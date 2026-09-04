@@ -64,15 +64,17 @@ jobs:
       - name: Validate trusted foundation change
         if: steps.transition.outputs.registry_data == 'false'
         shell: bash
+        working-directory: candidate
         run: |
           set -euo pipefail
-          pnpm --dir candidate install --frozen-lockfile
-          pnpm --dir candidate test
-          pnpm --dir candidate check
+          pnpm install --frozen-lockfile
+          pnpm test
+          pnpm check
 
       - name: Install trusted base validator
         if: steps.transition.outputs.registry_data == 'true'
-        run: pnpm --dir validator install --frozen-lockfile
+        working-directory: validator
+        run: pnpm install --frozen-lockfile
 
       - name: Validate publisher or maintainer Registry transition
         if: steps.transition.outputs.registry_data == 'true'
