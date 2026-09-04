@@ -309,7 +309,6 @@
         "sha256",
         "runtime_entry",
         "provenance_attestation_refs",
-        "provenance_revision",
         "execution_profile_ref",
         "native_trust"
       ],
@@ -329,7 +328,6 @@
           "uniqueItems": true,
           "items": { "$ref": "#/$defs/httpsUri" }
         },
-        "provenance_revision": { "$ref": "#/$defs/commitSha" },
         "execution_profile_ref": { "type": "string", "minLength": 1, "maxLength": 200 },
         "native_trust": { "$ref": "#/$defs/nativeTrust" }
       },

@@ -98,6 +98,35 @@ function githubRepositoryParts(repository) {
   return { owner: segments[0], repo: segments[1] };
 }
 
+function validateTaggedReleaseAsset(candidate, asset, label) {
+  let parsed;
+  try {
+    parsed = new URL(asset.asset_url);
+  } catch {
+    fail(`${label} asset_url is invalid`);
+  }
+  if (parsed.protocol !== 'https:' || parsed.hostname !== 'github.com' || parsed.username || parsed.password || parsed.search || parsed.hash || asset.asset_url.includes('\\')) {
+    fail(`${label} does not use an exact tagged GitHub Release locator`);
+  }
+  const rawSegments = parsed.pathname.split('/');
+  if (rawSegments.length !== 7 || rawSegments[0] !== '') fail(`${label} does not identify one exact Release asset`);
+  let segments;
+  try {
+    segments = rawSegments.slice(1).map((segment) => decodeURIComponent(segment));
+  } catch {
+    fail(`${label} contains invalid path encoding`);
+  }
+  if (segments.some((segment) => !segment || segment === '.' || segment === '..' || segment.includes('/') || segment.includes('\\'))) {
+    fail(`${label} contains a non-canonical path segment`);
+  }
+  const source = new URL(candidate.source.repository);
+  const sourceSegments = source.pathname.split('/').filter(Boolean);
+  const expected = [sourceSegments[0], sourceSegments[1], 'releases', 'download', candidate.release.tag, asset.asset_name];
+  if (!segments.every((segment, index) => segment === expected[index])) {
+    fail(`${label} does not identify the exact tagged GitHub Release asset`);
+  }
+}
+
 function validateCandidateFacts(candidate, label) {
   try {
     parseSpdxExpression(candidate.source.license.spdx_expression);
@@ -109,10 +138,7 @@ function validateCandidateFacts(candidate, label) {
     fail(`${label} source repository is not owned by publisher.github_namespace`);
   }
   if (candidate.release.tag !== `v${candidate.version}`) fail(`${label} release.tag must equal v<version>`);
-  const assetPrefix = `${candidate.source.repository}/releases/download/${candidate.release.tag}/`;
-  if (!candidate.aggregate.asset_url.startsWith(assetPrefix)) fail(`${label} aggregate does not use the exact tagged GitHub Release locator`);
-  const aggregateUrlName = decodeURIComponent(new URL(candidate.aggregate.asset_url).pathname.split('/').at(-1) || '');
-  if (aggregateUrlName !== candidate.aggregate.asset_name) fail(`${label} aggregate asset_name does not match asset_url`);
+  validateTaggedReleaseAsset(candidate, candidate.aggregate, `${label} aggregate`);
   const targetIds = new Set();
   const assetIds = new Set([candidate.aggregate.asset_id]);
   const assetNames = new Set([candidate.aggregate.asset_name]);
@@ -123,12 +149,7 @@ function validateCandidateFacts(candidate, label) {
     targetIds.add(target.target_id);
     assetIds.add(target.asset_id);
     assetNames.add(target.asset_name);
-    if (!target.asset_url.startsWith(assetPrefix)) fail(`${label} target ${target.target_id} does not use the exact tagged GitHub Release locator`);
-    const urlName = decodeURIComponent(new URL(target.asset_url).pathname.split('/').at(-1) || '');
-    if (urlName !== target.asset_name) fail(`${label} target ${target.target_id} asset_name does not match asset_url`);
-    if (target.provenance_revision !== candidate.release.commit_sha) {
-      fail(`${label} target ${target.target_id} provenance_revision must equal release.commit_sha`);
-    }
+    validateTaggedReleaseAsset(candidate, target, `${label} target ${target.target_id}`);
     if (!target.runtime_entry.startsWith('payload/')) fail(`${label} target ${target.target_id} runtime_entry must stay inside payload/`);
   }
   const licensePaths = candidate.source.license.files.map((entry) => entry.path);

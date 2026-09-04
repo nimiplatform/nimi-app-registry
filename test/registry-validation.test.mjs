@@ -100,7 +100,6 @@ function candidate() {
       sha256: 'd'.repeat(64),
       runtime_entry: 'payload/example-app.exe',
       provenance_attestation_refs: [`https://api.github.com/repos/publisher/example-app/attestations/sha256:${'d'.repeat(64)}`],
-      provenance_revision: 'b'.repeat(40),
       execution_profile_ref: 'windows-user-mode-as-invoker-v1',
       native_trust: {
         signing_subject: null,
@@ -198,6 +197,41 @@ function addFinalization(root, submission, descriptorOverrides = {}) {
 test('empty Registry tree is valid and contains no admission truth', async () => {
   const result = await validateRegistryTree(projectRoot, { schemaRoot });
   assert.deepEqual(result, { descriptors: 0, submissions: 0, apps: 0 });
+});
+
+test('approved target cannot carry Runtime-owned provenance revision', async (t) => {
+  const root = mkdtempSync(path.join(os.tmpdir(), 'nimi-registry-provenance-owner-test-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  const candidateValue = candidate();
+  candidateValue.targets[0].provenance_revision = candidateValue.release.commit_sha;
+  const descriptorValue = descriptor(candidateValue, 'e'.repeat(40));
+  writeJson(root, `descriptors/${candidateValue.app_id}/${candidateValue.version}.json`, descriptorValue);
+  writeJson(root, 'index.json', indexFor(descriptorValue));
+  await assert.rejects(
+    validateRegistryTree(root, { schemaRoot }),
+    /does not match its closed schema/u,
+  );
+});
+
+test('Release asset locator cannot escape its exact tag or add path segments', async (t) => {
+  for (const relativeAsset of [
+    '../v9.9.9/evil.nimiapp',
+    'nested/evil.nimiapp',
+    '%2e%2e/v9.9.9/evil.nimiapp',
+  ]) {
+    const root = mkdtempSync(path.join(os.tmpdir(), 'nimi-registry-asset-locator-test-'));
+    t.after(() => rmSync(root, { recursive: true, force: true }));
+    const candidateValue = candidate();
+    candidateValue.targets[0].asset_name = 'evil.nimiapp';
+    candidateValue.targets[0].asset_url = `${candidateValue.source.repository}/releases/download/${candidateValue.release.tag}/${relativeAsset}`;
+    const descriptorValue = descriptor(candidateValue, 'e'.repeat(40));
+    writeJson(root, `descriptors/${candidateValue.app_id}/${candidateValue.version}.json`, descriptorValue);
+    writeJson(root, 'index.json', indexFor(descriptorValue));
+    await assert.rejects(
+      validateRegistryTree(root, { schemaRoot }),
+      /exact tagged GitHub Release|exact Release asset|non-canonical path/u,
+    );
+  }
 });
 
 test('publisher PR adds one submission from its own fork namespace', async (t) => {
