@@ -43,10 +43,19 @@ jobs:
         env:
           BASE_SHA: ${{ github.event.pull_request.base.sha }}
           HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+          HEAD_REPOSITORY: ${{ github.event.pull_request.head.repo.full_name }}
         run: |
           set -euo pipefail
           changed=$(git -C candidate diff --name-only "$BASE_SHA..$HEAD_SHA" --)
-          if grep -Eq '^(submissions/|descriptors/|index\.json$)' <<<"$changed"; then
+          if ! git -C candidate cat-file -e "$BASE_SHA:index.json" 2>/dev/null; then
+            test "$HEAD_REPOSITORY" = "$GITHUB_REPOSITORY"
+            if grep -Eq '^(submissions/|descriptors/)' <<<"$changed"; then
+              echo 'Registry foundation cannot introduce admission data' >&2
+              exit 1
+            fi
+            node --input-type=module -e 'import assert from "node:assert/strict"; import { readFileSync } from "node:fs"; assert.deepEqual(JSON.parse(readFileSync("candidate/index.json", "utf8")), { schema_version: 1, apps: {} });'
+            echo 'registry_data=false' >> "$GITHUB_OUTPUT"
+          elif grep -Eq '^(submissions/|descriptors/|index\.json$)' <<<"$changed"; then
             echo 'registry_data=true' >> "$GITHUB_OUTPUT"
           else
             echo 'registry_data=false' >> "$GITHUB_OUTPUT"
