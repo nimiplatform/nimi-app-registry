@@ -1,0 +1,12 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://registry.nimi.ai/schema/submission.schema.json",
+  "title": "Nimi public App publisher submission",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "candidate"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "candidate": { "$ref": "common.schema.json#/$defs/candidate" }
+  }
+}
