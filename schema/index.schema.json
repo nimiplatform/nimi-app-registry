@@ -1,0 +1,67 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://registry.nimi.ai/schema/index.schema.json",
+  "title": "Nimi public App Registry index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "apps"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "apps": {
+      "type": "object",
+      "propertyNames": { "$ref": "common.schema.json#/$defs/appId" },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "display_name",
+          "visibility",
+          "admission_status",
+          "kill_switch",
+          "latest_admitted_release_by_target"
+        ],
+        "properties": {
+          "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
+          "visibility": { "enum": ["public", "hidden"] },
+          "admission_status": { "const": "approved" },
+          "kill_switch": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["active", "reason", "revision"],
+            "properties": {
+              "active": { "type": "boolean" },
+              "reason": {
+                "anyOf": [
+                  { "type": "string", "minLength": 1, "maxLength": 500 },
+                  { "type": "null" }
+                ]
+              },
+              "revision": { "type": "integer", "minimum": 0 }
+            },
+            "allOf": [
+              {
+                "if": { "properties": { "active": { "const": true } } },
+                "then": { "properties": { "reason": { "type": "string", "minLength": 1 } } },
+                "else": { "properties": { "reason": { "type": "null" } } }
+              }
+            ]
+          },
+          "latest_admitted_release_by_target": {
+            "type": "object",
+            "minProperties": 1,
+            "propertyNames": { "$ref": "common.schema.json#/$defs/targetId" },
+            "additionalProperties": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["descriptor_id", "path"],
+              "properties": {
+                "descriptor_id": { "$ref": "common.schema.json#/$defs/descriptorId" },
+                "path": { "$ref": "common.schema.json#/$defs/descriptorPath" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

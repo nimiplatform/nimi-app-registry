@@ -1,0 +1,20 @@
+{
+  "name": "@nimiplatform/nimi-app-registry",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "packageManager": "pnpm@10.34.5",
+  "engines": {
+    "node": ">=24.0.0"
+  },
+  "scripts": {
+    "check": "node scripts/validate-registry.mjs --all",
+    "test": "node --test test/*.test.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "ajv-formats": "3.0.1",
+    "spdx-expression-parse": "5.0.0",
+    "yaml": "2.9.0"
+  }
+}

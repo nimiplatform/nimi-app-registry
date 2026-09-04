@@ -1,0 +1,79 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://registry.nimi.ai/schema/approved-descriptor.schema.json",
+  "title": "Nimi approved immutable App release descriptor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "descriptor_id",
+    "publisher_submission",
+    "admission",
+    "candidate"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "descriptor_id": { "$ref": "common.schema.json#/$defs/descriptorId" },
+    "publisher_submission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["pull_number", "path", "head_sha"],
+      "properties": {
+        "pull_number": { "type": "integer", "minimum": 1 },
+        "path": { "$ref": "common.schema.json#/$defs/relativePath" },
+        "head_sha": { "$ref": "common.schema.json#/$defs/commitSha" }
+      }
+    },
+    "admission": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "ordinary_release_proof",
+        "trust_tier",
+        "build_assurance",
+        "dependency_assurance",
+        "review"
+      ],
+      "properties": {
+        "ordinary_release_proof": { "const": true },
+        "trust_tier": {
+          "enum": ["first-party", "verified-partner", "community"]
+        },
+        "build_assurance": { "const": "developer-attested" },
+        "dependency_assurance": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["lockfile_reviewed", "sbom_ref"],
+          "properties": {
+            "lockfile_reviewed": { "const": true },
+            "sbom_ref": { "$ref": "common.schema.json#/$defs/nullableHttpsUri" }
+          }
+        },
+        "review": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": [
+            "decision",
+            "adjudicator_login",
+            "adjudicator_actor_id",
+            "reason_code",
+            "decided_at"
+          ],
+          "properties": {
+            "decision": { "const": "approved" },
+            "adjudicator_login": { "$ref": "common.schema.json#/$defs/githubNamespace" },
+            "adjudicator_actor_id": { "type": "integer", "minimum": 1 },
+            "reason_code": {
+              "type": "string",
+              "pattern": "^[a-z0-9]+(?:-[a-z0-9]+)*$",
+              "minLength": 3,
+              "maxLength": 80
+            },
+            "decided_at": { "type": "string", "format": "date-time" }
+          }
+        }
+      }
+    },
+    "candidate": { "$ref": "common.schema.json#/$defs/candidate" }
+  }
+}

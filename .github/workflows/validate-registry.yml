@@ -1,0 +1,86 @@
+name: registry-validate
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+permissions:
+  contents: read
+  checks: read
+  pull-requests: read
+
+jobs:
+  validate-registry:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout trusted base validator
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.base.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: validator
+
+      - name: Checkout exact pull-request head as data
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name }}
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+          path: candidate
+
+      - uses: actions/setup-node@53b83947a5a98c8d113130e565377fae1a50d02f # v6.3.0
+        with:
+          node-version: 24
+          package-manager-cache: false
+
+      - run: corepack enable
+
+      - name: Classify Registry data transition
+        id: transition
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          changed=$(git -C candidate diff --name-only "$BASE_SHA..$HEAD_SHA" --)
+          if grep -Eq '^(submissions/|descriptors/|index\.json$)' <<<"$changed"; then
+            echo 'registry_data=true' >> "$GITHUB_OUTPUT"
+          else
+            echo 'registry_data=false' >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Validate trusted foundation change
+        if: steps.transition.outputs.registry_data == 'false'
+        shell: bash
+        run: |
+          set -euo pipefail
+          pnpm --dir candidate install --frozen-lockfile
+          pnpm --dir candidate test
+          pnpm --dir candidate check
+
+      - name: Install trusted base validator
+        if: steps.transition.outputs.registry_data == 'true'
+        run: pnpm --dir validator install --frozen-lockfile
+
+      - name: Validate publisher or maintainer Registry transition
+        if: steps.transition.outputs.registry_data == 'true'
+        shell: bash
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          GITHUB_ACTOR: ${{ github.actor }}
+          GITHUB_ACTOR_ID: ${{ github.actor_id }}
+          REGISTRY_BASE_SHA: ${{ github.event.pull_request.base.sha }}
+          REGISTRY_HEAD_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          set -euo pipefail
+          node validator/scripts/validate-registry.mjs \
+            --pr \
+            --root "$GITHUB_WORKSPACE/candidate" \
+            --git-root "$GITHUB_WORKSPACE/candidate" \
+            --schema-root "$GITHUB_WORKSPACE/validator/schema" \
+            --base "$REGISTRY_BASE_SHA" \
+            --head "$REGISTRY_HEAD_SHA" \
+            --event "$GITHUB_EVENT_PATH"
