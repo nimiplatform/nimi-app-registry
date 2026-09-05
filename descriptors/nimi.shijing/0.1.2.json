@@ -1,5 +1,27 @@
 {
   "schema_version": 1,
+  "descriptor_id": "nimi.shijing@0.1.2",
+  "publisher_submission": {
+    "pull_number": 2,
+    "path": "submissions/nimiplatform/nimi.shijing/0.1.2.json",
+    "head_sha": "6d3bd962560b4b41875a6df1930fa89f09e1ec0e"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-pilot-release",
+      "decided_at": "2026-09-05T15:25:20Z"
+    }
+  },
   "candidate": {
     "app_id": "nimi.shijing",
     "display_name": "时镜 ShiJing",
