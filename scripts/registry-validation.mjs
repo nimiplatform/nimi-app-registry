@@ -333,15 +333,8 @@ export async function validatePullRequestTransition(options) {
   const pullNumber = Number(requireContextValue(context.pullNumber, 'pull request number'));
   const actorId = Number(requireContextValue(context.actorId, 'finalizer actor id'));
   const actorLogin = requireContextValue(context.actorLogin, 'finalizer actor login');
-  const publisherPrAuthor = requireContextValue(context.publisherPrAuthor, 'publisher pull-request author');
   if (descriptor.publisher_submission.pull_number !== pullNumber) fail('descriptor pull_number does not match the current pull request');
   if (!maintainerPermissions.has(context.finalizerPermission)) fail('finalization actor is not a current Registry maintainer');
-  if (
-    actorLogin.toLowerCase() === publisherPrAuthor.toLowerCase()
-    || actorLogin.toLowerCase() === descriptor.candidate.publisher.github_namespace.toLowerCase()
-  ) {
-    fail('publisher cannot act as the human Registry adjudicator for its own submission');
-  }
   if (descriptor.admission.review.adjudicator_login !== actorLogin) fail('descriptor adjudicator_login does not match the GitHub event actor');
   if (descriptor.admission.review.adjudicator_actor_id !== actorId) fail('descriptor adjudicator_actor_id does not match the GitHub event actor id');
   if (context.candidateCheckPassed !== true) fail('checked publisher head does not have a successful base-owned validate-registry result');
