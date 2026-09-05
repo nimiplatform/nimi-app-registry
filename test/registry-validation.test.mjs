@@ -194,8 +194,10 @@ function addFinalization(root, submission, descriptorOverrides = {}) {
   return { descriptorPath, descriptorValue, headSha };
 }
 
-test('empty Registry tree is valid and contains no admission truth', async () => {
-  const result = await validateRegistryTree(projectRoot, { schemaRoot });
+test('empty Registry tree is valid and contains no admission truth', async (t) => {
+  const { root } = repository(t);
+  writeJson(root, 'index.json', { schema_version: 1, apps: {} });
+  const result = await validateRegistryTree(root, { schemaRoot });
   assert.deepEqual(result, { descriptors: 0, submissions: 0, apps: 0 });
 });
 
