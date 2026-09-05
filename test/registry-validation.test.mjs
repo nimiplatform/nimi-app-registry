@@ -309,7 +309,6 @@ test('maintainer finalization is one exact parent-bound descriptor and index tra
       pullNumber: 42,
       actorLogin: 'registry-maintainer',
       actorId: 9876,
-      publisherPrAuthor: 'publisher-author',
       finalizerPermission: 'maintain',
       candidateCheckPassed: true,
     },
@@ -319,7 +318,7 @@ test('maintainer finalization is one exact parent-bound descriptor and index tra
   assert.equal(result.descriptorPath, finalization.descriptorPath);
 });
 
-test('developer-authored adjudicator or non-maintainer finalizer fails closed', async (t) => {
+test('publisher finalizer without maintainer permission fails closed', async (t) => {
   const { root, baseSha } = repository(t);
   const submission = addPublisherSubmission(root);
   const finalization = addFinalization(root, submission);
@@ -334,7 +333,6 @@ test('developer-authored adjudicator or non-maintainer finalizer fails closed', 
         pullNumber: 42,
         actorLogin: 'publisher',
         actorId: 111,
-        publisherPrAuthor: 'publisher',
         finalizerPermission: 'write',
         candidateCheckPassed: true,
       },
@@ -343,7 +341,7 @@ test('developer-authored adjudicator or non-maintainer finalizer fails closed', 
   );
 });
 
-test('a Registry maintainer cannot self-approve its own publisher PR', async (t) => {
+test('a current Registry maintainer may finalize its own publisher PR', async (t) => {
   const { root, baseSha } = repository(t);
   const submission = addPublisherSubmission(root);
   const descriptorValue = descriptor(submission.candidateValue, submission.publisherHeadSha);
@@ -354,23 +352,44 @@ test('a Registry maintainer cannot self-approve its own publisher PR', async (t)
   writeJson(root, descriptorPath, descriptorValue);
   writeJson(root, 'index.json', indexFor(descriptorValue));
   const headSha = commit(root, 'publisher self-approval');
+  const result = await validatePullRequestTransition({
+    root,
+    gitRoot: root,
+    schemaRoot,
+    baseSha,
+    headSha,
+    context: {
+      pullNumber: 42,
+      actorLogin: 'publisher',
+      actorId: 111,
+      finalizerPermission: 'admin',
+      candidateCheckPassed: true,
+    },
+  });
+  assert.equal(result.mode, 'maintainer-finalization');
+  assert.equal(result.publisherHeadSha, submission.publisherHeadSha);
+});
+
+test('maintainer finalization remains bound to the exact GitHub event actor', async (t) => {
+  const { root, baseSha } = repository(t);
+  const submission = addPublisherSubmission(root);
+  const finalization = addFinalization(root, submission);
   await assert.rejects(
     validatePullRequestTransition({
       root,
       gitRoot: root,
       schemaRoot,
       baseSha,
-      headSha,
+      headSha: finalization.headSha,
       context: {
         pullNumber: 42,
-        actorLogin: 'publisher',
-        actorId: 111,
-        publisherPrAuthor: 'publisher',
-        finalizerPermission: 'admin',
+        actorLogin: 'different-maintainer',
+        actorId: 1234,
+        finalizerPermission: 'maintain',
         candidateCheckPassed: true,
       },
     }),
-    /cannot act as the human Registry adjudicator/u,
+    /adjudicator_login does not match the GitHub event actor/u,
   );
 });
 

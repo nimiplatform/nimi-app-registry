@@ -71,7 +71,6 @@ function pullEventContext(event, baseSha, headSha) {
   return {
     pullNumber: event.number,
     headOwner: event.pull_request.head?.repo?.owner?.login,
-    publisherPrAuthor: event.pull_request.user?.login,
     actorLogin,
     actorId,
   };
