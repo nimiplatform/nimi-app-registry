@@ -4,14 +4,14 @@ This repository is the static, Git-reviewed admission registry for public Nimi
 Apps. It stores JSON metadata only. App artifacts remain in the publisher's
 immutable GitHub Release.
 
-Current status: foundation development only. Public submission, admission,
-Catalog discovery, installation, and execution remain unavailable until the
-corresponding Nimi authority availability cutover and repository protection are
-completed.
+Publisher submissions and human maintainer admission use protected branch pull
+requests and required deterministic checks. Registry publication records
+admission only; Catalog discovery, installation, and execution belong to their
+separate Nimi Runtime and Desktop lifecycle owners.
 
 ## Ownership boundary
 
-- A publisher-owned fork branch may add exactly one file below
+- A publisher-owned branch may add exactly one file below
   `submissions/<publisher>/<app_id>/<version>.json` in a candidate PR.
 - Publisher input cannot contain approval, descriptor, review, or index fields.
 - After deterministic checks and an explicit human decision, a current Registry
