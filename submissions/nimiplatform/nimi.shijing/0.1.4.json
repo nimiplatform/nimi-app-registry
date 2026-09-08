@@ -1,0 +1,107 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.shijing",
+    "display_name": "时镜 ShiJing",
+    "version": "0.1.4",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-shijing",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "5830b56c92e055435c7eee5796fe5ba80645debe4d456dc070ef24f8697ab0c4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.4",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-shijing/rulesets/22027407",
+      "commit_sha": "45e48d8851f564560f3540698197a8907dc318cd",
+      "release_id": 385054605,
+      "release_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/tag/v0.1.4",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/tag/v0.1.4",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 551286877,
+      "asset_name": "nimi.shijing-0.1.4.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.4/nimi.shijing-0.1.4.candidate.json",
+      "size": 823,
+      "sha256": "c98e600db2f322332c1c9c8593f8ac8af8123a90b3c29f5607c8c51670abc102"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-shijing/blob/45e48d8851f564560f3540698197a8907dc318cd/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "personal_birth_data"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime",
+        "calculation",
+        "display"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-shijing/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart ShiJing from Nimi Desktop. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 551286542,
+        "asset_name": "nimi.shijing-0.1.4-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.4/nimi.shijing-0.1.4-windows-x86_64.nimiapp",
+        "size": 578099691,
+        "sha256": "96a2cb685515a2d9cda48da110c8b82122b5b1e3ec0ecf72a64d08f2b3166db3",
+        "runtime_entry": "payload/nimiapp-shijing-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-shijing/attestations/sha256:96a2cb685515a2d9cda48da110c8b82122b5b1e3ec0ecf72a64d08f2b3166db3"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
