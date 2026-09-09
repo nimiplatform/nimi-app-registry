@@ -334,10 +334,10 @@ test('macOS unsigned submission retains absent publisher identity and its own ex
   target.native_trust.macos_notarization = 'absent';
   const submission = addPublisherSubmission(root, value);
   writeJson(root, 'index.json', { schema_version: 1, apps: {} });
-  assert.deepEqual(await validateRegistryTree(root, { schemaRoot }), { descriptors: 0, submissions: 1, apps: 0 });
+  assert.deepEqual(await validateRegistryTree(root, { schemaRoot, allowSubmissions: true }), { descriptors: 0, submissions: 1, apps: 0 });
   target.execution_profile_ref = 'windows-user-mode-as-invoker-v1';
   writeJson(root, submission.submissionPath, { schema_version: 1, candidate: value });
-  await assert.rejects(validateRegistryTree(root, { schemaRoot }), /closed schema/u);
+  await assert.rejects(validateRegistryTree(root, { schemaRoot, allowSubmissions: true }), /closed schema/u);
 });
 
 test('Registry accepts bounded framework links and rejects escaping or cross-platform links', () => {
