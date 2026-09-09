@@ -1,0 +1,126 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "nimi.storybook@0.1.1",
+  "publisher_submission": {
+    "pull_number": 13,
+    "path": "submissions/nimiplatform/nimi.storybook/0.1.1.json",
+    "head_sha": "87a46c9289ccfe9be1b860b17a0558128d687532"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-09-09T11:13:40.766Z"
+    }
+  },
+  "candidate": {
+    "app_id": "nimi.storybook",
+    "display_name": "Storybook",
+    "version": "0.1.1",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-storybook",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b245c0e5326747d2ea6e82a6c20e9088bb6c46b0ec0c5cadd49ece6df99a1192"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.1",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-storybook/rulesets/22613699",
+      "commit_sha": "f8dab20c8e77921f193c6822ab6a80f2542df278",
+      "release_id": 385313560,
+      "release_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/tag/v0.1.1",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/tag/v0.1.1",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 552264242,
+      "asset_name": "nimi.storybook-0.1.1.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.1/nimi.storybook-0.1.1.candidate.json",
+      "size": 831,
+      "sha256": "d1fea61c049b166b32ade80de73be67cb25962656414f58cc881d0ec2c2d7b3f"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-storybook/blob/f8dab20c8e77921f193c6822ab6a80f2542df278/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "os_storage_disclosure": null,
+      "kind": "nimi-mediated-default"
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-storybook/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 552263902,
+        "asset_name": "nimi.storybook-0.1.1-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.1/nimi.storybook-0.1.1-windows-x86_64.nimiapp",
+        "size": 568404794,
+        "sha256": "72f5ea0663b5811110f0b8281c1cf256f7f57d04363300762e00e64af43e9e52",
+        "runtime_entry": "payload/nimiapp-storybook-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-storybook/attestations/sha256:72f5ea0663b5811110f0b8281c1cf256f7f57d04363300762e00e64af43e9e52"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
