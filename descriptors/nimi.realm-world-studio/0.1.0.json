@@ -1,0 +1,130 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "nimi.realm-world-studio@0.1.0",
+  "publisher_submission": {
+    "pull_number": 11,
+    "path": "submissions/nimiplatform/nimi.realm-world-studio/0.1.0.json",
+    "head_sha": "3e98c085c04eacea06f450e7eff80bedf68de9de"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-09-09T07:43:13.183Z"
+    }
+  },
+  "candidate": {
+    "app_id": "nimi.realm-world-studio",
+    "display_name": "Realm World Studio",
+    "version": "0.1.0",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-realm-world-studio",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.0",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-realm-world-studio/rulesets/22613697",
+      "commit_sha": "d8b3542fd8106e5134e520999672a18e09399363",
+      "release_id": 385297948,
+      "release_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/tag/v0.1.0",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/tag/v0.1.0",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 552225200,
+      "asset_name": "nimi.realm-world-studio-0.1.0.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.0/nimi.realm-world-studio-0.1.0.candidate.json",
+      "size": 867,
+      "sha256": "61f899275cc17ad4cbb99526f2db7c4fc6071df67f1f6973bb5b7f50a7cb20ca"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-realm-world-studio/blob/d8b3542fd8106e5134e520999672a18e09399363/src-electron/main.ts"
+    },
+    "app_access": [
+      "realm.data"
+    ],
+    "capability_contract_refs": [],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "os_storage_disclosure": [
+        {
+          "path_pattern": "<Electron userData>/Local Storage/**",
+          "purpose": "Language preference only; world and character records remain Realm-owned. Retained after Nimi uninstall.",
+          "expected_size_band": "A small preference record; browser storage overhead varies."
+        }
+      ],
+      "kind": "app-owned-os-storage"
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 552224714,
+        "asset_name": "nimi.realm-world-studio-0.1.0-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.0/nimi.realm-world-studio-0.1.0-windows-x86_64.nimiapp",
+        "size": 591066424,
+        "sha256": "ab0aabc6c0a44538bcd63b4552da616cadeb56ad80c2b7d1c20a819b81ae9c99",
+        "runtime_entry": "payload/nimiapp-realm-world-studio-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-world-studio/attestations/sha256:ab0aabc6c0a44538bcd63b4552da616cadeb56ad80c2b7d1c20a819b81ae9c99"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
