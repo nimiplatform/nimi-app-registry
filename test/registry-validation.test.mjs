@@ -201,6 +201,27 @@ test('empty Registry tree is valid and contains no admission truth', async (t) =
   assert.deepEqual(result, { descriptors: 0, submissions: 0, apps: 0 });
 });
 
+test('App-owned storage accepts the published app-tools disclosure contract', async (t) => {
+  const { root } = repository(t);
+  const candidateValue = candidate();
+  candidateValue.storage_policy = {
+    kind: 'app-owned-os-storage',
+    os_storage_disclosure: [{
+      path_pattern: '<Electron userData>/inscape.db',
+      purpose: 'Local SQLite profiles and observations',
+      expected_size_band: 'A few KiB and above, growing with saved records',
+    }],
+  };
+  const approved = descriptor(candidateValue, 'e'.repeat(40));
+  const descriptorPath = `descriptors/${candidateValue.app_id}/${candidateValue.version}.json`;
+  writeJson(root, descriptorPath, approved);
+  writeJson(root, 'index.json', indexFor(approved));
+  assert.deepEqual(await validateRegistryTree(root, { schemaRoot }), { descriptors: 1, submissions: 0, apps: 1 });
+  delete candidateValue.storage_policy.os_storage_disclosure[0].expected_size_band;
+  writeJson(root, descriptorPath, approved);
+  await assert.rejects(validateRegistryTree(root, { schemaRoot }), /closed schema/u);
+});
+
 test('approved target cannot carry Runtime-owned provenance revision', async (t) => {
   const root = mkdtempSync(path.join(os.tmpdir(), 'nimi-registry-provenance-owner-test-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));

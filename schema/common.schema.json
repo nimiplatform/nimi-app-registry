@@ -213,12 +213,11 @@
               "items": {
                 "type": "object",
                 "additionalProperties": false,
-                "required": ["path_pattern", "purpose", "retention", "removal"],
+                "required": ["path_pattern", "purpose", "expected_size_band"],
                 "properties": {
                   "path_pattern": { "type": "string", "minLength": 1, "maxLength": 500 },
                   "purpose": { "type": "string", "minLength": 1, "maxLength": 500 },
-                  "retention": { "type": "string", "minLength": 1, "maxLength": 500 },
-                  "removal": { "type": "string", "minLength": 1, "maxLength": 500 }
+                  "expected_size_band": { "type": "string", "minLength": 1, "maxLength": 500 }
                 }
               }
             }
