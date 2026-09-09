@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { parse as parseYaml } from 'yaml';
 import { RegistryValidationError } from './registry-validation.mjs';
+import { SYMBOLIC_LINK_MODE, validatePayloadLinks } from './payload-links.mjs';
 
 function fail(message) {
   throw new RegistryValidationError(message);
@@ -90,9 +91,10 @@ function readNimiAppArchive(bytes, label) {
     const extraLength = bytes.readUInt16LE(cursor + 30);
     const commentLength = bytes.readUInt16LE(cursor + 32);
     const localOffset = bytes.readUInt32LE(cursor + 42);
-    const mode = (bytes.readUInt32LE(cursor + 38) >>> 16) & 0o777;
+    const unixMode = bytes.readUInt32LE(cursor + 38) >>> 16;
+    const mode = (unixMode & 0o170000) === 0o120000 ? unixMode : unixMode & 0o777;
     if (method !== 0 || extraLength !== 0 || commentLength !== 0) fail(`${label} uses an unsupported ZIP entry encoding`);
-    if (mode !== 0o644 && mode !== 0o755) fail(`${label} uses an unsupported ZIP entry mode`);
+    if (mode !== 0o644 && mode !== 0o755 && mode !== SYMBOLIC_LINK_MODE) fail(`${label} uses an unsupported ZIP entry mode`);
     const name = canonicalEntryName(bytes.subarray(cursor + 46, cursor + 46 + nameLength).toString('utf8'));
     if (entries.has(name) || bytes.readUInt32LE(localOffset) !== 0x04034b50) fail(`${label} has an invalid or duplicate ZIP entry`);
     const localNameLength = bytes.readUInt16LE(localOffset + 26);
@@ -122,6 +124,17 @@ function parseJsonEntry(entries, name, label) {
 }
 
 function expectedArchiveNativeTrust(target) {
+  if (target.os === 'macos') {
+    if (target.execution_profile_ref !== 'macos-user-mode-same-session-v1') fail('macOS target has an unsupported execution profile');
+    const signed = target.native_trust.signing_subject === 'publisher';
+    if (signed && target.native_trust.observed_subject !== target.native_trust.macos_developer_id_subject) fail('macOS publisher identity is contradictory');
+    return {
+      posture: signed ? 'observed-valid-native-signature' : 'production-unsigned',
+      macos_developer_id: signed ? 'valid' : 'absent',
+      macos_notarization: target.native_trust.macos_notarization,
+      certificate_subject: target.native_trust.macos_developer_id_subject,
+    };
+  }
   if (target.os !== 'windows') fail(`Registry native archive verification is not yet implemented for ${target.os}`);
   if (target.native_trust.windows_code_signing === 'unsigned') {
     return {
@@ -140,6 +153,7 @@ function expectedArchiveNativeTrust(target) {
 function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests) {
   const label = `${target.target_id} nimiapp`;
   const entries = readNimiAppArchive(bytes, label);
+  validatePayloadLinks(entries, target.os);
   for (const required of ['LICENSE', 'manifest.json', 'nimi.app.yaml', target.runtime_entry]) {
     if (!entries.has(required)) fail(`${label} is missing ${required}`);
   }
@@ -154,7 +168,7 @@ function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests) 
     arch: target.arch,
     runtime_entry: target.runtime_entry,
     native_trust: expectedArchiveNativeTrust(target),
-    execution_profile: { requested_execution_level: 'asInvoker', ui_access: false },
+    execution_profile: target.os === 'macos' ? { launch_mode: 'current-user' } : { requested_execution_level: 'asInvoker', ui_access: false },
   };
   if (!sameValue(manifest, expectedManifest)) fail(`${label} manifest does not match the descriptor target`);
 

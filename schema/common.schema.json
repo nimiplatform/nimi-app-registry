@@ -374,6 +374,7 @@
           "else": {
             "properties": {
               "target_id": { "type": "string", "pattern": "^macos-" },
+              "execution_profile_ref": { "const": "macos-user-mode-same-session-v1" },
               "native_trust": {
                 "type": "object",
                 "allOf": [
