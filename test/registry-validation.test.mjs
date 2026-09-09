@@ -10,6 +10,7 @@ import {
   validatePullRequestTransition,
   validateRegistryTree,
 } from '../scripts/registry-validation.mjs';
+import { validatePayloadLinks } from '../scripts/payload-links.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const schemaRoot = path.join(projectRoot, 'schema');
@@ -316,6 +317,38 @@ test('claimed signer cannot be normalized to unsigned native posture', async (t)
     }),
     /does not match its closed schema/u,
   );
+});
+
+test('macOS unsigned submission retains absent publisher identity and its own execution profile', async (t) => {
+  const { root } = repository(t);
+  const value = candidate();
+  const target = value.targets[0];
+  target.target_id = 'macos-aarch64';
+  target.os = 'macos';
+  target.arch = 'arm64';
+  target.asset_name = 'publisher.example-app-1.2.3-macos-aarch64.nimiapp';
+  target.asset_url = `${value.source.repository}/releases/download/v1.2.3/${target.asset_name}`;
+  target.runtime_entry = 'payload/Example.app/Contents/MacOS/example';
+  target.execution_profile_ref = 'macos-user-mode-same-session-v1';
+  target.native_trust.windows_code_signing = 'not-applicable';
+  target.native_trust.macos_notarization = 'absent';
+  const submission = addPublisherSubmission(root, value);
+  writeJson(root, 'index.json', { schema_version: 1, apps: {} });
+  assert.deepEqual(await validateRegistryTree(root, { schemaRoot }), { descriptors: 0, submissions: 1, apps: 0 });
+  target.execution_profile_ref = 'windows-user-mode-as-invoker-v1';
+  writeJson(root, submission.submissionPath, { schema_version: 1, candidate: value });
+  await assert.rejects(validateRegistryTree(root, { schemaRoot }), /closed schema/u);
+});
+
+test('Registry accepts bounded framework links and rejects escaping or cross-platform links', () => {
+  const entries = new Map([
+    ['payload/F.framework/Versions/A/F', { mode: 0o755, bytes: Buffer.from('framework') }],
+    ['payload/F.framework/Versions/Current', { mode: 0o120777, bytes: Buffer.from('A') }],
+  ]);
+  validatePayloadLinks(entries, 'macos');
+  assert.throws(() => validatePayloadLinks(entries, 'windows'), /not admitted/u);
+  entries.set('payload/F.framework/Versions/Current', { mode: 0o120777, bytes: Buffer.from('../../../../outside') });
+  assert.throws(() => validatePayloadLinks(entries, 'macos'), /escapes/u);
 });
 
 test('maintainer finalization is one exact parent-bound descriptor and index transition', async (t) => {
