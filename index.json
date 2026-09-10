@@ -12,8 +12,12 @@
       },
       "latest_admitted_release_by_target": {
         "windows-x86_64": {
-          "descriptor_id": "nimi.shijing@0.1.4",
-          "path": "descriptors/nimi.shijing/0.1.4.json"
+          "descriptor_id": "nimi.shijing@0.1.5",
+          "path": "descriptors/nimi.shijing/0.1.5.json"
+        },
+        "macos-aarch64": {
+          "descriptor_id": "nimi.shijing@0.1.5",
+          "path": "descriptors/nimi.shijing/0.1.5.json"
         }
       }
     },
