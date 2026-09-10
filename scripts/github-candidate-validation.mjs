@@ -237,7 +237,7 @@ function releaseAsset(release, expected, label) {
   return asset;
 }
 
-function validateAggregate(bytes, candidate) {
+export function validateAggregate(bytes, candidate) {
   let aggregate;
   try {
     aggregate = JSON.parse(bytes.toString('utf8'));
@@ -268,7 +268,7 @@ function validateAggregate(bytes, candidate) {
       sha256: target.sha256,
       runtime_entry: target.runtime_entry,
       native_trust: expectedArchiveNativeTrust(target),
-      execution_profile: { requested_execution_level: 'asInvoker', ui_access: false },
+      execution_profile: target.os === 'macos' ? { launch_mode: 'current-user' } : { requested_execution_level: 'asInvoker', ui_access: false },
     };
     if (!sameValue(aggregateTarget, expected)) fail(`aggregate target ${target.target_id} does not match the candidate`);
   }
