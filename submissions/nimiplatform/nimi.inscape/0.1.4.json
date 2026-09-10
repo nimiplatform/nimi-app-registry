@@ -1,0 +1,133 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.inscape",
+    "display_name": "Inscape",
+    "version": "0.1.4",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-inscape",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.4",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-inscape/rulesets/22613684",
+      "commit_sha": "c50875835ca7133c4377103f18bb7a19ff971e53",
+      "release_id": 386190237,
+      "release_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/tag/v0.1.4",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/tag/v0.1.4",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 554798311,
+      "asset_name": "nimi.inscape-0.1.4.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.4/nimi.inscape-0.1.4.candidate.json",
+      "size": 1558,
+      "sha256": "5c8a43a0d2958eeaf33c812585acce6ecd064da56505ab3c089c6f3e740d4608"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-inscape/blob/c50875835ca7133c4377103f18bb7a19ff971e53/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "path_pattern": "<Electron userData>/inscape.db",
+          "purpose": "Local SQLite storage for adult attestation, profiles, observations and reflections. Retained after Nimi uninstall; cleared from Inscape settings.",
+          "expected_size_band": "Starts at a few KiB and grows with saved records; no App-enforced storage cap."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-inscape/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 554797519,
+        "asset_name": "nimi.inscape-0.1.4-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.4/nimi.inscape-0.1.4-macos-aarch64.nimiapp",
+        "size": 556378597,
+        "sha256": "06f343f06278ac8ba04d2c7009ecc738fd5b87899a9947f8d01d50ed7a9ed97d",
+        "runtime_entry": "payload/nimiapp-inscape-shell.app/Contents/MacOS/nimiapp-inscape-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-inscape/attestations/sha256:06f343f06278ac8ba04d2c7009ecc738fd5b87899a9947f8d01d50ed7a9ed97d"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 554797818,
+        "asset_name": "nimi.inscape-0.1.4-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.4/nimi.inscape-0.1.4-windows-x86_64.nimiapp",
+        "size": 586324237,
+        "sha256": "09dd88329e132719824a2c6287c343745a2f71b07429de3eb2b03bcd4323b151",
+        "runtime_entry": "payload/nimiapp-inscape-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-inscape/attestations/sha256:09dd88329e132719824a2c6287c343745a2f71b07429de3eb2b03bcd4323b151"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
