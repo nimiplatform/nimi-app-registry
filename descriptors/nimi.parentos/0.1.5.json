@@ -1,0 +1,156 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "nimi.parentos@0.1.5",
+  "publisher_submission": {
+    "pull_number": 39,
+    "path": "submissions/nimiplatform/nimi.parentos/0.1.5.json",
+    "head_sha": "b9582772e90c061aad82e15f42f625e4811a21d8"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-09-10T11:30:30.000Z"
+    }
+  },
+  "candidate": {
+    "app_id": "nimi.parentos",
+    "display_name": "ParentOS",
+    "version": "0.1.5",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-parentos",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.5",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-parentos/rulesets/22613690",
+      "commit_sha": "25ad474243d7a2a016e99ddd5110ca4bc5faff97",
+      "release_id": 386150597,
+      "release_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/tag/v0.1.5",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/tag/v0.1.5",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 554692155,
+      "asset_name": "nimi.parentos-0.1.5.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.5/nimi.parentos-0.1.5.candidate.json",
+      "size": 1566,
+      "sha256": "8c98a34e732082fe3c0b4f340ea9a5b1f0c2fa57c26d47ceda4e8c14a8ad1036"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-parentos/blob/25ad474243d7a2a016e99ddd5110ca4bc5faff97/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "audio.transcribe"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "path_pattern": "<Electron appData>/Nimi/ParentOS/{data,cache,tmp}/**",
+          "purpose": "Device-local family SQLite data, media and temporary files under %APPDATA% on Windows or ~/Library/Application Support on macOS. Retained after Nimi uninstall; managed by ParentOS.",
+          "expected_size_band": "Durable media writes enforce a 2 GiB partition limit; images up to 25 MiB and journal audio up to 64 MiB per object."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-parentos/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 554690584,
+        "asset_name": "nimi.parentos-0.1.5-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.5/nimi.parentos-0.1.5-macos-aarch64.nimiapp",
+        "size": 677627561,
+        "sha256": "1bfbd94ab3f06dc5d325783ee98ec341d12f6b7dc1524dd2748eb578d6fb607e",
+        "runtime_entry": "payload/nimiapp-parentos-shell.app/Contents/MacOS/nimiapp-parentos-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-parentos/attestations/sha256:1bfbd94ab3f06dc5d325783ee98ec341d12f6b7dc1524dd2748eb578d6fb607e"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 554691182,
+        "asset_name": "nimi.parentos-0.1.5-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.5/nimi.parentos-0.1.5-windows-x86_64.nimiapp",
+        "size": 712591594,
+        "sha256": "593a278b4aca0a76897ab5e8e04a1acd32b25cac2c146b24e1ca4bc1d84565b7",
+        "runtime_entry": "payload/nimiapp-parentos-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-parentos/attestations/sha256:593a278b4aca0a76897ab5e8e04a1acd32b25cac2c146b24e1ca4bc1d84565b7"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
