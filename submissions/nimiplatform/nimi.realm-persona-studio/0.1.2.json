@@ -1,0 +1,136 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.realm-persona-studio",
+    "display_name": "Realm Persona Studio",
+    "version": "0.1.2",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-realm-persona-studio",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.2",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-realm-persona-studio/rulesets/22613694",
+      "commit_sha": "6a09d01646fd0fcd8185a3d9023dde2060f8d88e",
+      "release_id": 386036732,
+      "release_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/tag/v0.1.2",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/tag/v0.1.2",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 554364830,
+      "asset_name": "nimi.realm-persona-studio-0.1.2.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.2/nimi.realm-persona-studio-0.1.2.candidate.json",
+      "size": 1662,
+      "sha256": "76463edd1d3c827c09f903fa5e896091addad60227e5c857beca0ff983e52f40"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/blob/6a09d01646fd0fcd8185a3d9023dde2060f8d88e/src-electron/main.ts"
+    },
+    "app_access": [
+      "realm.data",
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "image.generate",
+      "audio.synthesize"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "path_pattern": "<Electron userData>/Local Storage/**",
+          "purpose": "Owner draft schedules, creative-asset history references and language preference. Realm remains authoritative for Persona records. Retained after Nimi uninstall.",
+          "expected_size_band": "Typically KiB to a few MiB of JSON, subject to browser storage quota."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 554363982,
+        "asset_name": "nimi.realm-persona-studio-0.1.2-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.2/nimi.realm-persona-studio-0.1.2-macos-aarch64.nimiapp",
+        "size": 538198971,
+        "sha256": "4ed4920f9ecda116e49b3fbd19bc6dd6dd0c7800e614a56237ffcbb05196cc67",
+        "runtime_entry": "payload/nimiapp-realm-persona-studio-shell.app/Contents/MacOS/nimiapp-realm-persona-studio-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-persona-studio/attestations/sha256:4ed4920f9ecda116e49b3fbd19bc6dd6dd0c7800e614a56237ffcbb05196cc67"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 554364365,
+        "asset_name": "nimi.realm-persona-studio-0.1.2-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.2/nimi.realm-persona-studio-0.1.2-windows-x86_64.nimiapp",
+        "size": 594353547,
+        "sha256": "1a184afe7629dd86e60cbf48d9465fe2aeb22a50348315d82b73ddbb5b7cb336",
+        "runtime_entry": "payload/nimiapp-realm-persona-studio-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-persona-studio/attestations/sha256:1a184afe7629dd86e60cbf48d9465fe2aeb22a50348315d82b73ddbb5b7cb336"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
