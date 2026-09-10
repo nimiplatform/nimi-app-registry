@@ -11,6 +11,7 @@ import {
   validateRegistryTree,
 } from '../scripts/registry-validation.mjs';
 import { validatePayloadLinks } from '../scripts/payload-links.mjs';
+import { validateAggregate } from '../scripts/github-candidate-validation.mjs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const schemaRoot = path.join(projectRoot, 'schema');
@@ -335,6 +336,33 @@ test('macOS unsigned submission retains absent publisher identity and its own ex
   const submission = addPublisherSubmission(root, value);
   writeJson(root, 'index.json', { schema_version: 1, apps: {} });
   assert.deepEqual(await validateRegistryTree(root, { schemaRoot, allowSubmissions: true }), { descriptors: 0, submissions: 1, apps: 0 });
+  const aggregate = {
+    format: 'nimi.app-release-candidate/v1',
+    app_id: value.app_id,
+    version: value.version,
+    targets: [{
+      format: 'nimi.app-target-candidate/v1',
+      app_id: value.app_id,
+      version: value.version,
+      target_id: target.target_id,
+      os: target.os,
+      arch: target.arch,
+      asset_name: target.asset_name,
+      size: target.size,
+      sha256: target.sha256,
+      runtime_entry: target.runtime_entry,
+      native_trust: {
+        posture: 'production-unsigned',
+        macos_developer_id: 'absent',
+        macos_notarization: 'absent',
+        certificate_subject: null,
+      },
+      execution_profile: { launch_mode: 'current-user' },
+    }],
+  };
+  assert.doesNotThrow(() => validateAggregate(Buffer.from(JSON.stringify(aggregate)), value));
+  aggregate.targets[0].execution_profile = { requested_execution_level: 'asInvoker', ui_access: false };
+  assert.throws(() => validateAggregate(Buffer.from(JSON.stringify(aggregate)), value), /does not match/u);
   target.execution_profile_ref = 'windows-user-mode-as-invoker-v1';
   writeJson(root, submission.submissionPath, { schema_version: 1, candidate: value });
   await assert.rejects(validateRegistryTree(root, { schemaRoot, allowSubmissions: true }), /closed schema/u);
