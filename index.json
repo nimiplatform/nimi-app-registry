@@ -52,12 +52,12 @@
       },
       "latest_admitted_release_by_target": {
         "windows-x86_64": {
-          "descriptor_id": "nimi.overtone@0.1.2",
-          "path": "descriptors/nimi.overtone/0.1.2.json"
+          "descriptor_id": "nimi.overtone@0.1.4",
+          "path": "descriptors/nimi.overtone/0.1.4.json"
         },
         "macos-aarch64": {
-          "descriptor_id": "nimi.overtone@0.1.2",
-          "path": "descriptors/nimi.overtone/0.1.2.json"
+          "descriptor_id": "nimi.overtone@0.1.4",
+          "path": "descriptors/nimi.overtone/0.1.4.json"
         }
       }
     },
