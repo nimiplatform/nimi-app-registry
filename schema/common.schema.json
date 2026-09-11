@@ -306,6 +306,7 @@
         "asset_url",
         "size",
         "sha256",
+        "app_info",
         "runtime_entry",
         "provenance_attestation_refs",
         "execution_profile_ref",
@@ -320,6 +321,12 @@
         "asset_url": { "$ref": "#/$defs/httpsUri" },
         "size": { "type": "integer", "minimum": 1 },
         "sha256": { "$ref": "#/$defs/sha256" },
+        "app_info": {
+          "allOf": [
+            { "$ref": "#/$defs/aggregateAsset" },
+            { "type": "object", "properties": { "size": { "type": "integer", "maximum": 1048576 }, "asset_name": { "type": "string", "pattern": "\\.app-info\\.json$" } } }
+          ]
+        },
         "runtime_entry": { "$ref": "#/$defs/relativePath" },
         "provenance_attestation_refs": {
           "type": "array",

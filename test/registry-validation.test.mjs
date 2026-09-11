@@ -92,6 +92,7 @@ function candidate() {
       recovery_instructions: 'Restart the App from Nimi Desktop.',
     },
     targets: [{
+      app_info: { asset_id: 790, asset_name: 'publisher.example-app-1.2.3-windows-x86_64.app-info.json', asset_url: 'https://github.com/publisher/example-app/releases/download/v1.2.3/publisher.example-app-1.2.3-windows-x86_64.app-info.json', size: 1024, sha256: 'e'.repeat(64) },
       target_id: 'windows-x86_64',
       os: 'windows',
       arch: 'x86_64',
@@ -325,6 +326,8 @@ test('macOS unsigned submission retains absent publisher identity and its own ex
   const value = candidate();
   const target = value.targets[0];
   target.target_id = 'macos-aarch64';
+  target.app_info.asset_name = target.app_info.asset_name.replace('windows-x86_64', 'macos-aarch64');
+  target.app_info.asset_url = target.app_info.asset_url.replace('windows-x86_64', 'macos-aarch64');
   target.os = 'macos';
   target.arch = 'arm64';
   target.asset_name = 'publisher.example-app-1.2.3-macos-aarch64.nimiapp';
@@ -350,6 +353,7 @@ test('macOS unsigned submission retains absent publisher identity and its own ex
       asset_name: target.asset_name,
       size: target.size,
       sha256: target.sha256,
+      app_info: { asset_name: target.app_info.asset_name, size: target.app_info.size, sha256: target.app_info.sha256 },
       runtime_entry: target.runtime_entry,
       native_trust: {
         posture: 'production-unsigned',
