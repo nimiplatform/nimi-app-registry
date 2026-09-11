@@ -1,0 +1,148 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.parentos",
+    "display_name": "ParentOS",
+    "version": "0.1.6",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-parentos",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.6",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-parentos/rulesets/22613690",
+      "commit_sha": "4903defb40b28be5f3f2043b0afbd2e20d3f1b03",
+      "release_id": 387257181,
+      "release_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/tag/v0.1.6",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/tag/v0.1.6",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 557788621,
+      "asset_name": "nimi.parentos-0.1.6.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.6/nimi.parentos-0.1.6.candidate.json",
+      "size": 1989,
+      "sha256": "9e6dd5d48874e3c65ce657c06b841e7c4aa70b1bf577a4e1b95e075d51de020c"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-parentos/blob/4903defb40b28be5f3f2043b0afbd2e20d3f1b03/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "audio.transcribe"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Durable media writes enforce a 2 GiB partition limit; images up to 25 MiB and journal audio up to 64 MiB per object.",
+          "path_pattern": "<Electron appData>/Nimi/ParentOS/{data,cache,tmp}/**",
+          "purpose": "Device-local family SQLite data, media and temporary files under %APPDATA% on Windows or ~/Library/Application Support on macOS. Retained after Nimi uninstall; managed by ParentOS."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-parentos/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 557787267,
+        "asset_name": "nimi.parentos-0.1.6-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.6/nimi.parentos-0.1.6-macos-aarch64.nimiapp",
+        "size": 679360769,
+        "sha256": "637a08397ad60b7fe10a94ef41c60456421935fc9b6550629ab49b4ab65abb93",
+        "runtime_entry": "payload/nimiapp-parentos-shell.app/Contents/MacOS/nimiapp-parentos-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-parentos/attestations/sha256:637a08397ad60b7fe10a94ef41c60456421935fc9b6550629ab49b4ab65abb93"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        },
+        "app_info": {
+          "asset_id": 557788551,
+          "asset_name": "nimi.parentos-0.1.6-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.6/nimi.parentos-0.1.6-macos-aarch64.app-info.json",
+          "size": 141334,
+          "sha256": "69ef88a5cce59f827c6528c44c783e6dd32fc5b59775d45bc7325eeb3089ad24"
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 557787849,
+        "asset_name": "nimi.parentos-0.1.6-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.6/nimi.parentos-0.1.6-windows-x86_64.nimiapp",
+        "size": 713867110,
+        "sha256": "d14046f972eb6781a253430a735ee12d638d1220d17cc9cfd2eb6f354bd38e43",
+        "runtime_entry": "payload/nimiapp-parentos-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-parentos/attestations/sha256:d14046f972eb6781a253430a735ee12d638d1220d17cc9cfd2eb6f354bd38e43"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        },
+        "app_info": {
+          "asset_id": 557788585,
+          "asset_name": "nimi.parentos-0.1.6-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.6/nimi.parentos-0.1.6-windows-x86_64.app-info.json",
+          "size": 141399,
+          "sha256": "09d02c42f096d689757700a4959dd531780a68cbceb434a0d3f14abc97ed35d5"
+        }
+      }
+    ]
+  }
+}
