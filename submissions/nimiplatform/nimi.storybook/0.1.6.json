@@ -1,0 +1,141 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.storybook",
+    "display_name": "Storybook",
+    "version": "0.1.6",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-storybook",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b245c0e5326747d2ea6e82a6c20e9088bb6c46b0ec0c5cadd49ece6df99a1192"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.6",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-storybook/rulesets/22613699",
+      "commit_sha": "9afc0ca390fb2331b40d3374f477272174aea40e",
+      "release_id": 387249469,
+      "release_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/tag/v0.1.6",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/tag/v0.1.6",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 557767520,
+      "asset_name": "nimi.storybook-0.1.6.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.6/nimi.storybook-0.1.6.candidate.json",
+      "size": 1997,
+      "sha256": "6c803ffe74821375dd40856606b5d35f5f665c40410d08e3138916d57e19f3cb"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-storybook/blob/9afc0ca390fb2331b40d3374f477272174aea40e/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-storybook/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 557766402,
+        "asset_name": "nimi.storybook-0.1.6-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.6/nimi.storybook-0.1.6-macos-aarch64.nimiapp",
+        "size": 532217257,
+        "sha256": "8902a1925810a7b3c40664b186f0b16a94938b6164b5d7aae702678a3dcd1da4",
+        "runtime_entry": "payload/nimiapp-storybook-shell.app/Contents/MacOS/nimiapp-storybook-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-storybook/attestations/sha256:8902a1925810a7b3c40664b186f0b16a94938b6164b5d7aae702678a3dcd1da4"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        },
+        "app_info": {
+          "asset_id": 557767475,
+          "asset_name": "nimi.storybook-0.1.6-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.6/nimi.storybook-0.1.6-macos-aarch64.app-info.json",
+          "size": 27879,
+          "sha256": "e9e9a5eac90ff9348a2370019bcfa6a4014ed8a9ff642c86f8870d9f3bc5fe2e"
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 557766907,
+        "asset_name": "nimi.storybook-0.1.6-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.6/nimi.storybook-0.1.6-windows-x86_64.nimiapp",
+        "size": 571968623,
+        "sha256": "e639b71195a2ddd27ef0a358ab75ed1ad711260d26a96487906674ad7459ed1d",
+        "runtime_entry": "payload/nimiapp-storybook-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-storybook/attestations/sha256:e639b71195a2ddd27ef0a358ab75ed1ad711260d26a96487906674ad7459ed1d"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        },
+        "app_info": {
+          "asset_id": 557767499,
+          "asset_name": "nimi.storybook-0.1.6-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.6/nimi.storybook-0.1.6-windows-x86_64.app-info.json",
+          "size": 27880,
+          "sha256": "5e7588318fc501673b479f98a6f3cb0852497c6e27e5f63137a960b989f60d7f"
+        }
+      }
+    ]
+  }
+}
