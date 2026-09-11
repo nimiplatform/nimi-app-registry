@@ -1,4 +1,85 @@
 {
   "schema_version": 1,
-  "apps": {}
+  "apps": {
+    "nimi.inscape": {
+      "display_name": "Inscape",
+      "visibility": "public",
+      "admission_status": "approved",
+      "kill_switch": {
+        "active": false,
+        "reason": null,
+        "revision": 0
+      },
+      "latest_admitted_release_by_target": {
+        "macos-aarch64": {
+          "descriptor_id": "nimi.inscape@0.1.6",
+          "path": "descriptors/nimi.inscape/0.1.6.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "nimi.inscape@0.1.6",
+          "path": "descriptors/nimi.inscape/0.1.6.json"
+        }
+      }
+    },
+    "nimi.overtone": {
+      "display_name": "Nimi Overtone",
+      "visibility": "public",
+      "admission_status": "approved",
+      "kill_switch": {
+        "active": false,
+        "reason": null,
+        "revision": 0
+      },
+      "latest_admitted_release_by_target": {
+        "macos-aarch64": {
+          "descriptor_id": "nimi.overtone@0.1.6",
+          "path": "descriptors/nimi.overtone/0.1.6.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "nimi.overtone@0.1.6",
+          "path": "descriptors/nimi.overtone/0.1.6.json"
+        }
+      }
+    },
+    "nimi.parentos": {
+      "display_name": "ParentOS",
+      "visibility": "public",
+      "admission_status": "approved",
+      "kill_switch": {
+        "active": false,
+        "reason": null,
+        "revision": 0
+      },
+      "latest_admitted_release_by_target": {
+        "macos-aarch64": {
+          "descriptor_id": "nimi.parentos@0.1.6",
+          "path": "descriptors/nimi.parentos/0.1.6.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "nimi.parentos@0.1.6",
+          "path": "descriptors/nimi.parentos/0.1.6.json"
+        }
+      }
+    },
+    "nimi.realm-persona-studio": {
+      "display_name": "Realm Persona Studio",
+      "visibility": "public",
+      "admission_status": "approved",
+      "kill_switch": {
+        "active": false,
+        "reason": null,
+        "revision": 0
+      },
+      "latest_admitted_release_by_target": {
+        "macos-aarch64": {
+          "descriptor_id": "nimi.realm-persona-studio@0.1.4",
+          "path": "descriptors/nimi.realm-persona-studio/0.1.4.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "nimi.realm-persona-studio@0.1.4",
+          "path": "descriptors/nimi.realm-persona-studio/0.1.4.json"
+        }
+      }
+    }
+  }
 }
