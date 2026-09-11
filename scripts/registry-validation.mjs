@@ -149,6 +149,11 @@ function validateCandidateFacts(candidate, label) {
     targetIds.add(target.target_id);
     assetIds.add(target.asset_id);
     assetNames.add(target.asset_name);
+    const info = target.app_info;
+    if (info.asset_name !== `${candidate.app_id}-${candidate.version}-${target.target_id}.app-info.json` || assetIds.has(info.asset_id) || assetNames.has(info.asset_name)) fail(`${label} has an invalid or colliding App info asset`);
+    assetIds.add(info.asset_id);
+    assetNames.add(info.asset_name);
+    validateTaggedReleaseAsset(candidate, info, `${label} App info ${target.target_id}`);
     validateTaggedReleaseAsset(candidate, target, `${label} target ${target.target_id}`);
     if (!target.runtime_entry.startsWith('payload/')) fail(`${label} target ${target.target_id} runtime_entry must stay inside payload/`);
   }

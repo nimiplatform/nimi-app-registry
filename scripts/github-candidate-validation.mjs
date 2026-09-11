@@ -1,3 +1,4 @@
+import { validatePublishedAppInfo } from './app-info-validation.mjs';
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { parse as parseYaml } from 'yaml';
@@ -150,17 +151,17 @@ function expectedArchiveNativeTrust(target) {
   };
 }
 
-function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests) {
+export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes) {
   const label = `${target.target_id} nimiapp`;
   const entries = readNimiAppArchive(bytes, label);
   validatePayloadLinks(entries, target.os);
-  for (const required of ['LICENSE', 'manifest.json', 'nimi.app.yaml', target.runtime_entry]) {
+  for (const required of ['LICENSE', 'manifest.json', 'nimi.app.yaml', 'app-info.json', target.runtime_entry]) {
     if (!entries.has(required)) fail(`${label} is missing ${required}`);
   }
   if (entries.get(target.runtime_entry).mode !== 0o755) fail(`${label} runtime_entry is not executable`);
   const manifest = parseJsonEntry(entries, 'manifest.json', label);
   const expectedManifest = {
-    format: 'nimi.app-package/v1',
+    format: 'nimi.app-package/v2',
     app_id: candidate.app_id,
     version: candidate.version,
     target_id: target.target_id,
@@ -182,6 +183,12 @@ function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests) 
     fail(`${label} nimi.app.yaml identity does not match the candidate`);
   }
   if (!sameValue(declaration.app_access || [], candidate.app_access)) fail(`${label} App Access declaration does not match the candidate`);
+  if (!Buffer.isBuffer(infoBytes) || !entries.get('app-info.json').bytes.equals(infoBytes)) fail(`${label} App info sidecar differs from archive`);
+  const info = validatePublishedAppInfo(infoBytes, candidate, target);
+  if (entries.get('LICENSE').bytes.toString('utf8') !== info.license.text) fail(`${label} App info license differs from LICENSE`);
+  for (const field of ['display_name', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy']) {
+    if (!sameValue(declaration[field], info[field])) fail(`${label} App info differs from declaration ${field}`);
+  }
   const archivedLicenseSha = createHash('sha256').update(entries.get('LICENSE').bytes).digest('hex');
   if (!sourceLicenseDigests.has(archivedLicenseSha)) fail(`${label} LICENSE does not match a reviewed source license file`);
 }
@@ -266,6 +273,7 @@ export function validateAggregate(bytes, candidate) {
       asset_name: target.asset_name,
       size: target.size,
       sha256: target.sha256,
+      app_info: { asset_name: target.app_info.asset_name, size: target.app_info.size, sha256: target.app_info.sha256 },
       runtime_entry: target.runtime_entry,
       native_trust: expectedArchiveNativeTrust(target),
       execution_profile: target.os === 'macos' ? { launch_mode: 'current-user' } : { requested_execution_level: 'asInvoker', ui_access: false },
@@ -308,7 +316,9 @@ export async function validatePublishedGitHubCandidate(candidate, options = {}) 
   for (const target of candidate.targets) {
     releaseAsset(release, target, target.target_id);
     const bytes = await downloadExact(target.asset_url, target.size, target.sha256, target.target_id);
-    validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests);
+    releaseAsset(release, target.app_info, `${target.target_id} App info`);
+    const infoBytes = await downloadExact(target.app_info.asset_url, target.app_info.size, target.app_info.sha256, `${target.target_id} App info`);
+    validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes);
     const attestationRef = `https://api.github.com/repos/${owner}/${repo}/attestations/sha256:${target.sha256}`;
     if (!sameValue(target.provenance_attestation_refs, [attestationRef])) {
       fail(`${target.target_id} provenance_attestation_refs must bind the exact GitHub digest lookup`);
