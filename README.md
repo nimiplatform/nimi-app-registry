@@ -24,6 +24,70 @@ separate Nimi Runtime and Desktop lifecycle owners.
 - Existing descriptors are append-only. A new App version requires a new
   publisher Release, submission, review, and descriptor.
 
+## Prepare a publisher submission
+
+From this Registry checkout, prepare input from the publisher's actual claims
+and source license paths. For example:
+
+```json
+{
+  "publisher": {
+    "github_namespace": "your-publisher", "namespace_kind": "organization",
+    "assurance": "pseudonymous", "verified_domain_ref": null, "kyc_ref": null
+  },
+  "license_files": ["LICENSE"],
+  "package": {
+    "kind": "nimiapp", "runtime_kind": "native", "registration_mode": "app-managed",
+    "sandbox_ref": "ordinary-user-process-no-sandbox"
+  },
+  "support": {
+    "diagnostics_bundle_fields": ["app_version", "runtime_status"],
+    "redaction_rules": ["credentials"], "issue_categories": ["startup", "runtime"],
+    "escalation_url": "https://github.com/your-publisher/your-app/issues",
+    "kill_switch_visibility": "visible", "recovery_instructions": "Restart the App from Nimi."
+  },
+  "update_channel": "stable", "rollback_marker": "none"
+}
+```
+
+Use the actual publisher, package posture, support policy and license paths;
+the example is not an approval or a license assessment. The tool derives SPDX
+from the exact published App information and license digests from the tagged
+source files. Input cannot supply or override remote release/asset facts or
+review/admission fields.
+
+```bash
+node scripts/prepare-submission.mjs \
+  --repository https://github.com/your-publisher/your-app \
+  --tag v0.1.0 --input publisher-input.json --out candidate.json
+```
+
+Install the GitHub CLI (`gh`) with `attestation verify` and its source/signer
+identity flags. The script uses `GH_TOKEN` or `GITHUB_TOKEN` when present; `gh`
+can also use its existing authentication. It reads GitHub
+metadata and exact release assets, reuses the Registry schema/fact checks and
+published-candidate verifier, and cryptographically verifies SLSA build
+provenance for each downloaded package against the exact repository, tag,
+commit and managed `.github/workflows/nimi-app-release.yml` identity. The
+verified certificate must identify a push-triggered run. GitHub's automatic
+immutable-Release attestation alone is not build provenance. The script writes
+only `{schema_version:1,candidate}`
+after validation succeeds. The Release must be final, immutable and not a
+prerelease. A different existing output is not overwritten. This can download
+large `.nimiapp` packages; reuse the successful result unless inputs change.
+
+Move the result into its canonical
+`submissions/<publisher>/<app_id>/<version>.json` path for the publisher PR.
+An external publisher uses its own fork; an authorized publisher sharing this
+Registry namespace may use a same-repository branch. Continue the same PR for
+the exact App version and Release when retrying. Human admission remains a
+separate maintainer decision.
+
+`pnpm check` validates the main-shaped static tree and rejects pending
+submissions. Candidate preparation validates publisher input; the base-owned
+GitHub workflow validates the exact PR transition. Do not substitute one for
+the other or copy approval fields from an existing descriptor.
+
 ## Local validation
 
 ```bash

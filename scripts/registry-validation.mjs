@@ -91,6 +91,13 @@ function validateWith(validator, value, label) {
   if (!validator(value)) schemaError(label, validator.errors);
 }
 
+export async function validatePublisherSubmission(submission, options = {}) {
+  const validators = await loadValidators(options.schemaRoot);
+  validateWith(validators.submission, submission, 'publisher submission');
+  validateCandidateFacts(submission.candidate, 'publisher submission');
+  return submission;
+}
+
 function githubRepositoryParts(repository) {
   const parsed = new URL(repository);
   const segments = parsed.pathname.split('/').filter(Boolean);
@@ -98,7 +105,7 @@ function githubRepositoryParts(repository) {
   return { owner: segments[0], repo: segments[1] };
 }
 
-function validateTaggedReleaseAsset(candidate, asset, label) {
+export function validateTaggedReleaseAsset(candidate, asset, label) {
   let parsed;
   try {
     parsed = new URL(asset.asset_url);
