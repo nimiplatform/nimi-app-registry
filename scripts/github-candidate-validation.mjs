@@ -1,5 +1,9 @@
 import { validatePublishedAppInfo } from './app-info-validation.mjs';
+import childProcess from 'node:child_process';
 import { createHash } from 'node:crypto';
+import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import { tmpdir } from 'node:os';
+import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
 import { parse as parseYaml } from 'yaml';
 import { RegistryValidationError } from './registry-validation.mjs';
@@ -20,7 +24,7 @@ function repositoryParts(repository) {
   return { owner: parts[0], repo: parts[1] };
 }
 
-async function requestJson(url, token, label) {
+export async function requestJson(url, token, label) {
   const response = await fetch(url, {
     headers: {
       Accept: 'application/vnd.github+json',
@@ -32,7 +36,7 @@ async function requestJson(url, token, label) {
   return response.json();
 }
 
-async function downloadExact(url, expectedSize, expectedSha256, label) {
+export async function downloadExact(url, expectedSize, expectedSha256, label) {
   const response = await fetch(url, { redirect: 'follow' });
   if (!response.ok || !response.body) fail(`${label} download failed with HTTP ${response.status}`);
   const chunks = [];
@@ -193,21 +197,110 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
   if (!sourceLicenseDigests.has(archivedLicenseSha)) fail(`${label} LICENSE does not match a reviewed source license file`);
 }
 
-async function verifyTagRules(owner, repo, tag, token) {
+// @nimi-authority: rule.nimi.platform.app-ecosystem.p-dev-004
+function tagPatternMatches(pattern, tag) {
+  if (pattern === '~ALL') return true;
+  if (typeof pattern !== 'string' || !pattern.startsWith('refs/tags/') || /[{}()]|\[\[:/u.test(pattern)) {
+    fail(`unsupported GitHub tag ruleset pattern: ${String(pattern)}`);
+  }
+  // GitHub uses Ruby fnmatch with FNM_PATHNAME. These version tags contain no
+  // slashes or leading dots, so match only the final tag component; a leading
+  // **/ can consume zero directories. Preserve fnmatch backslash escapes.
+  let suffix = pattern.slice('refs/tags/'.length);
+  while (suffix.startsWith('**/')) suffix = suffix.slice(3);
+  const literal = (value) => value.replace(/[\\^$.*+?()[\]{}|/]/gu, '\\$&');
+  let expression = '^';
+  for (let index = 0; index < suffix.length; index += 1) {
+    const char = suffix[index];
+    if (char === '\\') {
+      if (++index === suffix.length) fail(`unsupported GitHub tag ruleset pattern: ${pattern}`);
+      expression += literal(suffix[index]);
+    } else if (char === '*') expression += '[^/]*';
+    else if (char === '?') expression += '[^/]';
+    else if (char === '[') {
+      let cursor = index + 1;
+      const negated = suffix[cursor] === '!' || suffix[cursor] === '^';
+      if (negated) cursor += 1;
+      let members = '';
+      if (suffix[cursor] === ']') { members += '\\]'; cursor += 1; }
+      for (; cursor < suffix.length && suffix[cursor] !== ']'; cursor += 1) {
+        const member = suffix[cursor];
+        if (member === '\\') {
+          if (++cursor === suffix.length) fail(`unsupported GitHub tag ruleset pattern: ${pattern}`);
+          const escaped = suffix[cursor];
+          members += ['\\', ']', '[', '^', '-'].includes(escaped) ? `\\${escaped}` : escaped;
+        } else members += member === '^' || member === '[' ? `\\${member}` : member;
+      }
+      if (!members || suffix[cursor] !== ']') fail(`unsupported GitHub tag ruleset pattern: ${pattern}`);
+      expression += `[${negated ? '^' : ''}${members}]`;
+      index = cursor;
+    } else expression += literal(char);
+  }
+  try { return new RegExp(`${expression}$`, 'u').test(tag); }
+  catch { fail(`unsupported GitHub tag ruleset pattern: ${pattern}`); }
+}
+
+export async function verifyTagRules(owner, repo, tag, token) {
   const summaries = await requestJson(`https://api.github.com/repos/${owner}/${repo}/rulesets?includes_parents=true`, token, 'publisher tag rulesets');
   for (const summary of summaries) {
     if (summary.target !== 'tag' || summary.enforcement !== 'active') continue;
     const ruleset = await requestJson(`https://api.github.com/repos/${owner}/${repo}/rulesets/${summary.id}`, token, `publisher tag ruleset ${summary.id}`);
     const includes = ruleset.conditions?.ref_name?.include || [];
     const excludes = ruleset.conditions?.ref_name?.exclude || [];
-    const included = includes.includes(`refs/tags/${tag}`) || includes.includes('refs/tags/v*');
-    const excluded = excludes.includes(`refs/tags/${tag}`) || excludes.includes('refs/tags/v*');
+    const included = includes.map((pattern) => tagPatternMatches(pattern, tag)).some(Boolean);
+    const excluded = excludes.map((pattern) => tagPatternMatches(pattern, tag)).some(Boolean);
     const types = new Set((ruleset.rules || []).map((rule) => rule.type));
     if (included && !excluded && types.has('update') && types.has('deletion')) {
       return `https://api.github.com/repos/${owner}/${repo}/rulesets/${summary.id}`;
     }
   }
   fail(`publisher tag ${tag} is not protected against update and deletion`);
+}
+
+async function verifyBuildProvenance(bytes, candidate, target, attestations, token) {
+  if (!Array.isArray(attestations.attestations) || attestations.attestations.length === 0) {
+    fail(`${target.target_id} has no GitHub build provenance attestation`);
+  }
+  const bundles = attestations.attestations.map((attestation) => {
+    if (!attestation.bundle || typeof attestation.bundle !== 'object') fail(`${target.target_id} has an invalid attestation bundle`);
+    return JSON.stringify(attestation.bundle);
+  });
+  const { owner, repo } = repositoryParts(candidate.source.repository);
+  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'nimi-registry-provenance-'));
+  try {
+    const artifactPath = path.join(temporaryRoot, 'artifact.nimiapp');
+    const bundlePath = path.join(temporaryRoot, 'attestations.jsonl');
+    await writeFile(artifactPath, bytes);
+    await writeFile(bundlePath, `${bundles.join('\n')}\n`);
+    let result;
+    try {
+      result = JSON.parse(childProcess.execFileSync('gh', [
+        'attestation', 'verify', artifactPath,
+        '--bundle', bundlePath,
+        '--hostname', 'github.com',
+        '--repo', `${owner}/${repo}`,
+        '--predicate-type', 'https://slsa.dev/provenance/v1',
+        '--source-ref', `refs/tags/${candidate.release.tag}`,
+        '--source-digest', candidate.release.commit_sha,
+        '--signer-digest', candidate.release.commit_sha,
+        '--cert-identity', `${candidate.source.repository}/.github/workflows/nimi-app-release.yml@refs/tags/${candidate.release.tag}`,
+        '--cert-oidc-issuer', 'https://token.actions.githubusercontent.com',
+        '--format', 'json',
+      ], {
+        encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, windowsHide: true,
+        env: { ...process.env, GH_PROMPT_DISABLED: '1', ...(token ? { GH_TOKEN: token } : {}) },
+      }));
+    } catch (error) {
+      fail(`${target.target_id} build provenance verification failed: ${error.stderr?.toString().trim() || error.message}`);
+    }
+    // Predicate fields are publisher-controlled. The verified certificate's
+    // trigger comes from GitHub OIDC and distinguishes tag pushes from dispatch.
+    if (!Array.isArray(result) || !result.some((entry) => entry.verificationResult?.signature?.certificate?.buildTrigger === 'push')) {
+      fail(`${target.target_id} build provenance is not from a tag-triggered GitHub Actions run`);
+    }
+  } finally {
+    await rm(temporaryRoot, { recursive: true, force: true });
+  }
 }
 
 async function verifyLicenseFiles(owner, repo, candidate, token) {
@@ -328,9 +421,7 @@ export async function validatePublishedGitHubCandidate(candidate, options = {}) 
       token,
       `${target.target_id} provenance attestations`,
     );
-    if (!Array.isArray(attestations.attestations) || attestations.attestations.length === 0) {
-      fail(`${target.target_id} has no GitHub build provenance attestation`);
-    }
+    await verifyBuildProvenance(bytes, candidate, target, attestations, token);
   }
 
   return Object.freeze({ repository: `${owner}/${repo}`, releaseId: release.id, targets: candidate.targets.length });
