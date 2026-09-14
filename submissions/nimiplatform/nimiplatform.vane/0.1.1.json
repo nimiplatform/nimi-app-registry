@@ -1,0 +1,120 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimiplatform.vane",
+    "display_name": "Vane",
+    "version": "0.1.1",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/Vane",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "d76e1037fdcc8ab04db9e8ffcfe6104effc513cd7530401f8f45e98941822ba6"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.1",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/Vane/rulesets/23202803",
+      "commit_sha": "cb8c4a8e3a6132896a44be92236b8c9817fe7f4c",
+      "release_id": 388152724,
+      "release_url": "https://github.com/nimiplatform/Vane/releases/tag/v0.1.1",
+      "release_notes_url": "https://github.com/nimiplatform/Vane/releases/tag/v0.1.1",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 562595954,
+      "asset_name": "nimiplatform.vane-0.1.1.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.1/nimiplatform.vane-0.1.1.candidate.json",
+      "size": 1059,
+      "sha256": "d02857318179c0b903f808e52fdb8a11c501c6b9762fd71883f33b26d92406ce"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "failed_operation",
+        "runtime_status",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "search",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/Vane/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart Vane from Nimi after checking the failed operation and AI settings. Include App version and redacted diagnostics in an issue. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 562595409,
+        "asset_name": "nimiplatform.vane-0.1.1-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.1/nimiplatform.vane-0.1.1-macos-aarch64.nimiapp",
+        "size": 810690363,
+        "sha256": "64b6f446a4614cb1cbd70cc0d26df404352c2d8f446dc00e76a0c2958ac8b689",
+        "app_info": {
+          "asset_id": 562595934,
+          "asset_name": "nimiplatform.vane-0.1.1-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.1/nimiplatform.vane-0.1.1-macos-aarch64.app-info.json",
+          "size": 51737,
+          "sha256": "ca97ce551ae55070bf91dbb648ebc0dc1466fe2e08397d79e8342e990dc90247"
+        },
+        "runtime_entry": "payload/vane-shell.app/Contents/MacOS/vane-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/Vane/attestations/sha256:64b6f446a4614cb1cbd70cc0d26df404352c2d8f446dc00e76a0c2958ac8b689"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
