@@ -1,5 +1,11 @@
 {
   "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.18",
+  "publisher_submission": {
+    "pull_number": 55,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.next-ai-draw-io/0.4.18.json",
+    "head_sha": "0fc715610e6e2f3d0d6c152129918c6f389f93b6"
+  },
   "candidate": {
     "app_id": "io.github.nimiplatform.next-ai-draw-io",
     "display_name": "Next AI Draw.io",
@@ -153,5 +159,21 @@
         }
       }
     ]
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "community-source-and-release-reviewed",
+      "decided_at": "2026-09-14T16:10:52Z"
+    }
   }
 }
