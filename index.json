@@ -156,6 +156,26 @@
           "path": "descriptors/nimiplatform.vane/0.1.1.json"
         }
       }
+    },
+    "openmontage.studio": {
+      "display_name": "OpenMontage",
+      "visibility": "public",
+      "admission_status": "approved",
+      "kill_switch": {
+        "active": false,
+        "reason": null,
+        "revision": 0
+      },
+      "latest_admitted_release_by_target": {
+        "macos-aarch64": {
+          "descriptor_id": "openmontage.studio@0.1.0",
+          "path": "descriptors/openmontage.studio/0.1.0.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "openmontage.studio@0.1.0",
+          "path": "descriptors/openmontage.studio/0.1.0.json"
+        }
+      }
     }
   }
 }
