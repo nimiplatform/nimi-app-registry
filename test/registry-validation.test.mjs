@@ -12,6 +12,7 @@ import {
 } from '../scripts/registry-validation.mjs';
 import { validatePayloadLinks } from '../scripts/payload-links.mjs';
 import { validateAggregate } from '../scripts/github-candidate-validation.mjs';
+import { cpSync } from 'node:fs';
 
 const projectRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const schemaRoot = path.join(projectRoot, 'schema');
@@ -271,7 +272,7 @@ test('publisher PR adds one submission from its own fork namespace', async (t) =
     headSha: submission.publisherHeadSha,
     context: { headOwner: 'publisher' },
   });
-  assert.deepEqual(result, { mode: 'publisher-submission', submissionPath: submission.submissionPath });
+  assert.deepEqual(result, { mode: 'publisher-submission', submissionPath: submission.submissionPath, declaration: { declared: false, baselines: [{ previousDescriptorId: null, targetIds: ['windows-x86_64'], changes: [] }] } });
 });
 
 test('publisher PR cannot add approval or index truth', async (t) => {
@@ -501,4 +502,311 @@ test('an existing approved descriptor cannot be modified in a later PR', async (
     /must add exactly one approved descriptor/u,
   );
   assert.notEqual(baseSha, finalization.headSha);
+});
+
+function safetyProfile(overrides = {}) {
+  return {
+    ai: {
+      direct_interaction: true,
+      interaction_notice: 'absent',
+      outputs: [{ export_visible_marking: 'absent', exposure: 'exportable', in_product_notice: 'absent', machine_readable_marking: 'absent', modality: 'text', publication_control: 'not-applicable' }],
+      risk_features: [],
+      subject_notice: 'not-applicable',
+    },
+    content_descriptors: [],
+    data_practices: { commercial_features: [], publisher_direct_external_network: false, sensitive_data_categories: [], telemetry: [], third_party_account: 'none', user_content_sharing: 'none' },
+    high_impact_decision_uses: [],
+    intended_audience: 'general',
+    ...overrides,
+  };
+}
+
+function schemaRootRequiringDeclaration(t) {
+  const root = mkdtempSync(path.join(os.tmpdir(), 'nimi-registry-schema-required-'));
+  t.after(() => rmSync(root, { recursive: true, force: true }));
+  cpSync(schemaRoot, root, { recursive: true });
+  writeJson(root, 'admission-policy.json', { schema_version: 1, safety_profile: { required_for_new_admission: true } });
+  return root;
+}
+
+const maintainerContext = { pullNumber: 42, actorLogin: 'registry-maintainer', actorId: 9876, finalizerPermission: 'maintain', candidateCheckPassed: true };
+
+test('one v1 schema admits historical undeclared descriptors next to declared ones and rejects invalid declarations', async (t) => {
+  const { root } = repository(t);
+  const historical = candidate();
+  const declared = candidate();
+  declared.version = '1.3.0';
+  declared.release.tag = 'v1.3.0';
+  declared.release.release_url = declared.release.release_notes_url = 'https://github.com/publisher/example-app/releases/tag/v1.3.0';
+  declared.aggregate.asset_name = 'publisher.example-app-1.3.0.candidate.json';
+  declared.aggregate.asset_url = `${declared.source.repository}/releases/download/v1.3.0/${declared.aggregate.asset_name}`;
+  for (const target of declared.targets) {
+    target.asset_name = target.asset_name.replace('1.2.3', '1.3.0');
+    target.asset_url = `${declared.source.repository}/releases/download/v1.3.0/${target.asset_name}`;
+    target.app_info.asset_name = target.app_info.asset_name.replace('1.2.3', '1.3.0');
+    target.app_info.asset_url = `${declared.source.repository}/releases/download/v1.3.0/${target.app_info.asset_name}`;
+  }
+  declared.safety_profile = safetyProfile();
+  const historicalDescriptor = descriptor(historical, 'e'.repeat(40));
+  const declaredDescriptor = descriptor(declared, 'f'.repeat(40));
+  writeJson(root, `descriptors/${historical.app_id}/1.2.3.json`, historicalDescriptor);
+  writeJson(root, `descriptors/${declared.app_id}/1.3.0.json`, declaredDescriptor);
+  const index = indexFor(declaredDescriptor);
+  writeJson(root, 'index.json', index);
+  assert.deepEqual(await validateRegistryTree(root, { schemaRoot }), { descriptors: 2, submissions: 0, apps: 1 });
+  assert.equal('safety_profile' in historicalDescriptor.candidate, false, 'historical record stays undeclared without backfill');
+
+  for (const mutate of [
+    (profile) => { profile.intended_audience = 'everyone'; },
+    (profile) => { profile.certified_safe = true; },
+    (profile) => { profile.content_descriptors = ['violence', 'violence']; },
+    (profile) => { profile.ai.outputs[0].exposure = 'publishable'; },
+    (profile) => { profile.ai.direct_interaction = false; },
+    (profile) => { delete profile.high_impact_decision_uses; },
+  ]) {
+    const broken = structuredClone(declaredDescriptor);
+    mutate(broken.candidate.safety_profile);
+    writeJson(root, `descriptors/${declared.app_id}/1.3.0.json`, broken);
+    await assert.rejects(validateRegistryTree(root, { schemaRoot }), /does not match its closed schema/u);
+  }
+});
+
+test('new public admission requires the declaration only once admission policy enables it', async (t) => {
+  const required = schemaRootRequiringDeclaration(t);
+  {
+    const { root, baseSha } = repository(t);
+    const submission = addPublisherSubmission(root);
+    await assert.rejects(
+      validatePullRequestTransition({ root, gitRoot: root, schemaRoot: required, baseSha, headSha: submission.publisherHeadSha, context: { headOwner: 'publisher' } }),
+      /is missing safety_profile: new public admission requires the complete publisher safety declaration/u,
+    );
+    const finalization = addFinalization(root, submission);
+    await assert.rejects(
+      validatePullRequestTransition({ root, gitRoot: root, schemaRoot: required, baseSha, headSha: finalization.headSha, context: maintainerContext }),
+      /is missing safety_profile/u,
+    );
+    // The same transitions remain valid under the current (not yet enabled) policy.
+    assert.equal((await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha, headSha: finalization.headSha, context: maintainerContext })).mode, 'maintainer-finalization');
+  }
+  {
+    const { root, baseSha } = repository(t);
+    const value = candidate();
+    value.safety_profile = safetyProfile();
+    const submission = addPublisherSubmission(root, value);
+    const result = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot: required, baseSha, headSha: submission.publisherHeadSha, context: { headOwner: 'publisher' } });
+    assert.equal(result.mode, 'publisher-submission');
+    assert.equal(result.declaration.declared, true);
+    assert.deepEqual(result.declaration.baselines.map((baseline) => [baseline.previousDescriptorId, baseline.targetIds]), [[null, ['windows-x86_64']]]);
+    assert.ok(result.declaration.baselines[0].changes.every((change) => change.before === 'undeclared'));
+    const finalization = addFinalization(root, submission);
+    const finalized = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot: required, baseSha, headSha: finalization.headSha, context: maintainerContext });
+    assert.equal(finalized.mode, 'maintainer-finalization');
+    assert.equal(finalized.declaration.declared, true);
+  }
+});
+
+function nextVersion(value, version) {
+  const next = structuredClone(value);
+  const previous = next.version;
+  next.version = version;
+  next.release.tag = `v${version}`;
+  next.release.release_url = next.release.release_notes_url = `${next.source.repository}/releases/tag/v${version}`;
+  next.aggregate.asset_name = next.aggregate.asset_name.replace(previous, version);
+  next.aggregate.asset_url = `${next.source.repository}/releases/download/v${version}/${next.aggregate.asset_name}`;
+  for (const target of next.targets) {
+    target.asset_name = target.asset_name.replace(previous, version);
+    target.asset_url = `${next.source.repository}/releases/download/v${version}/${target.asset_name}`;
+    target.app_info.asset_name = target.app_info.asset_name.replace(previous, version);
+    target.app_info.asset_url = `${next.source.repository}/releases/download/v${version}/${target.app_info.asset_name}`;
+  }
+  return next;
+}
+
+test('a later submission carries the old-to-new declaration diff against the previously admitted descriptor', async (t) => {
+  const { root, baseSha } = repository(t);
+  const first = candidate();
+  first.safety_profile = safetyProfile();
+  const finalization = addFinalization(root, addPublisherSubmission(root, first));
+  const second = nextVersion(first, '1.2.4');
+  second.safety_profile = safetyProfile({ content_descriptors: ['violence'] });
+  second.safety_profile.ai.outputs[0].export_visible_marking = 'present';
+  const submission = addPublisherSubmission(root, second);
+  const result = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: finalization.headSha, headSha: submission.publisherHeadSha, context: { headOwner: 'publisher' } });
+  assert.deepEqual(result.declaration, {
+    declared: true,
+    baselines: [{
+      previousDescriptorId: 'publisher.example-app@1.2.3',
+      targetIds: ['windows-x86_64'],
+      changes: [
+        { field: 'ai.outputs[text].export_visible_marking', before: 'absent', after: 'present' },
+        { field: 'content_descriptors', before: '[]', after: 'violence' },
+      ],
+    }],
+  });
+  assert.notEqual(baseSha, finalization.headSha);
+});
+
+test('the declaration diff selects the previous descriptor per target and deduplicates shared baselines', async (t) => {
+  const { root } = repository(t);
+  // First release: Windows only, undeclared.
+  const first = candidate();
+  const firstFinalization = addFinalization(root, addPublisherSubmission(root, first));
+  // Second release: macOS only, declared, so the index points each target at a different descriptor.
+  const second = nextVersion(first, '1.2.4');
+  second.safety_profile = safetyProfile({ intended_audience: 'adult' });
+  const macTarget = structuredClone(second.targets[0]);
+  macTarget.target_id = 'macos-aarch64';
+  macTarget.os = 'macos';
+  macTarget.arch = 'arm64';
+  macTarget.asset_name = 'publisher.example-app-1.2.4-macos-aarch64.nimiapp';
+  macTarget.asset_url = `${second.source.repository}/releases/download/v1.2.4/${macTarget.asset_name}`;
+  macTarget.app_info.asset_name = 'publisher.example-app-1.2.4-macos-aarch64.app-info.json';
+  macTarget.app_info.asset_url = `${second.source.repository}/releases/download/v1.2.4/${macTarget.app_info.asset_name}`;
+  macTarget.runtime_entry = 'payload/Example.app/Contents/MacOS/example';
+  macTarget.execution_profile_ref = 'macos-user-mode-same-session-v1';
+  macTarget.native_trust = { ...macTarget.native_trust, windows_code_signing: 'not-applicable', macos_notarization: 'absent' };
+  second.targets = [macTarget];
+  const secondSubmission = addPublisherSubmission(root, second);
+  const secondDescriptor = descriptor(second, secondSubmission.publisherHeadSha);
+  const secondPath = `descriptors/${second.app_id}/1.2.4.json`;
+  rmSync(path.join(root, ...secondSubmission.submissionPath.split('/')));
+  writeJson(root, secondPath, secondDescriptor);
+  const index = structuredClone(indexFor(firstFinalization.descriptorValue));
+  index.apps[second.app_id].latest_admitted_release_by_target['macos-aarch64'] = { descriptor_id: secondDescriptor.descriptor_id, path: secondPath };
+  writeJson(root, 'index.json', index);
+  const secondHead = commit(root, 'finalize macOS release');
+  // Third release: both targets, changed declaration. Each target diffs against its own baseline.
+  const third = nextVersion(first, '1.2.5');
+  third.safety_profile = safetyProfile({ intended_audience: 'teen' });
+  const thirdMac = structuredClone(macTarget);
+  for (const target of [thirdMac]) {
+    target.asset_name = target.asset_name.replace('1.2.4', '1.2.5');
+    target.asset_url = target.asset_url.replace('v1.2.4', 'v1.2.5').replace('1.2.4', '1.2.5');
+    target.app_info.asset_name = target.app_info.asset_name.replace('1.2.4', '1.2.5');
+    target.app_info.asset_url = target.app_info.asset_url.replace('v1.2.4', 'v1.2.5').replace('1.2.4', '1.2.5');
+    target.asset_id = 900;
+    target.app_info.asset_id = 901;
+  }
+  third.targets = [...third.targets, thirdMac];
+  const thirdSubmission = addPublisherSubmission(root, third);
+  const result = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: secondHead, headSha: thirdSubmission.publisherHeadSha, context: { headOwner: 'publisher' } });
+  assert.equal(result.declaration.declared, true);
+  assert.deepEqual(result.declaration.baselines.map((baseline) => [baseline.previousDescriptorId, baseline.targetIds]), [
+    ['publisher.example-app@1.2.3', ['windows-x86_64']],
+    ['publisher.example-app@1.2.4', ['macos-aarch64']],
+  ]);
+  assert.ok(result.declaration.baselines[0].changes.every((change) => change.before === 'undeclared'), 'the Windows baseline was undeclared');
+  assert.deepEqual(result.declaration.baselines[1].changes, [{ field: 'intended_audience', before: 'adult', after: 'teen' }], 'the macOS baseline reports only its own change');
+});
+
+test('maintainer policy change modifies only kill_switch with an incremented revision and needs no candidate', async (t) => {
+  const { root } = repository(t);
+  const finalization = addFinalization(root, addPublisherSubmission(root));
+  const base = finalization.headSha;
+  const activate = structuredClone(indexFor(finalization.descriptorValue));
+  activate.apps['publisher.example-app'].kill_switch = { active: true, reason: 'v1.2.3 declares content_descriptors as empty; the App provides gambling content', revision: 1 };
+  writeJson(root, 'index.json', activate);
+  const activated = commit(root, 'activate kill switch');
+  const result = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: base, headSha: activated, context: { ...maintainerContext, finalizerPermission: 'admin' } });
+  assert.deepEqual(result, { mode: 'maintainer-policy', killSwitchChanges: [{ appId: 'publisher.example-app', active: true, revision: 1, reason: 'v1.2.3 declares content_descriptors as empty; the App provides gambling content' }] });
+  await assert.rejects(
+    validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: base, headSha: activated, context: { ...maintainerContext, finalizerPermission: 'write' } }),
+    /maintainer policy change actor is not a current Registry maintainer/u,
+  );
+
+  const lift = structuredClone(activate);
+  lift.apps['publisher.example-app'].kill_switch = { active: false, reason: null, revision: 2 };
+  writeJson(root, 'index.json', lift);
+  const lifted = commit(root, 'lift kill switch after corrected release review');
+  const liftResult = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: activated, headSha: lifted, context: maintainerContext });
+  assert.deepEqual(liftResult.killSwitchChanges, [{ appId: 'publisher.example-app', active: false, revision: 2, reason: null }]);
+
+  for (const [mutate, expected] of [
+    [(index) => { index.apps['publisher.example-app'].kill_switch = { active: true, reason: 'again', revision: 2 }; }, /revision for publisher\.example-app must increment from 2 to 3/u],
+    [(index) => { index.apps['publisher.example-app'].kill_switch = { active: true, reason: null, revision: 3 }; }, /does not match its closed schema/u],
+    [(index) => { index.apps['publisher.example-app'].kill_switch = { active: false, reason: 'stale', revision: 3 }; }, /does not match its closed schema/u],
+    [(index) => { index.apps['publisher.example-app'].display_name = 'Renamed'; }, /must not change display_name/u],
+    [(index) => { index.apps['publisher.other-app'] = structuredClone(index.apps['publisher.example-app']); }, /must not add or remove index rows/u],
+    [(index) => { index.apps['publisher.example-app'] = Object.fromEntries(Object.entries(index.apps['publisher.example-app']).reverse()); }, /must change at least one kill_switch/u],
+  ]) {
+    const mutated = structuredClone(lift);
+    mutate(mutated);
+    writeJson(root, 'index.json', mutated);
+    const head = commit(root, 'invalid policy change');
+    await assert.rejects(validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: lifted, headSha: head, context: maintainerContext }), expected);
+  }
+});
+
+test('ordinary finalization cannot carry other rows or existing policy while formatting is not change', async (t) => {
+  const { root } = repository(t);
+  const firstFinalization = addFinalization(root, addPublisherSubmission(root));
+  const policy = structuredClone(indexFor(firstFinalization.descriptorValue));
+  policy.apps['publisher.example-app'].kill_switch = { active: true, reason: 'v1.2.3 declares no gambling; the App provides gambling content', revision: 1 };
+  writeJson(root, 'index.json', policy);
+  const policyBase = commit(root, 'existing policy');
+
+  const other = candidate();
+  other.app_id = 'publisher.other-app';
+  other.display_name = 'Other App';
+  other.aggregate.asset_name = 'publisher.other-app-1.2.3.candidate.json';
+  other.aggregate.asset_url = `${other.source.repository}/releases/download/v1.2.3/${other.aggregate.asset_name}`;
+  for (const target of other.targets) {
+    target.asset_name = `publisher.other-app-1.2.3-${target.target_id}.nimiapp`;
+    target.asset_url = `${other.source.repository}/releases/download/v1.2.3/${target.asset_name}`;
+    target.app_info.asset_name = `publisher.other-app-1.2.3-${target.target_id}.app-info.json`;
+    target.app_info.asset_url = `${other.source.repository}/releases/download/v1.2.3/${target.app_info.asset_name}`;
+  }
+  const submission = addPublisherSubmission(root, other);
+  const otherDescriptor = descriptor(other, submission.publisherHeadSha);
+  const otherPath = `descriptors/${other.app_id}/${other.version}.json`;
+  const otherRow = indexFor(otherDescriptor).apps[other.app_id];
+
+  const attempt = async (mutateIndex, expected) => {
+    git(root, 'checkout', '-q', submission.publisherHeadSha);
+    rmSync(path.join(root, ...submission.submissionPath.split('/')));
+    writeJson(root, otherPath, otherDescriptor);
+    const index = structuredClone(policy);
+    index.apps[other.app_id] = structuredClone(otherRow);
+    mutateIndex(index);
+    writeJson(root, 'index.json', index);
+    const head = commit(root, 'finalization attempt');
+    const run = validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: policyBase, headSha: head, context: maintainerContext });
+    if (expected) await assert.rejects(run, expected);
+    else assert.equal((await run).mode, 'maintainer-finalization');
+    git(root, 'checkout', '-q', 'main');
+  };
+  await attempt((index) => { index.apps['publisher.example-app'].kill_switch = { active: false, reason: null, revision: 2 }; }, /must not change index row publisher\.example-app/u);
+  await attempt((index) => { index.apps['publisher.example-app'].display_name = 'Renamed'; }, /must not change index row publisher\.example-app/u);
+  await attempt((index) => { index.apps[other.app_id].kill_switch = { active: true, reason: 'pre-blocked', revision: 1 }; }, /new index row publisher\.other-app must start with an inactive kill switch/u);
+  await attempt((index) => { index.apps[other.app_id].latest_admitted_release_by_target['macos-aarch64'] = { descriptor_id: otherDescriptor.descriptor_id, path: otherPath }; }, /is outside the admitted candidate targets/u);
+  await attempt((index) => { index.apps = Object.fromEntries(Object.entries(index.apps).reverse()); index.apps['publisher.example-app'] = Object.fromEntries(Object.entries(index.apps['publisher.example-app']).reverse()); }, null);
+});
+
+test('a re-admission of an existing App updates only its own target pointers and keeps its policy', async (t) => {
+  const { root } = repository(t);
+  const first = candidate();
+  const firstFinalization = addFinalization(root, addPublisherSubmission(root, first));
+  const second = nextVersion(first, '1.2.4');
+  const submission = addPublisherSubmission(root, second);
+  const secondDescriptor = descriptor(second, submission.publisherHeadSha);
+  const secondPath = `descriptors/${second.app_id}/1.2.4.json`;
+  const finalizeFrom = (visibility) => {
+    git(root, 'checkout', '-q', submission.publisherHeadSha);
+    rmSync(path.join(root, ...submission.submissionPath.split('/')));
+    writeJson(root, secondPath, secondDescriptor);
+    const index = structuredClone(indexFor(firstFinalization.descriptorValue));
+    index.apps[second.app_id].latest_admitted_release_by_target['windows-x86_64'] = { descriptor_id: secondDescriptor.descriptor_id, path: secondPath };
+    index.apps[second.app_id].visibility = visibility;
+    writeJson(root, 'index.json', index);
+    // Stay checked out at the finalization head: the validator reads the tree at the head.
+    return commit(root, `finalize with visibility ${visibility}`);
+  };
+  await assert.rejects(
+    validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: firstFinalization.headSha, headSha: finalizeFrom('hidden'), context: maintainerContext }),
+    /must not change visibility for publisher\.example-app; use a maintainer policy change/u,
+  );
+  git(root, 'checkout', '-q', 'main');
+  const result = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: firstFinalization.headSha, headSha: finalizeFrom('public'), context: maintainerContext });
+  assert.equal(result.mode, 'maintainer-finalization');
+  assert.deepEqual(result.declaration.baselines.map((baseline) => [baseline.previousDescriptorId, baseline.targetIds]), [['publisher.example-app@1.2.3', ['windows-x86_64']]]);
 });

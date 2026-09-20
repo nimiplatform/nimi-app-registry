@@ -1,6 +1,7 @@
 import { execFileSync } from 'node:child_process';
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { validatePublishedGitHubCandidate } from './github-candidate-validation.mjs';
 import {
   RegistryValidationError,
@@ -76,25 +77,36 @@ function pullEventContext(event, baseSha, headSha) {
   };
 }
 
-async function pullRequestContext(options) {
+// Base-owned transition kinds by changed path set. A policy-only change is a
+// maintainer index edit with no descriptor or submission: it needs the actor's
+// maintainer permission but no publisher head, parent-commit or check-run facts.
+export function classifyChangedPaths(changedPaths) {
+  const touchesAdmission = changedPaths.some((entry) => entry === 'index.json' || entry.startsWith('descriptors/'));
+  if (!touchesAdmission) return 'publisher-submission';
+  if (changedPaths.length === 1 && changedPaths[0] === 'index.json') return 'maintainer-policy';
+  return 'maintainer-finalization';
+}
+
+export async function pullRequestContext(options, deps = { githubJson, gitOutput, readJson }) {
   const token = process.env.GITHUB_TOKEN || '';
   const repository = process.env.GITHUB_REPOSITORY || '';
   if (!token || !/^[^/]+\/[^/]+$/u.test(repository)) throw new RegistryValidationError('GITHUB_TOKEN and GITHUB_REPOSITORY are required');
   const eventPath = path.resolve(options.event || process.env.GITHUB_EVENT_PATH || '');
-  const event = await readJson(eventPath, 'GitHub event');
+  const event = await deps.readJson(eventPath, 'GitHub event');
   const context = pullEventContext(event, options.base, options.head);
-  const changedPaths = gitOutput(options.gitRoot, ['diff', '--name-only', `${options.base}..${options.head}`, '--']).split(/\r?\n/u).filter(Boolean);
-  const finalization = changedPaths.some((entry) => entry === 'index.json' || entry.startsWith('descriptors/'));
-  if (!finalization) return { ...context, finalizerPermission: '', candidateCheckPassed: false, token };
+  const changedPaths = deps.gitOutput(options.gitRoot, ['diff', '--name-only', `${options.base}..${options.head}`, '--']).split(/\r?\n/u).filter(Boolean);
+  const kind = classifyChangedPaths(changedPaths);
+  if (kind === 'publisher-submission') return { ...context, finalizerPermission: '', candidateCheckPassed: false, token };
 
-  const permission = await githubJson(
+  const permission = await deps.githubJson(
     `https://api.github.com/repos/${repository}/collaborators/${encodeURIComponent(context.actorLogin)}/permission`,
     token,
     'Registry collaborator permission',
   );
-  const parentLine = gitOutput(options.gitRoot, ['rev-list', '--parents', '-n', '1', options.head]).split(/\s+/u);
+  if (kind === 'maintainer-policy') return { ...context, finalizerPermission: permission.permission, candidateCheckPassed: false, token };
+  const parentLine = deps.gitOutput(options.gitRoot, ['rev-list', '--parents', '-n', '1', options.head]).split(/\s+/u);
   if (parentLine.length !== 2) throw new RegistryValidationError('finalization commit must have one parent');
-  const checkRuns = await githubJson(
+  const checkRuns = await deps.githubJson(
     `https://api.github.com/repos/${repository}/commits/${parentLine[1]}/check-runs?per_page=100`,
     token,
     'publisher-head check runs',
@@ -136,13 +148,20 @@ async function main() {
     headSha: head,
     context,
   });
+  if (transition.mode === 'maintainer-policy') {
+    // Policy-only changes carry no candidate; no publisher Release is read.
+    process.stdout.write(`${JSON.stringify({ ok: true, mode: transition.mode, transition, external: null })}\n`);
+    return;
+  }
   const candidate = await candidateFromTransition(root, transition);
   const external = await validatePublishedGitHubCandidate(candidate, { token: context.token });
   process.stdout.write(`${JSON.stringify({ ok: true, mode: transition.mode, transition, external })}\n`);
 }
 
-main().catch((error) => {
-  const message = error instanceof Error ? error.message : String(error);
-  process.stderr.write(`${message}\n`);
-  process.exitCode = 1;
-});
+if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {
+  main().catch((error) => {
+    const message = error instanceof Error ? error.message : String(error);
+    process.stderr.write(`${message}\n`);
+    process.exitCode = 1;
+  });
+}

@@ -7,11 +7,13 @@ import { fileURLToPath } from 'node:url';
 import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import parseSpdxExpression from 'spdx-expression-parse';
+import { diffSafetyProfiles } from './safety-profile-validation.mjs';
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const submissionPathPattern = /^submissions\/([^/]+)\/([^/]+)\/([^/]+)\.json$/u;
 const descriptorPathPattern = /^descriptors\/([^/]+)\/([^/]+)\.json$/u;
 const maintainerPermissions = new Set(['admin', 'maintain']);
+const NEW_ROW_KILL_SWITCH = Object.freeze({ active: false, reason: null, revision: 0 });
 
 export class RegistryValidationError extends Error {
   constructor(message) {
@@ -89,6 +91,116 @@ async function loadValidators(schemaRoot = path.join(moduleRoot, 'schema')) {
 
 function validateWith(validator, value, label) {
   if (!validator(value)) schemaError(label, validator.errors);
+}
+
+async function loadAdmissionPolicyAt(schemaRoot) {
+  const policy = await readJsonFile(path.join(schemaRoot, 'admission-policy.json'), 'admission policy');
+  if (policy?.schema_version !== 1 || typeof policy.safety_profile?.required_for_new_admission !== 'boolean') {
+    fail('admission policy has an unsupported shape');
+  }
+  return Object.freeze({ safetyProfileRequiredForNewAdmission: policy.safety_profile.required_for_new_admission });
+}
+
+// New public admission requires the complete declaration once Platform enables
+// it; the shared schema keeps the field optional so historical records stay
+// valid as undeclared and are never re-evaluated here.
+// @nimi-authority: rule.nimi.platform.app-ecosystem.p-napp-043b
+function requireDeclarationForNewAdmission(candidate, policy, label) {
+  if (policy.safetyProfileRequiredForNewAdmission && candidate.safety_profile === undefined) {
+    fail(`${label} is missing safety_profile: new public admission requires the complete publisher safety declaration`);
+  }
+}
+
+// Previously admitted baselines for the targets this candidate carries: each
+// target's current index pointer at the base revision selects the descriptor
+// whose declaration it replaces. Targets sharing a baseline are reported once;
+// a target without a prior pointer diffs against undeclared.
+function declarationReview(gitRoot, baseSha, candidate) {
+  const index = readJsonAt(gitRoot, baseSha, 'index.json', 'index.json');
+  const row = index?.apps?.[candidate.app_id];
+  const groups = new Map();
+  for (const target of candidate.targets) {
+    const pointer = row?.latest_admitted_release_by_target?.[target.target_id];
+    const key = pointer ? pointer.descriptor_id : null;
+    const group = groups.get(key) ?? { previousDescriptorId: key, targetIds: [], pointerPath: pointer?.path ?? null };
+    group.targetIds.push(target.target_id);
+    groups.set(key, group);
+  }
+  const baselines = [...groups.values()].map((group) => {
+    const previous = group.pointerPath ? readJsonAt(gitRoot, baseSha, group.pointerPath, group.pointerPath).candidate?.safety_profile : undefined;
+    return Object.freeze({ previousDescriptorId: group.previousDescriptorId, targetIds: group.targetIds, changes: diffSafetyProfiles(previous, candidate.safety_profile) });
+  });
+  return Object.freeze({ declared: candidate.safety_profile !== undefined, baselines });
+}
+
+function sameSemanticValue(left, right) {
+  return isDeepStrictEqual(left, right);
+}
+
+// Ordinary finalization may change only the admitted App's display identity and
+// the target pointers its candidate carries; every other row and all existing
+// policy stay semantically identical (formatting and key order are not change).
+// @nimi-authority: rule.nimi.platform.app-ecosystem.p-napp-043d
+function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descriptorPath) {
+  const candidate = descriptor.candidate;
+  const appId = candidate.app_id;
+  const baseApps = baseIndex?.apps || {};
+  const headApps = headIndex?.apps || {};
+  for (const otherId of new Set([...Object.keys(baseApps), ...Object.keys(headApps)])) {
+    if (otherId === appId) continue;
+    if (!sameSemanticValue(baseApps[otherId], headApps[otherId])) fail(`maintainer finalization must not change index row ${otherId}`);
+  }
+  const headRow = headApps[appId];
+  if (!headRow) fail(`maintainer finalization must add or update the index row for ${appId}`);
+  const baseRow = baseApps[appId];
+  if (headRow.display_name !== candidate.display_name) fail(`index display_name for ${appId} must equal the admitted candidate display_name`);
+  const candidateTargets = new Set(candidate.targets.map((target) => target.target_id));
+  for (const [targetId, pointer] of Object.entries(headRow.latest_admitted_release_by_target)) {
+    if (candidateTargets.has(targetId)) {
+      if (pointer.descriptor_id !== descriptor.descriptor_id || pointer.path !== descriptorPath) {
+        fail(`index pointer ${appId}/${targetId} must select the newly admitted descriptor`);
+      }
+    } else if (!sameSemanticValue(pointer, baseRow?.latest_admitted_release_by_target?.[targetId])) {
+      fail(`index pointer ${appId}/${targetId} is outside the admitted candidate targets and must stay unchanged`);
+    }
+  }
+  if (baseRow) {
+    for (const targetId of Object.keys(baseRow.latest_admitted_release_by_target)) {
+      if (!Object.hasOwn(headRow.latest_admitted_release_by_target, targetId)) fail(`index pointer ${appId}/${targetId} must not be removed by finalization`);
+    }
+    for (const field of ['visibility', 'admission_status', 'kill_switch']) {
+      if (!sameSemanticValue(baseRow[field], headRow[field])) fail(`maintainer finalization must not change ${field} for ${appId}; use a maintainer policy change`);
+    }
+  } else {
+    if (!sameSemanticValue(headRow.kill_switch, NEW_ROW_KILL_SWITCH)) fail(`new index row ${appId} must start with an inactive kill switch at revision 0`);
+    if (headRow.admission_status !== 'approved') fail(`new index row ${appId} must record approved admission`);
+  }
+}
+
+// Base-owned maintainer policy: only kill_switch fields of existing rows change,
+// each with an incremented revision, a reason while active and null when
+// inactive. No candidate, descriptor or publisher Release is involved.
+// @nimi-authority: rule.nimi.platform.app-ecosystem.p-napp-043d
+function validateMaintainerPolicyChange(baseIndex, headIndex) {
+  const baseApps = baseIndex?.apps || {};
+  const headApps = headIndex?.apps || {};
+  if (!sameSemanticValue(Object.keys(baseApps).sort(), Object.keys(headApps).sort())) fail('maintainer policy change must not add or remove index rows');
+  const changed = [];
+  for (const [appId, baseRow] of Object.entries(baseApps)) {
+    const headRow = headApps[appId];
+    for (const field of ['display_name', 'visibility', 'admission_status', 'latest_admitted_release_by_target']) {
+      if (!sameSemanticValue(baseRow[field], headRow[field])) fail(`maintainer policy change must not change ${field} for ${appId}`);
+    }
+    if (sameSemanticValue(baseRow.kill_switch, headRow.kill_switch)) continue;
+    const before = baseRow.kill_switch;
+    const after = headRow.kill_switch;
+    if (after.revision !== before.revision + 1) fail(`kill_switch revision for ${appId} must increment from ${before.revision} to ${before.revision + 1}`);
+    if (after.active && (typeof after.reason !== 'string' || !after.reason.trim())) fail(`active kill_switch for ${appId} must state its reason naming the version, misstated field and actual difference`);
+    if (!after.active && after.reason !== null) fail(`inactive kill_switch for ${appId} must have a null reason`);
+    changed.push(Object.freeze({ appId, active: after.active, revision: after.revision, reason: after.reason }));
+  }
+  if (changed.length === 0) fail('maintainer policy change must change at least one kill_switch');
+  return changed;
 }
 
 export async function validatePublisherSubmission(submission, options = {}) {
@@ -285,10 +397,22 @@ export async function validatePullRequestTransition(options) {
   const baseSha = requireContextValue(options.baseSha, 'baseSha');
   const headSha = requireContextValue(options.headSha, 'headSha');
   const context = options.context || {};
-  const validators = await loadValidators(path.resolve(options.schemaRoot || path.join(moduleRoot, 'schema')));
+  const schemaRoot = path.resolve(options.schemaRoot || path.join(moduleRoot, 'schema'));
+  const validators = await loadValidators(schemaRoot);
+  const policy = await loadAdmissionPolicyAt(schemaRoot);
   const changes = gitChanges(gitRoot, baseSha, headSha);
   const descriptorAdds = changes.filter((change) => change.status === 'A' && descriptorPathPattern.test(change.path));
   const touchesAdmission = changes.some((change) => change.path === 'index.json' || change.path.startsWith('descriptors/'));
+
+  if (touchesAdmission && changes.length === 1 && changes[0].status === 'M' && changes[0].path === 'index.json') {
+    if (!maintainerPermissions.has(context.finalizerPermission)) fail('maintainer policy change actor is not a current Registry maintainer');
+    const baseIndex = readJsonAt(gitRoot, baseSha, 'index.json', 'index.json');
+    const headIndex = readJsonAt(gitRoot, headSha, 'index.json', 'index.json');
+    validateWith(validators.index, headIndex, 'index.json');
+    const killSwitchChanges = validateMaintainerPolicyChange(baseIndex, headIndex);
+    await validateRegistryTree(root, { schemaRoot: options.schemaRoot, allowSubmissions: false });
+    return Object.freeze({ mode: 'maintainer-policy', killSwitchChanges });
+  }
 
   if (!touchesAdmission) {
     if (changes.length !== 1 || changes[0].status !== 'A' || !submissionPathPattern.test(changes[0].path)) {
@@ -303,7 +427,8 @@ export async function validatePullRequestTransition(options) {
     if (headOwner.toLowerCase() !== submission.candidate.publisher.github_namespace.toLowerCase()) {
       fail('publisher submission must originate from a fork owned by publisher.github_namespace');
     }
-    return Object.freeze({ mode: 'publisher-submission', submissionPath });
+    requireDeclarationForNewAdmission(submission.candidate, policy, submissionPath);
+    return Object.freeze({ mode: 'publisher-submission', submissionPath, declaration: declarationReview(gitRoot, baseSha, submission.candidate) });
   }
 
   if (descriptorAdds.length !== 1) fail('maintainer finalization must add exactly one approved descriptor');
@@ -341,6 +466,13 @@ export async function validatePullRequestTransition(options) {
   if (!isDeepStrictEqual(submission.candidate, descriptor.candidate)) {
     fail('approved descriptor candidate must exactly equal the checked publisher submission candidate');
   }
+  requireDeclarationForNewAdmission(descriptor.candidate, policy, descriptorPath);
+  validateFinalizationIndexScope(
+    readJsonAt(gitRoot, baseSha, 'index.json', 'index.json'),
+    readJsonAt(gitRoot, headSha, 'index.json', 'index.json'),
+    descriptor,
+    descriptorPath,
+  );
 
   const pullNumber = Number(requireContextValue(context.pullNumber, 'pull request number'));
   const actorId = Number(requireContextValue(context.actorId, 'finalizer actor id'));
@@ -352,5 +484,5 @@ export async function validatePullRequestTransition(options) {
   if (context.candidateCheckPassed !== true) fail('checked publisher head does not have a successful base-owned validate-registry result');
 
   await validateRegistryTree(root, { schemaRoot: options.schemaRoot, allowSubmissions: false });
-  return Object.freeze({ mode: 'maintainer-finalization', descriptorPath, submissionPath, publisherHeadSha });
+  return Object.freeze({ mode: 'maintainer-finalization', descriptorPath, submissionPath, publisherHeadSha, declaration: declarationReview(gitRoot, baseSha, descriptor.candidate) });
 }

@@ -1,10 +1,12 @@
 import { createHash } from 'node:crypto';
 import { mkdir, readFile, writeFile } from 'node:fs/promises';
+import { isDeepStrictEqual } from 'node:util';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { RegistryValidationError, validatePublisherSubmission, validateTaggedReleaseAsset } from './registry-validation.mjs';
 import { downloadExact, requestJson, validateAggregate, validatePublishedGitHubCandidate, verifyTagRules } from './github-candidate-validation.mjs';
 import { validatePublishedAppInfo } from './app-info-validation.mjs';
+import { loadAdmissionPolicy, requireSafetyProfileForNewAdmission } from './admission-policy.mjs';
 
 const fail = (message) => { throw new RegistryValidationError(message); };
 
@@ -45,7 +47,7 @@ function nativeTarget(source, asset, appInfo, apiRoot) {
 
 // Publisher input only. Registry maintainers still own the human admission step.
 // @nimi-authority: rule.nimi.platform.app-ecosystem.p-dev-004
-export async function prepareSubmission({ repository, tag, input, token = '' }) {
+export async function prepareSubmission({ repository, tag, input, token = '', policy = loadAdmissionPolicy() }) {
   const repoMatch = /^https:\/\/github\.com\/([A-Za-z0-9-]+)\/([A-Za-z0-9._-]+)$/u.exec(repository || '');
   if (!repoMatch || !/^v[0-9][0-9A-Za-z.+-]*$/u.test(tag || '')) fail('Use an exact GitHub repository URL and version tag');
   const keys = ['publisher', 'license_files', 'package', 'support', 'update_channel', 'rollback_marker'];
@@ -102,9 +104,16 @@ export async function prepareSubmission({ repository, tag, input, token = '' }) 
     required_standardized_feature_refs: firstInfo.required_standardized_feature_refs,
     storage_policy: firstInfo.storage_policy, update_channel: input.update_channel,
     rollback_marker: input.rollback_marker, support: input.support, targets,
+    // The declaration comes only from the immutable information asset; the
+    // caller input cannot supply or override it.
+    ...(firstInfo.safety_profile === undefined ? {} : { safety_profile: firstInfo.safety_profile }),
   };
+  for (const [index, entry] of information.entries()) {
+    if (!isDeepStrictEqual(entry.info.safety_profile, firstInfo.safety_profile)) fail(`App information for ${targets[index].target_id} declares a different safety_profile than ${targets[0].target_id}; one release carries one declaration`);
+  }
   const submission = { schema_version: 1, candidate };
   await validatePublisherSubmission(submission);
+  requireSafetyProfileForNewAdmission(candidate, policy, 'publisher candidate');
   validateAggregate(aggregateBytes, candidate);
   for (const [index, target] of targets.entries()) validatePublishedAppInfo(information[index].bytes, candidate, target);
   // Reuse the owner verifier for exact source licenses, package bytes and provenance.

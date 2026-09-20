@@ -430,6 +430,89 @@
         }
       ]
     },
+    "safetyProfileOutput": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["modality", "exposure", "publication_control", "in_product_notice", "export_visible_marking", "machine_readable_marking"],
+      "properties": {
+        "modality": { "enum": ["text", "image", "audio", "video", "virtual-scene"] },
+        "exposure": { "enum": ["in-app-only", "exportable", "publishable"] },
+        "publication_control": { "enum": ["not-applicable", "user-confirmed", "automatic"] },
+        "in_product_notice": { "enum": ["present", "absent"] },
+        "export_visible_marking": { "enum": ["present", "absent", "not-applicable"] },
+        "machine_readable_marking": { "enum": ["present", "absent"] }
+      },
+      "allOf": [
+        {
+          "if": { "properties": { "exposure": { "const": "publishable" } } },
+          "then": { "properties": { "publication_control": { "enum": ["user-confirmed", "automatic"] } } },
+          "else": { "properties": { "publication_control": { "const": "not-applicable" } } }
+        },
+        {
+          "if": { "properties": { "exposure": { "const": "in-app-only" } } },
+          "then": { "properties": { "export_visible_marking": { "const": "not-applicable" } } },
+          "else": { "properties": { "export_visible_marking": { "enum": ["present", "absent"] } } }
+        }
+      ]
+    },
+    "safetyProfile": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["intended_audience", "content_descriptors", "ai", "data_practices", "high_impact_decision_uses"],
+      "properties": {
+        "intended_audience": { "enum": ["children", "general", "teen", "adult"] },
+        "content_descriptors": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["sexual-content", "violence", "self-harm", "drugs-alcohol", "gambling", "hate-harassment", "frightening-content", "strong-language", "unmoderated-shared-content"] }
+        },
+        "ai": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["direct_interaction", "interaction_notice", "risk_features", "subject_notice", "outputs"],
+          "properties": {
+            "direct_interaction": { "type": "boolean" },
+            "interaction_notice": { "enum": ["present", "absent", "not-applicable"] },
+            "risk_features": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "enum": ["realistic-face-manipulation", "realistic-voice-replication", "emotion-recognition", "biometric-categorization"] }
+            },
+            "subject_notice": { "enum": ["present", "absent", "not-applicable"] },
+            "outputs": { "type": "array", "maxItems": 5, "items": { "$ref": "#/$defs/safetyProfileOutput" } }
+          },
+          "allOf": [
+            {
+              "if": { "properties": { "direct_interaction": { "const": true } } },
+              "then": { "properties": { "interaction_notice": { "enum": ["present", "absent"] } } },
+              "else": { "properties": { "interaction_notice": { "const": "not-applicable" } } }
+            }
+          ]
+        },
+        "data_practices": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["publisher_direct_external_network", "telemetry", "third_party_account", "user_content_sharing", "commercial_features", "sensitive_data_categories"],
+          "properties": {
+            "publisher_direct_external_network": { "type": "boolean" },
+            "telemetry": { "type": "array", "uniqueItems": true, "items": { "enum": ["crash-diagnostics", "usage-analytics"] } },
+            "third_party_account": { "enum": ["none", "optional", "required"] },
+            "user_content_sharing": { "enum": ["none", "private", "public"] },
+            "commercial_features": { "type": "array", "uniqueItems": true, "items": { "enum": ["purchase", "subscription", "advertising"] } },
+            "sensitive_data_categories": {
+              "type": "array",
+              "uniqueItems": true,
+              "items": { "enum": ["precise-location", "contacts", "health", "financial", "biometric", "government-identifier"] }
+            }
+          }
+        },
+        "high_impact_decision_uses": {
+          "type": "array",
+          "uniqueItems": true,
+          "items": { "enum": ["medical-diagnosis-treatment", "legal-decision-support", "employment-decision", "education-admission-decision", "credit-insurance-decision", "biometric-identification", "public-safety-decision"] }
+        }
+      }
+    },
     "candidate": {
       "type": "object",
       "additionalProperties": false,
@@ -472,7 +555,8 @@
           "minItems": 1,
           "maxItems": 20,
           "items": { "$ref": "#/$defs/target" }
-        }
+        },
+        "safety_profile": { "$ref": "#/$defs/safetyProfile" }
       }
     }
   }

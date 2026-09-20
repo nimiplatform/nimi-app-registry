@@ -27,11 +27,19 @@ function archive(entries) {
   return Buffer.concat([...locals, ...central, end]);
 }
 
-function fixture(t, change = () => {}) {
+const SAFETY_PROFILE = {
+  ai: { direct_interaction: true, interaction_notice: 'absent', outputs: [{ export_visible_marking: 'absent', exposure: 'exportable', in_product_notice: 'absent', machine_readable_marking: 'absent', modality: 'text', publication_control: 'not-applicable' }], risk_features: [], subject_notice: 'not-applicable' },
+  content_descriptors: [],
+  data_practices: { commercial_features: [], publisher_direct_external_network: false, sensitive_data_categories: [], telemetry: [], third_party_account: 'none', user_content_sharing: 'none' },
+  high_impact_decision_uses: [],
+  intended_audience: 'general',
+};
+
+function fixture(t, change = () => {}, options = {}) {
   const repository = 'https://github.com/publisher/example-app', tag = 'v1.2.3';
   const api = 'https://api.github.com/repos/publisher/example-app';
   const license = 'MIT fixture license';
-  const declaration = { app_id: 'publisher.example-app', display_name: 'Example', version: '1.2.3', app_access: [], capability_contract_refs: [], required_standardized_feature_refs: [], storage_policy: { kind: 'nimi-mediated-default', os_storage_disclosure: null } };
+  const declaration = { app_id: 'publisher.example-app', display_name: 'Example', version: '1.2.3', app_access: [], capability_contract_refs: [], required_standardized_feature_refs: [], storage_policy: { kind: 'nimi-mediated-default', os_storage_disclosure: null }, ...(options.safetyProfile ? { safety_profile: options.safetyProfile } : {}) };
   const info = { ...declaration, format: 'nimi.app-info/v1', target_id: 'windows-x86_64', summary: 'A test App.', icon: { media_type: 'image/png', data_base64: PNG.sync.write({ width: 128, height: 128, data: Buffer.alloc(128 * 128 * 4, 255) }).toString('base64') }, readme_markdown: 'Use the App.', release_notes_markdown: 'Initial release.', license: { identifier: 'MIT', text: license } };
   const nativeTrust = { posture: 'production-unsigned', windows_authenticode: 'unsigned', certificate_subject: null };
   const execution = { requested_execution_level: 'asInvoker', ui_access: false };
@@ -155,4 +163,16 @@ test('a claimed push predicate cannot substitute for the verified certificate tr
     statement: { predicate: { buildDefinition: { internalParameters: { github: { event_name: 'push' } } } } },
   } }];
   await assert.rejects(() => prepareSubmission(f), /not from a tag-triggered GitHub Actions run/);
+});
+
+test('the declaration enters the candidate only from the immutable information asset and is required once policy enables it', async (t) => {
+  const undeclared = fixture(t);
+  const optional = { safetyProfileRequiredForNewAdmission: false };
+  const required = { safetyProfileRequiredForNewAdmission: true };
+  assert.equal('safety_profile' in (await prepareSubmission({ ...undeclared, policy: optional })).candidate, false);
+  await assert.rejects(() => prepareSubmission({ ...undeclared, policy: required }), /publisher candidate is missing safety_profile: new public admission requires the complete publisher safety declaration/u);
+  const declared = fixture(t, () => {}, { safetyProfile: SAFETY_PROFILE });
+  const submission = await prepareSubmission({ ...declared, policy: required });
+  assert.deepEqual(submission.candidate.safety_profile, SAFETY_PROFILE);
+  await assert.rejects(() => prepareSubmission({ ...declared, policy: required, input: { ...declared.input, safety_profile: SAFETY_PROFILE } }), /facts cannot be supplied/u);
 });
