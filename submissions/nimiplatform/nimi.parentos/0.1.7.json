@@ -1,0 +1,179 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.parentos",
+    "display_name": "ParentOS",
+    "version": "0.1.7",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-parentos",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.7",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-parentos/rulesets/22613690",
+      "commit_sha": "b20bc8460a3b500153815ee211a9b94ea973c958",
+      "release_id": 392359397,
+      "release_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/tag/v0.1.7",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/tag/v0.1.7",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 576417152,
+      "asset_name": "nimi.parentos-0.1.7.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.7/nimi.parentos-0.1.7.candidate.json",
+      "size": 1989,
+      "sha256": "90df1d34041951a8468952f6e651a3dce9ef9cfb8c40c3179abf80ec80eed64a"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-parentos/blob/b20bc8460a3b500153815ee211a9b94ea973c958/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "audio.transcribe"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Durable media writes enforce a 2 GiB partition limit; images up to 25 MiB and journal audio up to 64 MiB per object.",
+          "path_pattern": "<Electron appData>/Nimi/ParentOS/{data,cache,tmp}/**",
+          "purpose": "Device-local family SQLite data, media and temporary files under %APPDATA% on Windows or ~/Library/Application Support on macOS. Retained after Nimi uninstall; managed by ParentOS."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-parentos/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 576416153,
+        "asset_name": "nimi.parentos-0.1.7-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.7/nimi.parentos-0.1.7-macos-aarch64.nimiapp",
+        "size": 679363362,
+        "sha256": "6955d3f05812cb39d5eeacbb2e614f6f9ec4209f4fa6ec4a6959fceb26d8475d",
+        "app_info": {
+          "asset_id": 576417111,
+          "asset_name": "nimi.parentos-0.1.7-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.7/nimi.parentos-0.1.7-macos-aarch64.app-info.json",
+          "size": 142472,
+          "sha256": "e4c39ef396e48ee8301fef3f4eb6b1e09a4c6be4b593c9a191665f799d9c8705"
+        },
+        "runtime_entry": "payload/nimiapp-parentos-shell.app/Contents/MacOS/nimiapp-parentos-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-parentos/attestations/sha256:6955d3f05812cb39d5eeacbb2e614f6f9ec4209f4fa6ec4a6959fceb26d8475d"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 576416523,
+        "asset_name": "nimi.parentos-0.1.7-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.7/nimi.parentos-0.1.7-windows-x86_64.nimiapp",
+        "size": 713869703,
+        "sha256": "12caefa99110d05a1cfae4662122548fb12e6f38977ee9cacca6a434a288db10",
+        "app_info": {
+          "asset_id": 576417135,
+          "asset_name": "nimi.parentos-0.1.7-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-parentos/releases/download/v0.1.7/nimi.parentos-0.1.7-windows-x86_64.app-info.json",
+          "size": 142545,
+          "sha256": "ee1e2c378cddc01ce8bcff75a6013ab2304082b94c1e5e18824dd97de893a133"
+        },
+        "runtime_entry": "payload/nimiapp-parentos-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-parentos/attestations/sha256:12caefa99110d05a1cfae4662122548fb12e6f38977ee9cacca6a434a288db10"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [
+          "health"
+        ],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "adult"
+    }
+  }
+}
