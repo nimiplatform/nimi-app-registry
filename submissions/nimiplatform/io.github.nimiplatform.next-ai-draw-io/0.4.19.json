@@ -1,0 +1,194 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "io.github.nimiplatform.next-ai-draw-io",
+    "display_name": "Next AI Draw.io",
+    "version": "0.4.19",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/next-ai-draw-io",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "edcc537d7b303d03624347d5047c36772bcc1828e1ae0208096cc94cc58de95e"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.4.19",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/next-ai-draw-io/rulesets/23304758",
+      "commit_sha": "f1e12c50bc5cd78894f8cb8f31dc4c2509253203",
+      "release_id": 392356053,
+      "release_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/tag/v0.4.19",
+      "release_notes_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/tag/v0.4.19",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 576398706,
+      "asset_name": "io.github.nimiplatform.next-ai-draw-io-0.4.19.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/download/v0.4.19/io.github.nimiplatform.next-ai-draw-io-0.4.19.candidate.json",
+      "size": 2168,
+      "sha256": "71f4fbe1bada6ac6b91a57efc7944030395b2fa30c7328b4d130b53fed374802"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "1–500 MB",
+          "path_pattern": "~/Library/Application Support/Next AI Draw.io — Nimi/",
+          "purpose": "macOS Electron display preferences and browser cache; conversations/templates use Nimi managed storage"
+        },
+        {
+          "expected_size_band": "1–500 MB",
+          "path_pattern": "%APPDATA%/Next AI Draw.io — Nimi/",
+          "purpose": "Windows Electron display preferences and browser cache; conversations/templates use Nimi managed storage"
+        },
+        {
+          "expected_size_band": "Up to 25 MB per drawing export",
+          "path_pattern": "User-selected export destinations",
+          "purpose": "Drawing and template exports saved through system file dialogs"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/next-ai-draw-io/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 576397247,
+        "asset_name": "io.github.nimiplatform.next-ai-draw-io-0.4.19-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/download/v0.4.19/io.github.nimiplatform.next-ai-draw-io-0.4.19-macos-aarch64.nimiapp",
+        "size": 633166866,
+        "sha256": "09d163afcc7ebefdbd211c281c1c40a8c13706abcfaa7e7372eca04230d283b1",
+        "app_info": {
+          "asset_id": 576398623,
+          "asset_name": "io.github.nimiplatform.next-ai-draw-io-0.4.19-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/download/v0.4.19/io.github.nimiplatform.next-ai-draw-io-0.4.19-macos-aarch64.app-info.json",
+          "size": 170020,
+          "sha256": "e23682255c6469c03f15ad9bbe9bdf86ad2fcf23413cd4a5ce7f934a6c5fe70c"
+        },
+        "runtime_entry": "payload/next-ai-draw-io-shell.app/Contents/MacOS/next-ai-draw-io-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/next-ai-draw-io/attestations/sha256:09d163afcc7ebefdbd211c281c1c40a8c13706abcfaa7e7372eca04230d283b1"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 576397827,
+        "asset_name": "io.github.nimiplatform.next-ai-draw-io-0.4.19-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/download/v0.4.19/io.github.nimiplatform.next-ai-draw-io-0.4.19-windows-x86_64.nimiapp",
+        "size": 678261099,
+        "sha256": "ff0cb4e0198beb0610b12a23be01426c9f27444cb9c11730ae212184d6038f79",
+        "app_info": {
+          "asset_id": 576398664,
+          "asset_name": "io.github.nimiplatform.next-ai-draw-io-0.4.19-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/next-ai-draw-io/releases/download/v0.4.19/io.github.nimiplatform.next-ai-draw-io-0.4.19-windows-x86_64.app-info.json",
+          "size": 170093,
+          "sha256": "2a276e2298cc0dfdd1d7a5034897ec5eed9d680ba82c6c83a057b26581c38e7e"
+        },
+        "runtime_entry": "payload/next-ai-draw-io-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/next-ai-draw-io/attestations/sha256:ff0cb4e0198beb0610b12a23be01426c9f27444cb9c11730ae212184d6038f79"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
