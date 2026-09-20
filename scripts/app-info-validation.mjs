@@ -1,16 +1,27 @@
 import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { PNG } from 'pngjs';
+import { normalizeSafetyProfile } from './safety-profile-validation.mjs';
 
 // Implements the Platform P-NAPP-042 publisher information contract.
+// @nimi-authority: rule.nimi.platform.app-ecosystem.p-napp-043b
 export function validatePublishedAppInfo(raw, candidate, target) {
   const fail = (field) => { throw new Error(`App info ${field} is invalid or differs from the reviewed candidate`); };
   if (!Buffer.isBuffer(raw) || raw.length === 0 || raw.length > 1048576 || raw.length !== target.app_info.size || createHash('sha256').update(raw).digest('hex') !== target.app_info.sha256) fail('asset bytes');
   const info = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw));
-  const allowed = ['format', 'app_id', 'version', 'target_id', 'display_name', 'summary', 'icon', 'readme_markdown', 'release_notes_markdown', 'license', 'app_access', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy', 'author', 'homepage_url', 'support_url'];
+  const allowed = ['format', 'app_id', 'version', 'target_id', 'display_name', 'summary', 'icon', 'readme_markdown', 'release_notes_markdown', 'license', 'app_access', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy', 'author', 'homepage_url', 'support_url', 'safety_profile'];
   if (Object.keys(info).some((key) => !allowed.includes(key)) || info.format !== 'nimi.app-info/v1' || info.target_id !== target.target_id) fail('format or target');
-  for (const field of ['app_id', 'version', 'display_name', 'app_access', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy']) {
+  // safety_profile is compared as declared: absent on both sides is undeclared,
+  // a declared copy must be canonical and identical to the reviewed candidate.
+  for (const field of ['app_id', 'version', 'display_name', 'app_access', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy', 'safety_profile']) {
     if (!isDeepStrictEqual(info[field], candidate[field])) fail(field);
+  }
+  if (info.safety_profile !== undefined) {
+    let canonical;
+    try { canonical = normalizeSafetyProfile(info.safety_profile); }
+    catch (error) { throw new Error(`App info ${error.message}`); }
+    // Canonical form is tool-serialized: sorted keys and vocabulary-ordered lists.
+    if (JSON.stringify(canonical) !== JSON.stringify(info.safety_profile)) fail('safety_profile serialization');
   }
   const text = (value, field, max, document = false) => {
     if (typeof value !== 'string' || !value.trim() || value.includes('\0') || (document ? Buffer.byteLength(value) : [...value].length) > max || (!document && (value !== value.trim() || /[\r\n]/u.test(value)))) fail(field);

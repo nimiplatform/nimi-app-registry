@@ -190,7 +190,7 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
   if (!Buffer.isBuffer(infoBytes) || !entries.get('app-info.json').bytes.equals(infoBytes)) fail(`${label} App info sidecar differs from archive`);
   const info = validatePublishedAppInfo(infoBytes, candidate, target);
   if (entries.get('LICENSE').bytes.toString('utf8') !== info.license.text) fail(`${label} App info license differs from LICENSE`);
-  for (const field of ['display_name', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy']) {
+  for (const field of ['display_name', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy', 'safety_profile']) {
     if (!sameValue(declaration[field], info[field])) fail(`${label} App info differs from declaration ${field}`);
   }
   const archivedLicenseSha = createHash('sha256').update(entries.get('LICENSE').bytes).digest('hex');

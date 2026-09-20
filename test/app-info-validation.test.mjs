@@ -35,3 +35,47 @@ test('review rejects incomplete or invisible artwork and missing documentation e
     assert.throws(() => validatePublishedAppInfo(raw, candidate, target), /App info/u);
   }
 });
+
+test('a declared safety_profile must be canonical and identical to the reviewed candidate, while absence stays undeclared', () => {
+  const profile = {
+    ai: { direct_interaction: true, interaction_notice: 'absent', outputs: [], risk_features: [], subject_notice: 'not-applicable' },
+    content_descriptors: [],
+    data_practices: { commercial_features: [], publisher_direct_external_network: false, sensitive_data_categories: [], telemetry: [], third_party_account: 'none', user_content_sharing: 'none' },
+    high_impact_decision_uses: [],
+    intended_audience: 'general',
+  };
+  const build = (mutateInfo, mutateCandidate) => {
+    const { info, candidate, target } = fixture();
+    mutateInfo(info);
+    mutateCandidate(candidate);
+    const raw = Buffer.from(JSON.stringify(info));
+    target.app_info = { size: raw.length, sha256: createHash('sha256').update(raw).digest('hex') };
+    return { raw, candidate, target };
+  };
+  {
+    const { raw, candidate, target } = build(() => {}, () => {});
+    assert.equal('safety_profile' in validatePublishedAppInfo(raw, candidate, target), false);
+  }
+  {
+    const { raw, candidate, target } = build((info) => { info.safety_profile = profile; }, (candidate) => { candidate.safety_profile = profile; });
+    assert.deepEqual(validatePublishedAppInfo(raw, candidate, target).safety_profile, profile);
+  }
+  {
+    const { raw, candidate, target } = build((info) => { info.safety_profile = profile; }, () => {});
+    assert.throws(() => validatePublishedAppInfo(raw, candidate, target), /safety_profile is invalid or differs/u);
+  }
+  {
+    const { raw, candidate, target } = build(() => {}, (candidate) => { candidate.safety_profile = profile; });
+    assert.throws(() => validatePublishedAppInfo(raw, candidate, target), /safety_profile is invalid or differs/u);
+  }
+  {
+    const reordered = { intended_audience: 'general', ...profile };
+    const { raw, candidate, target } = build((info) => { info.safety_profile = reordered; }, (candidate) => { candidate.safety_profile = reordered; });
+    assert.throws(() => validatePublishedAppInfo(raw, candidate, target), /safety_profile serialization/u);
+  }
+  {
+    const invalid = { ...profile, intended_audience: 'everyone' };
+    const { raw, candidate, target } = build((info) => { info.safety_profile = invalid; }, (candidate) => { candidate.safety_profile = invalid; });
+    assert.throws(() => validatePublishedAppInfo(raw, candidate, target), /safety_profile\.intended_audience must be one of/u);
+  }
+});
