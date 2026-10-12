@@ -228,8 +228,8 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "org.nimiplatform.deeptutor@1.6.11",
-          "path": "descriptors/org.nimiplatform.deeptutor/1.6.11.json"
+          "descriptor_id": "org.nimiplatform.deeptutor@1.6.12",
+          "path": "descriptors/org.nimiplatform.deeptutor/1.6.12.json"
         }
       }
     },
