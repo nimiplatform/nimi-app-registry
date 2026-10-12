@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "org.nimiplatform.deeptutor@1.6.13",
+  "publisher_submission": {
+    "pull_number": 78,
+    "path": "submissions/nimiplatform/org.nimiplatform.deeptutor/1.6.13.json",
+    "head_sha": "57e0d481b4c8d6c8bc03ebdbc291cdeba0d953cb"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-version-update",
+      "decided_at": "2026-10-12T13:29:44.952369Z"
+    }
+  },
+  "candidate": {
+    "app_id": "org.nimiplatform.deeptutor",
+    "display_name": "DeepTutor",
+    "version": "1.6.13",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/DeepTutor",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "cd2f54e1e5066644023203dcbd956776a9f4ef6eb8b6225afe1ffa2d380fede4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.6.13",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/DeepTutor/rulesets/24907482",
+      "commit_sha": "e552cf906c1a5699a1481a8de6cfad19589e7caf",
+      "release_id": 410622899,
+      "release_url": "https://github.com/nimiplatform/DeepTutor/releases/tag/v1.6.13",
+      "release_notes_url": "https://github.com/nimiplatform/DeepTutor/releases/tag/v1.6.13",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 633857632,
+      "asset_name": "org.nimiplatform.deeptutor-1.6.13.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.13/org.nimiplatform.deeptutor-1.6.13.candidate.json",
+      "size": 1111,
+      "sha256": "f3e7df6d018091307134c5af68aaf175556bc499f149606cc6755d3b9fd1adcd"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "100 MiB\u201320 GiB, depending on imported materials",
+          "path_pattern": "~/Library/Application Support/Nimi/Local App Hosts/v1/*/workspace/**",
+          "purpose": "Development Host workspace for learning sessions, uploaded materials, retrieval indexes, notebooks and App settings"
+        },
+        {
+          "expected_size_band": "100 MiB\u201320 GiB, depending on imported materials",
+          "path_pattern": "~/Library/Application Support/org.nimiplatform.deeptutor/**",
+          "purpose": "Installed App profile and workspace containing browser cache, learning sessions, uploaded materials, retrieval indexes, notebooks and App settings"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "knowledge-base",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/DeepTutor/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 633854934,
+        "asset_name": "org.nimiplatform.deeptutor-1.6.13-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.13/org.nimiplatform.deeptutor-1.6.13-macos-aarch64.nimiapp",
+        "size": 1630576935,
+        "sha256": "0ad52fc3b7841d227c8728c337b597758c58204a0b0286fdaaa326486d67f3d8",
+        "app_info": {
+          "asset_id": 633857568,
+          "asset_name": "org.nimiplatform.deeptutor-1.6.13-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.13/org.nimiplatform.deeptutor-1.6.13-macos-aarch64.app-info.json",
+          "size": 393065,
+          "sha256": "a3f9ad6b165a0aa92f793d77b582b75fe0fb463342121604828dd1d6e1ba2976"
+        },
+        "runtime_entry": "payload/deeptutor-shell.app/Contents/MacOS/deeptutor-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/DeepTutor/attestations/sha256:0ad52fc3b7841d227c8728c337b597758c58204a0b0286fdaaa326486d67f3d8"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
