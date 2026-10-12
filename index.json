@@ -102,7 +102,7 @@
       }
     },
     "nimi.shijing": {
-      "display_name": "时镜 ShiJing",
+      "display_name": "\u65f6\u955c ShiJing",
       "visibility": "public",
       "admission_status": "approved",
       "kill_switch": {
@@ -192,12 +192,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.18",
-          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.18.json"
+          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.20",
+          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.20.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.18",
-          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.18.json"
+          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.20",
+          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.20.json"
         }
       }
     }
