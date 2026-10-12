@@ -1,0 +1,197 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.inscape",
+    "display_name": "Inscape",
+    "version": "0.1.8",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-inscape",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.8",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-inscape/rulesets/22613684",
+      "commit_sha": "f4874a4c53ecb3ead126476b3cc055f949e1d4f3",
+      "release_id": 410851430,
+      "release_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/tag/v0.1.8",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/tag/v0.1.8",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 634473860,
+      "asset_name": "nimi.inscape-0.1.8.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.8/nimi.inscape-0.1.8.candidate.json",
+      "size": 1977,
+      "sha256": "080ac973847e7a1a4559bd1926485ee5f05ea3c38b37e73fc7f3fbce76e5e268"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-inscape/blob/8d85ce1c5a28e6a6967081c1ba207a9a79c2ad91/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Starts at a few KiB and grows with saved records; no App-enforced storage cap.",
+          "path_pattern": "<OS application-data>/nimi.inscape/inscape.db",
+          "purpose": "Local SQLite storage for adult attestation, profiles, relationships and reflections. Retained after Nimi uninstall; cleared from Inscape settings."
+        },
+        {
+          "expected_size_band": "A transient snapshot of the affected local space, growing with saved records.",
+          "path_pattern": "<OS application-data>/nimi.inscape/inscape-quarantine-pending.json*",
+          "purpose": "Confirmed quarantine write intent for restart recovery during a failed SQLite write. Removed after the real commit or explicit local-data reset; never used for analysis."
+        },
+        {
+          "expected_size_band": "Starts at a few KiB and grows with saved development records.",
+          "path_pattern": "<OS application-data>/nimi.inscape/development/*/inscape.db",
+          "purpose": "Isolated development SQLite space per Desktop Host profile, retained across an explicit registration resume. Never reads or converts installed or older development data."
+        },
+        {
+          "expected_size_band": "A transient snapshot of the affected development space.",
+          "path_pattern": "<OS application-data>/nimi.inscape/development/*/inscape-quarantine-pending.json*",
+          "purpose": "Recovery-only confirmed quarantine intent for the isolated development space. Removed after commit or explicit local-data reset."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-inscape/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 634472025,
+        "asset_name": "nimi.inscape-0.1.8-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.8/nimi.inscape-0.1.8-macos-aarch64.nimiapp",
+        "size": 625408304,
+        "sha256": "99a025322445f6d44bb1814a6120c546009f1af1b3586a3a951b9099d15f67c8",
+        "app_info": {
+          "asset_id": 634473752,
+          "asset_name": "nimi.inscape-0.1.8-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.8/nimi.inscape-0.1.8-macos-aarch64.app-info.json",
+          "size": 32813,
+          "sha256": "58ed0069528f9ca502cfad4f3ccc97a85f8d224eab75136242e201c590815fe7"
+        },
+        "runtime_entry": "payload/nimiapp-inscape-shell.app/Contents/MacOS/nimiapp-inscape-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-inscape/attestations/sha256:99a025322445f6d44bb1814a6120c546009f1af1b3586a3a951b9099d15f67c8"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 634472942,
+        "asset_name": "nimi.inscape-0.1.8-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.8/nimi.inscape-0.1.8-windows-x86_64.nimiapp",
+        "size": 655094790,
+        "sha256": "31880447aa16af8d97201cd482ba7235a3768140df7e69b34ec50f1c6bc090f0",
+        "app_info": {
+          "asset_id": 634473811,
+          "asset_name": "nimi.inscape-0.1.8-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.8/nimi.inscape-0.1.8-windows-x86_64.app-info.json",
+          "size": 32814,
+          "sha256": "21e41316b9f610386c535830386fdd6346b07e95cbf16a74b6995a6b71fccd25"
+        },
+        "runtime_entry": "payload/nimiapp-inscape-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-inscape/attestations/sha256:31880447aa16af8d97201cd482ba7235a3768140df7e69b34ec50f1c6bc090f0"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "adult"
+    }
+  }
+}
