@@ -72,12 +72,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "nimi.realm-persona-studio@0.1.4",
-          "path": "descriptors/nimi.realm-persona-studio/0.1.4.json"
+          "descriptor_id": "nimi.realm-persona-studio@0.1.6",
+          "path": "descriptors/nimi.realm-persona-studio/0.1.6.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "nimi.realm-persona-studio@0.1.4",
-          "path": "descriptors/nimi.realm-persona-studio/0.1.4.json"
+          "descriptor_id": "nimi.realm-persona-studio@0.1.6",
+          "path": "descriptors/nimi.realm-persona-studio/0.1.6.json"
         }
       }
     },
