@@ -1,5 +1,27 @@
 {
   "schema_version": 1,
+  "descriptor_id": "nimi.parentos@0.1.9",
+  "publisher_submission": {
+    "pull_number": 83,
+    "path": "submissions/nimiplatform/nimi.parentos/0.1.9.json",
+    "head_sha": "a3cf7b32951ad702316f819a629ce34e58c936f1"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-10-12T18:18:51.735454Z"
+    }
+  },
   "candidate": {
     "app_id": "nimi.parentos",
     "display_name": "ParentOS",
