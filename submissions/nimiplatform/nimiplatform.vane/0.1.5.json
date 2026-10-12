@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimiplatform.vane",
+    "display_name": "Vane",
+    "version": "0.1.5",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/Vane",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "d76e1037fdcc8ab04db9e8ffcfe6104effc513cd7530401f8f45e98941822ba6"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.5",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/Vane/rulesets/23202803",
+      "commit_sha": "5a850fc520233f6734905ef6ac25910cfc594062",
+      "release_id": 410172312,
+      "release_url": "https://github.com/nimiplatform/Vane/releases/tag/v0.1.5",
+      "release_notes_url": "https://github.com/nimiplatform/Vane/releases/tag/v0.1.5",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 632687939,
+      "asset_name": "nimiplatform.vane-0.1.5.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.5/nimiplatform.vane-0.1.5.candidate.json",
+      "size": 1979,
+      "sha256": "4a41d0218fcee120f1818e0169b49cc7b504135a860ff1d17b8524caac4051ac"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "search",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/Vane/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 632686124,
+        "asset_name": "nimiplatform.vane-0.1.5-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.5/nimiplatform.vane-0.1.5-macos-aarch64.nimiapp",
+        "size": 823885147,
+        "sha256": "c22cd5c2cd19ceb6a1bffc8c6c7ff5365a9ecf5b3fb3f1ef18f2637eabad6505",
+        "app_info": {
+          "asset_id": 632687792,
+          "asset_name": "nimiplatform.vane-0.1.5-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.5/nimiplatform.vane-0.1.5-macos-aarch64.app-info.json",
+          "size": 55889,
+          "sha256": "5e4913589b33dfd534d955a199edc37d54929c005a157a0b94a215dfff50421b"
+        },
+        "runtime_entry": "payload/vane-shell.app/Contents/MacOS/vane-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/Vane/attestations/sha256:c22cd5c2cd19ceb6a1bffc8c6c7ff5365a9ecf5b3fb3f1ef18f2637eabad6505"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 632686911,
+        "asset_name": "nimiplatform.vane-0.1.5-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.5/nimiplatform.vane-0.1.5-windows-x86_64.nimiapp",
+        "size": 908896506,
+        "sha256": "9f072541fc6e7a9c63f7bb4d8bd86d23bc2a0800083ba3d90865085938f05263",
+        "app_info": {
+          "asset_id": 632687867,
+          "asset_name": "nimiplatform.vane-0.1.5-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.5/nimiplatform.vane-0.1.5-windows-x86_64.app-info.json",
+          "size": 56204,
+          "sha256": "dc6f6c714235f9d20ab1664800a9c26621654792292d05a6fd0007d20d30342a"
+        },
+        "runtime_entry": "payload/vane-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/Vane/attestations/sha256:9f072541fc6e7a9c63f7bb4d8bd86d23bc2a0800083ba3d90865085938f05263"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [
+          "precise-location"
+        ],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
