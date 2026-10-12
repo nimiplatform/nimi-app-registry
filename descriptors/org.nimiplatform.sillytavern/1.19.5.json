@@ -1,0 +1,160 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "org.nimiplatform.sillytavern@1.19.5",
+  "publisher_submission": {
+    "pull_number": 74,
+    "path": "submissions/nimiplatform/org.nimiplatform.sillytavern/1.19.5.json",
+    "head_sha": "f0379b362225e81875b8770bfb5fbc5d452994ef"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-version-update",
+      "decided_at": "2026-10-12T11:30:44.942536Z"
+    }
+  },
+  "candidate": {
+    "app_id": "org.nimiplatform.sillytavern",
+    "display_name": "SillyTavern",
+    "version": "1.19.5",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/SillyTavern",
+      "license": {
+        "spdx_expression": "AGPL-3.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.19.5",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/SillyTavern/rulesets/24907492",
+      "commit_sha": "fcac88f5ed09c23d1a560320809324462552fb3f",
+      "release_id": 410517355,
+      "release_url": "https://github.com/nimiplatform/SillyTavern/releases/tag/v1.19.5",
+      "release_notes_url": "https://github.com/nimiplatform/SillyTavern/releases/tag/v1.19.5",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 633549327,
+      "asset_name": "org.nimiplatform.sillytavern-1.19.5.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.5/org.nimiplatform.sillytavern-1.19.5.candidate.json",
+      "size": 1122,
+      "sha256": "e67f34b7babc88099e1512b482ecdfdc0145c3db0847f788665ef1f0230c8dd7"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume",
+      "integration.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed",
+      "image.generate",
+      "audio.synthesize",
+      "audio.transcribe",
+      "text.decide"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "User-controlled; megabytes for text, potentially multiple gigabytes for media and indexes.",
+          "path_pattern": "~/Library/Application Support/SillyTavern-Nimi",
+          "purpose": "Character cards, Persona, chats, world books, settings, media, backups and retrieval indexes. Shared between development and local installation; independent of Nimi accounts."
+        },
+        {
+          "expected_size_band": "User-controlled; megabytes to multiple gigabytes.",
+          "path_pattern": "%APPDATA%/SillyTavern-Nimi",
+          "purpose": "Windows business data root; implementation declared, Windows acceptance NOT-VERIFIED."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "characters",
+        "chat",
+        "media",
+        "retrieval",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/SillyTavern/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 633548248,
+        "asset_name": "org.nimiplatform.sillytavern-1.19.5-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.5/org.nimiplatform.sillytavern-1.19.5-macos-aarch64.nimiapp",
+        "size": 957499930,
+        "sha256": "abd6d88a959f63fbf88e8bcf0a5163a4b99506ab391e0e9717cfc72606cc46d9",
+        "app_info": {
+          "asset_id": 633549281,
+          "asset_name": "org.nimiplatform.sillytavern-1.19.5-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.5/org.nimiplatform.sillytavern-1.19.5-macos-aarch64.app-info.json",
+          "size": 110263,
+          "sha256": "24771a4e6834caf51bd04c1e75ce3ebb781dea2ca96c611b46486a887c4e4b38"
+        },
+        "runtime_entry": "payload/sillytavern-shell.app/Contents/MacOS/sillytavern-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/SillyTavern/attestations/sha256:abd6d88a959f63fbf88e8bcf0a5163a4b99506ab391e0e9717cfc72606cc46d9"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
