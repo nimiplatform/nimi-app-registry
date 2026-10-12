@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "nimi.polyagent@0.1.0",
+  "publisher_submission": {
+    "pull_number": 88,
+    "path": "submissions/nimiplatform/nimi.polyagent/0.1.0.json",
+    "head_sha": "4734a171f47f11dcac793cdb6f1fdba7ceb94aa0"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-10-12T18:47:22.334078Z"
+    }
+  },
+  "candidate": {
+    "app_id": "nimi.polyagent",
+    "display_name": "PolyAgent",
+    "version": "0.1.0",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-polyagent",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.0",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-polyagent/rulesets/24936182",
+      "commit_sha": "3de4535d32b850fc923c1c24ca852495c9b6fb34",
+      "release_id": 410881556,
+      "release_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/tag/v0.1.0",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/tag/v0.1.0",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 634578735,
+      "asset_name": "nimi.polyagent-0.1.0.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/download/v0.1.0/nimi.polyagent-0.1.0.candidate.json",
+      "size": 1997,
+      "sha256": "708e2ea324ed3da9dbdefccc4944ffbecd56802faeef5841cc0e566aaf65a139"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "agent.work",
+      "integration.consume",
+      "app.activity"
+    ],
+    "capability_contract_refs": [],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "A few kilobytes per configured executor.",
+          "path_pattern": "macOS Keychain / ai.nimi.polyagent.executor.secrets / executor-*",
+          "purpose": "Executor bearer and Relayer credential. Ordinary configuration stores only references."
+        },
+        {
+          "expected_size_band": "One 32-byte secret per imported signer.",
+          "path_pattern": "macOS Keychain / ai.nimi.polyagent.polymarket.signer / polyagent-*",
+          "purpose": "User-imported Polymarket signing key, stored directly as a Keychain item. App metadata uses Nimi managed storage; no plaintext key file."
+        },
+        {
+          "expected_size_band": "Typically KiB to MiB of JSON, grows with orders.",
+          "path_pattern": "<user-home>/.polyagent-executor/**",
+          "purpose": "Selected external executor submission journal, signed order material and process lock. Contains no wallet private key. A user-selected executor state directory can replace this root."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage",
+        "integration",
+        "paper-trading"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-polyagent/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 634575627,
+        "asset_name": "nimi.polyagent-0.1.0-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/download/v0.1.0/nimi.polyagent-0.1.0-macos-aarch64.nimiapp",
+        "size": 626605730,
+        "sha256": "e218694989ae874b0b1a6a6062c719c0933c509f61a690ce576bdce2ccfcea47",
+        "app_info": {
+          "asset_id": 634578617,
+          "asset_name": "nimi.polyagent-0.1.0-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/download/v0.1.0/nimi.polyagent-0.1.0-macos-aarch64.app-info.json",
+          "size": 34613,
+          "sha256": "3242d2f37b643200837bfd01dc448c8d49a55be63d25609cd53315588554aff1"
+        },
+        "runtime_entry": "payload/nimiapp-polyagent-shell.app/Contents/MacOS/nimiapp-polyagent-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-polyagent/attestations/sha256:e218694989ae874b0b1a6a6062c719c0933c509f61a690ce576bdce2ccfcea47"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 634577142,
+        "asset_name": "nimi.polyagent-0.1.0-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/download/v0.1.0/nimi.polyagent-0.1.0-windows-x86_64.nimiapp",
+        "size": 688364055,
+        "sha256": "98fb2884449d36de1028c1a60568448abef103691e56f0f3d4545ab482d28607",
+        "app_info": {
+          "asset_id": 634578679,
+          "asset_name": "nimi.polyagent-0.1.0-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-polyagent/releases/download/v0.1.0/nimi.polyagent-0.1.0-windows-x86_64.app-info.json",
+          "size": 34858,
+          "sha256": "4ca9751fae4231232d6cb2cc38672b570a085c49457ac82ec4bd01daa7a2100b"
+        },
+        "runtime_entry": "payload/nimiapp-polyagent-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-polyagent/attestations/sha256:98fb2884449d36de1028c1a60568448abef103691e56f0f3d4545ab482d28607"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
