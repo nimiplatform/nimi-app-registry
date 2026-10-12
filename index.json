@@ -232,6 +232,26 @@
           "path": "descriptors/org.nimiplatform.deeptutor/1.6.11.json"
         }
       }
+    },
+    "io.github.nimiplatform.open-notebook": {
+      "display_name": "Open Notebook",
+      "visibility": "public",
+      "admission_status": "approved",
+      "kill_switch": {
+        "active": false,
+        "reason": null,
+        "revision": 0
+      },
+      "latest_admitted_release_by_target": {
+        "macos-aarch64": {
+          "descriptor_id": "io.github.nimiplatform.open-notebook@1.14.4",
+          "path": "descriptors/io.github.nimiplatform.open-notebook/1.14.4.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "io.github.nimiplatform.open-notebook@1.14.4",
+          "path": "descriptors/io.github.nimiplatform.open-notebook/1.14.4.json"
+        }
+      }
     }
   }
 }

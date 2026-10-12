@@ -1,5 +1,27 @@
 {
   "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.open-notebook@1.14.4",
+  "publisher_submission": {
+    "pull_number": 70,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.open-notebook/1.14.4.json",
+    "head_sha": "3807b951bb71492edaeb0300698e2686152c7c65"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-version-update",
+      "decided_at": "2026-10-12T06:38:16.930265Z"
+    }
+  },
   "candidate": {
     "app_id": "io.github.nimiplatform.open-notebook",
     "display_name": "Open Notebook",
