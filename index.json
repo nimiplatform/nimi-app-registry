@@ -192,12 +192,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.20",
-          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.20.json"
+          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.21",
+          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.21.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.20",
-          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.20.json"
+          "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.21",
+          "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.21.json"
         }
       }
     },
