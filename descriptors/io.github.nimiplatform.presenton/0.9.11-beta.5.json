@@ -1,0 +1,155 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.presenton@0.9.11-beta.5",
+  "publisher_submission": {
+    "pull_number": 71,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.presenton/0.9.11-beta.5.json",
+    "head_sha": "6111371f3f9074dcd67be97e39a06632cbe79c99"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-version-update",
+      "decided_at": "2026-10-12T09:43:02.364281Z"
+    }
+  },
+  "candidate": {
+    "app_id": "io.github.nimiplatform.presenton",
+    "display_name": "Presenton",
+    "version": "0.9.11-beta.5",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/presenton",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "23d6fd64bfcbd46b331098ed89454717fd1719faccbf632f8234b962aa43ed1a"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.9.11-beta.5",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/presenton/rulesets/24907490",
+      "commit_sha": "446bdceeac5f58b2c6a8bf820d40a578d22665db",
+      "release_id": 410354517,
+      "release_url": "https://github.com/nimiplatform/presenton/releases/tag/v0.9.11-beta.5",
+      "release_notes_url": "https://github.com/nimiplatform/presenton/releases/tag/v0.9.11-beta.5",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 633123791,
+      "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.5.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.5/io.github.nimiplatform.presenton-0.9.11-beta.5.candidate.json",
+      "size": 1162,
+      "sha256": "622be37dbe0c565f311891caab0edbf0a90b302208f42f0692a420eb18b0c108"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "image.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "10 MB–10 GB depending on imported media",
+          "path_pattern": "~/Library/Application Support/Presenton Nimi/workspaces/",
+          "purpose": "Presentation databases, templates, uploaded documents, generated images and document retrieval caches, partitioned by the Nimi-managed App workspace identifier"
+        },
+        {
+          "expected_size_band": "Up to hundreds of MB per presentation",
+          "path_pattern": "User-selected download destinations",
+          "purpose": "Exported PDF and PPTX presentations"
+        }
+      ]
+    },
+    "update_channel": "beta",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "presentations",
+        "images",
+        "export",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/presenton/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 633122302,
+        "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.5-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.5/io.github.nimiplatform.presenton-0.9.11-beta.5-macos-aarch64.nimiapp",
+        "size": 1833495758,
+        "sha256": "a0f1ad5eb89921abe9d1c16a380d7f541983c05c819daa1dd53e7215dfdab413",
+        "app_info": {
+          "asset_id": 633123748,
+          "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.5-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.5/io.github.nimiplatform.presenton-0.9.11-beta.5-macos-aarch64.app-info.json",
+          "size": 93415,
+          "sha256": "2f726774ea18582825ec1b56413046df93ad4ff1036f9f1fd78231c5e340dd6d"
+        },
+        "runtime_entry": "payload/presenton-shell.app/Contents/MacOS/presenton-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/presenton/attestations/sha256:a0f1ad5eb89921abe9d1c16a380d7f541983c05c819daa1dd53e7215dfdab413"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
