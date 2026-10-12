@@ -1,0 +1,191 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.odd-bureau",
+    "display_name": "奇物局",
+    "version": "0.1.1",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-odd-bureau",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "5830b56c92e055435c7eee5796fe5ba80645debe4d456dc070ef24f8697ab0c4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.1",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-odd-bureau/rulesets/24936168",
+      "commit_sha": "314a69bdab02bf116acd5017f0c5129268ecd3b0",
+      "release_id": 410864403,
+      "release_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/tag/v0.1.1",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/tag/v0.1.1",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 634520358,
+      "asset_name": "nimi.odd-bureau-0.1.1.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/download/v0.1.1/nimi.odd-bureau-0.1.1.candidate.json",
+      "size": 2022,
+      "sha256": "959365524a861588946a1230221ec8116138fb0a796d2dcb0ef18df3ea800cd2"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "vision.locate",
+      "image.generate",
+      "video.generate",
+      "music.generate",
+      "audio.synthesize",
+      "audio.transcribe",
+      "voice.create"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 634518721,
+        "asset_name": "nimi.odd-bureau-0.1.1-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/download/v0.1.1/nimi.odd-bureau-0.1.1-macos-aarch64.nimiapp",
+        "size": 575490632,
+        "sha256": "e602adf6d0216cdba520ff995fabdb44639bd6fc24ae99829199b14a81ad96bb",
+        "app_info": {
+          "asset_id": 634520257,
+          "asset_name": "nimi.odd-bureau-0.1.1-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/download/v0.1.1/nimi.odd-bureau-0.1.1-macos-aarch64.app-info.json",
+          "size": 15028,
+          "sha256": "f3af879e61a57a354fc5163f0d6fdf4b3f9739ef56161049a19ae174be8322c4"
+        },
+        "runtime_entry": "payload/nimiplatform-odd-bureau-shell.app/Contents/MacOS/nimiplatform-odd-bureau-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-odd-bureau/attestations/sha256:e602adf6d0216cdba520ff995fabdb44639bd6fc24ae99829199b14a81ad96bb"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 634519567,
+        "asset_name": "nimi.odd-bureau-0.1.1-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/download/v0.1.1/nimi.odd-bureau-0.1.1-windows-x86_64.nimiapp",
+        "size": 635866944,
+        "sha256": "60903544b239f7bafa024b94825326009cc1bbba611bf783e70d4944c0aa36df",
+        "app_info": {
+          "asset_id": 634520317,
+          "asset_name": "nimi.odd-bureau-0.1.1-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-odd-bureau/releases/download/v0.1.1/nimi.odd-bureau-0.1.1-windows-x86_64.app-info.json",
+          "size": 15081,
+          "sha256": "bcb8774959bfbf91dcb4a3bc35bb15a359fe73f359c33688c781082e7da1390e"
+        },
+        "runtime_entry": "payload/nimiplatform-odd-bureau-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-odd-bureau/attestations/sha256:60903544b239f7bafa024b94825326009cc1bbba611bf783e70d4944c0aa36df"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "present",
+        "outputs": [
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
