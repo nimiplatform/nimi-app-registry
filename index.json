@@ -132,12 +132,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "nimi.storybook@0.1.6",
-          "path": "descriptors/nimi.storybook/0.1.6.json"
+          "descriptor_id": "nimi.storybook@0.1.8",
+          "path": "descriptors/nimi.storybook/0.1.8.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "nimi.storybook@0.1.6",
-          "path": "descriptors/nimi.storybook/0.1.6.json"
+          "descriptor_id": "nimi.storybook@0.1.8",
+          "path": "descriptors/nimi.storybook/0.1.8.json"
         }
       }
     },
