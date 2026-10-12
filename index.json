@@ -264,8 +264,8 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "io.github.nimiplatform.presenton@0.9.11-beta.6",
-          "path": "descriptors/io.github.nimiplatform.presenton/0.9.11-beta.6.json"
+          "descriptor_id": "io.github.nimiplatform.presenton@0.9.11-beta.7",
+          "path": "descriptors/io.github.nimiplatform.presenton/0.9.11-beta.7.json"
         }
       }
     }
