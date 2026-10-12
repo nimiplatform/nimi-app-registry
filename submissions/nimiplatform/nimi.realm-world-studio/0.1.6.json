@@ -1,0 +1,184 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.realm-world-studio",
+    "display_name": "Realm World Studio",
+    "version": "0.1.6",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-realm-world-studio",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.6",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-realm-world-studio/rulesets/22613697",
+      "commit_sha": "214819b5fe9ac3a18984d51e8734637584ea02a6",
+      "release_id": 410850282,
+      "release_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/tag/v0.1.6",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/tag/v0.1.6",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 634469232,
+      "asset_name": "nimi.realm-world-studio-0.1.6.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.6/nimi.realm-world-studio-0.1.6.candidate.json",
+      "size": 2089,
+      "sha256": "cbe539b0863ed1fc33e375a5ada90f11a3d94ee4259ada1c67c1e442f37c8105"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-realm-world-studio/blob/c142b377a8b9baaa5bf2900c10e62d635306eaad/src-electron/main.ts"
+    },
+    "app_access": [
+      "realm.data",
+      "runtime.consume",
+      "app.activity"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "语言偏好为少量文本；其余占用随 Chromium 缓存和使用情况变化，应用未设置缓存大小上限。",
+          "path_pattern": "<Electron userData>/**",
+          "purpose": "保存语言偏好及 Electron/Chromium 运行所需的本地设置与缓存。创作草稿与 AI 候选通过 Nimi protected storage 保存，始终不是 Realm 正式资料。从 Nimi 卸载应用后，OS 本地文件仍会保留。"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 634467071,
+        "asset_name": "nimi.realm-world-studio-0.1.6-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.6/nimi.realm-world-studio-0.1.6-macos-aarch64.nimiapp",
+        "size": 625795144,
+        "sha256": "d56f3022495aad052d7e5cf74443271098ce1fef52ba6e861a6e40cfd19af207",
+        "app_info": {
+          "asset_id": 634469083,
+          "asset_name": "nimi.realm-world-studio-0.1.6-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.6/nimi.realm-world-studio-0.1.6-macos-aarch64.app-info.json",
+          "size": 246003,
+          "sha256": "d993e338a87356529d8baea04e4e0cdf45a840734eb229fbd850b9f96f1a4af5"
+        },
+        "runtime_entry": "payload/nimiapp-realm-world-studio-shell.app/Contents/MacOS/nimiapp-realm-world-studio-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-world-studio/attestations/sha256:d56f3022495aad052d7e5cf74443271098ce1fef52ba6e861a6e40cfd19af207"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 634468059,
+        "asset_name": "nimi.realm-world-studio-0.1.6-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.6/nimi.realm-world-studio-0.1.6-windows-x86_64.nimiapp",
+        "size": 654894749,
+        "sha256": "f11eefd1643a0fdd5ee65119137e331bd4cd5f75f3851249ce6540351da45819",
+        "app_info": {
+          "asset_id": 634469166,
+          "asset_name": "nimi.realm-world-studio-0.1.6-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-realm-world-studio/releases/download/v0.1.6/nimi.realm-world-studio-0.1.6-windows-x86_64.app-info.json",
+          "size": 246004,
+          "sha256": "a3efc609d0a0a869199a9b02e17265e5a9ade766d9879e01c33f8e32d4f9a992"
+        },
+        "runtime_entry": "payload/nimiapp-realm-world-studio-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-world-studio/attestations/sha256:f11eefd1643a0fdd5ee65119137e331bd4cd5f75f3851249ce6540351da45819"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "user-confirmed"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
