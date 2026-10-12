@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "org.nimiplatform.deeptutor",
+    "display_name": "DeepTutor",
+    "version": "1.6.11",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/DeepTutor",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "cd2f54e1e5066644023203dcbd956776a9f4ef6eb8b6225afe1ffa2d380fede4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.6.11",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/DeepTutor/rulesets/24907482",
+      "commit_sha": "9bba262b5e23c850105c599176df2f3c7de8d6dc",
+      "release_id": 410229159,
+      "release_url": "https://github.com/nimiplatform/DeepTutor/releases/tag/v1.6.11",
+      "release_notes_url": "https://github.com/nimiplatform/DeepTutor/releases/tag/v1.6.11",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 632820406,
+      "asset_name": "org.nimiplatform.deeptutor-1.6.11.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.11/org.nimiplatform.deeptutor-1.6.11.candidate.json",
+      "size": 1111,
+      "sha256": "9b93dbedfb81ef030b9a33cd98ad7f3fdceb33211b0b332a14fb2437d468c252"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "100 MiB–20 GiB, depending on imported materials",
+          "path_pattern": "~/Library/Application Support/Nimi/Local App Hosts/v1/*/workspace/**",
+          "purpose": "Development Host workspace for learning sessions, uploaded materials, retrieval indexes, notebooks and App settings"
+        },
+        {
+          "expected_size_band": "100 MiB–20 GiB, depending on imported materials",
+          "path_pattern": "~/Library/Application Support/org.nimiplatform.deeptutor/**",
+          "purpose": "Installed App profile and workspace containing browser cache, learning sessions, uploaded materials, retrieval indexes, notebooks and App settings"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "knowledge-base",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/DeepTutor/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 632818444,
+        "asset_name": "org.nimiplatform.deeptutor-1.6.11-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.11/org.nimiplatform.deeptutor-1.6.11-macos-aarch64.nimiapp",
+        "size": 1605967864,
+        "sha256": "9ddddc10b09b8267c1b5ac617f02c1d34b1d4f36192c32b55951a4f8c3fd33a3",
+        "app_info": {
+          "asset_id": 632820362,
+          "asset_name": "org.nimiplatform.deeptutor-1.6.11-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.11/org.nimiplatform.deeptutor-1.6.11-macos-aarch64.app-info.json",
+          "size": 391749,
+          "sha256": "6811ccedc2bc418de2aeea392e7740ca8cc8fe5eee99de531870270104f6e4ae"
+        },
+        "runtime_entry": "payload/deeptutor-shell.app/Contents/MacOS/deeptutor-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/DeepTutor/attestations/sha256:9ddddc10b09b8267c1b5ac617f02c1d34b1d4f36192c32b55951a4f8c3fd33a3"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      }
+    ]
+  }
+}
