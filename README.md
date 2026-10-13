@@ -102,7 +102,10 @@ node scripts/prepare-submission.mjs \
 
 Install the GitHub CLI (`gh`) with `attestation verify` and its source/signer
 identity flags. The script uses `GH_TOKEN` or `GITHUB_TOKEN` when present; `gh`
-can also use its existing authentication. It reads GitHub
+can also use its existing authentication: without an explicit token, metadata
+is read through `gh api --hostname github.com --method GET`, and credentials
+stay with `gh`. A failed CLI request stops preparation rather than retrying
+anonymously. It reads GitHub
 metadata and exact release assets, reuses the Registry schema/fact checks and
 published-candidate verifier, and cryptographically verifies SLSA build
 provenance for each downloaded package against the exact repository, tag,
