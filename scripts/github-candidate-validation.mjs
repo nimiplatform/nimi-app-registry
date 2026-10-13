@@ -69,22 +69,109 @@ export async function requestJson(url, token, label) {
   return response.json();
 }
 
-export async function downloadExact(url, expectedSize, expectedSha256, label) {
-  const response = await fetch(url, { redirect: 'follow' });
-  if (!response.ok || !response.body) fail(`${label} download failed with HTTP ${response.status}`);
+const DOWNLOAD_RANGE_BYTES = 8 * 1024 * 1024;
+const DOWNLOAD_CONCURRENCY = 4;
+class TransientDownloadError extends Error {}
+
+async function readDownloadBytes(response, expectedSize, label) {
+  if (!response.body) fail(`${label} download has no body`);
   const chunks = [];
-  const hash = createHash('sha256');
   let size = 0;
   for await (const chunk of response.body) {
     const bytes = Buffer.from(chunk);
     size += bytes.length;
     if (size > expectedSize) fail(`${label} exceeded its declared size`);
-    hash.update(bytes);
     chunks.push(bytes);
   }
   if (size !== expectedSize) fail(`${label} size mismatch`);
-  if (hash.digest('hex') !== expectedSha256) fail(`${label} SHA-256 mismatch`);
   return Buffer.concat(chunks, size);
+}
+
+function verifyDownloadDigest(bytes, expectedSha256, label) {
+  const hash = createHash('sha256');
+  for (let offset = 0; offset < bytes.length; offset += 64 * 1024 * 1024) {
+    hash.update(bytes.subarray(offset, offset + 64 * 1024 * 1024));
+  }
+  if (hash.digest('hex') !== expectedSha256) fail(`${label} SHA-256 mismatch`);
+  return bytes;
+}
+
+async function retryDownload(operation, signal, label) {
+  for (let attempt = 0; attempt < 3; attempt += 1) {
+    try { return await operation(); }
+    catch (error) {
+      if (signal.aborted || !(error instanceof TransientDownloadError || error instanceof TypeError
+        || ['AbortError', 'TimeoutError'].includes(error.name))) throw error;
+      if (attempt === 2) fail(`${label} transfer interrupted after 3 attempts`);
+      await new Promise((resolve) => setTimeout(resolve, 250 * (attempt + 1)));
+    }
+  }
+}
+
+async function fetchDownload(url, headers, signal, label) {
+  const response = await fetch(url, {
+    redirect: 'follow', headers,
+    signal: AbortSignal.any([signal, AbortSignal.timeout(600_000)]),
+  });
+  if ([408, 500, 502, 503, 504].includes(response.status)) {
+    await response.body?.cancel();
+    throw new TransientDownloadError(`${label} transient HTTP ${response.status}`);
+  }
+  return response;
+}
+
+export async function downloadExact(url, expectedSize, expectedSha256, label) {
+  const controller = new AbortController();
+  const { signal } = controller;
+  try {
+    if (expectedSize <= DOWNLOAD_RANGE_BYTES) {
+      const bytes = await retryDownload(async () => {
+        const response = await fetchDownload(url, undefined, signal, label);
+        if (!response.ok) { await response.body?.cancel(); fail(`${label} download failed with HTTP ${response.status}`); }
+        return readDownloadBytes(response, expectedSize, label);
+      }, signal, label);
+      return verifyDownloadDigest(bytes, expectedSha256, label);
+    }
+
+    const range = async (start, end) => retryDownload(async () => {
+      const response = await fetchDownload(url, {
+        Range: `bytes=${start}-${end}`, 'Accept-Encoding': 'identity',
+      }, signal, label);
+      // Servers may ignore Range. Consume that first complete response using
+      // the same full size/digest checks instead of requesting it again.
+      if (start === 0 && response.status === 200) {
+        return { complete: true, bytes: await readDownloadBytes(response, expectedSize, label) };
+      }
+      if (response.status !== 206) {
+        await response.body?.cancel();
+        fail(`${label} range download failed with HTTP ${response.status}`);
+      }
+      if (response.headers.get('content-range') !== `bytes ${start}-${end}/${expectedSize}`) {
+        await response.body?.cancel();
+        fail(`${label} range identity mismatch`);
+      }
+      return { complete: false, bytes: await readDownloadBytes(response, end - start + 1, label) };
+    }, signal, label);
+
+    const first = await range(0, DOWNLOAD_RANGE_BYTES - 1);
+    if (first.complete) return verifyDownloadDigest(first.bytes, expectedSha256, label);
+    const bytes = Buffer.allocUnsafe(expectedSize);
+    first.bytes.copy(bytes);
+    let next = DOWNLOAD_RANGE_BYTES;
+    const worker = async () => {
+      while (next < expectedSize) {
+        const start = next;
+        next += DOWNLOAD_RANGE_BYTES;
+        const part = await range(start, Math.min(next, expectedSize) - 1);
+        part.bytes.copy(bytes, start);
+      }
+    };
+    await Promise.all(Array.from({ length: DOWNLOAD_CONCURRENCY }, worker));
+    return verifyDownloadDigest(bytes, expectedSha256, label);
+  } catch (error) {
+    controller.abort();
+    throw error;
+  }
 }
 
 const crcTable = (() => {
