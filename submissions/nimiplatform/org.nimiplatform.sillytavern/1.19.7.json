@@ -1,0 +1,218 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "org.nimiplatform.sillytavern",
+    "display_name": "SillyTavern",
+    "version": "1.19.7",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/SillyTavern",
+      "license": {
+        "spdx_expression": "AGPL-3.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "8486a10c4393cee1c25392769ddd3b2d6c242d6ec7928e1414efff7dfb2f07ef"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.19.7",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/SillyTavern/rulesets/24907492",
+      "commit_sha": "c0966473a6e42ac549844e1aae67c1e74ebf861f",
+      "release_id": 411625089,
+      "release_url": "https://github.com/nimiplatform/SillyTavern/releases/tag/v1.19.7",
+      "release_notes_url": "https://github.com/nimiplatform/SillyTavern/releases/tag/v1.19.7",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 636899215,
+      "asset_name": "org.nimiplatform.sillytavern-1.19.7.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.7/org.nimiplatform.sillytavern-1.19.7.candidate.json",
+      "size": 2087,
+      "sha256": "0c42c5c62ce58b3b2c18a10954aa19248f702dfd75fe152adb91447934c5ae5e"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume",
+      "integration.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed",
+      "image.generate",
+      "audio.synthesize",
+      "audio.transcribe",
+      "text.decide"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "User-controlled; megabytes for text, potentially multiple gigabytes for media and indexes.",
+          "path_pattern": "~/Library/Application Support/SillyTavern-Nimi",
+          "purpose": "Character cards, Persona, chats, world books, settings, media, backups and retrieval indexes. Shared between development and local installation; independent of Nimi accounts."
+        },
+        {
+          "expected_size_band": "User-controlled; megabytes to multiple gigabytes.",
+          "path_pattern": "%APPDATA%/SillyTavern-Nimi",
+          "purpose": "Character cards, Persona, chats, world books, settings, media, backups and retrieval indexes on Windows; independent of Nimi accounts."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "characters",
+        "chat",
+        "media",
+        "retrieval",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/SillyTavern/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 636896548,
+        "asset_name": "org.nimiplatform.sillytavern-1.19.7-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.7/org.nimiplatform.sillytavern-1.19.7-macos-aarch64.nimiapp",
+        "size": 957517813,
+        "sha256": "ca14b83f5704f9d47c3a530334ab546f464ceb49d5e6839548ee7abe99f9f084",
+        "app_info": {
+          "asset_id": 636899108,
+          "asset_name": "org.nimiplatform.sillytavern-1.19.7-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.7/org.nimiplatform.sillytavern-1.19.7-macos-aarch64.app-info.json",
+          "size": 114724,
+          "sha256": "e80cf048ab2d15467d8a3eafe4bfae6a2a6d0f3590a18e2ceabc19d49f3634b1"
+        },
+        "runtime_entry": "payload/sillytavern-shell.app/Contents/MacOS/sillytavern-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/SillyTavern/attestations/sha256:ca14b83f5704f9d47c3a530334ab546f464ceb49d5e6839548ee7abe99f9f084"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 636898029,
+        "asset_name": "org.nimiplatform.sillytavern-1.19.7-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.7/org.nimiplatform.sillytavern-1.19.7-windows-x86_64.nimiapp",
+        "size": 1003510178,
+        "sha256": "409be2d74480215242c7a9f7cffad4fe305127996b07b5eccb9302da937e4eff",
+        "app_info": {
+          "asset_id": 636899156,
+          "asset_name": "org.nimiplatform.sillytavern-1.19.7-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/SillyTavern/releases/download/v1.19.7/org.nimiplatform.sillytavern-1.19.7-windows-x86_64.app-info.json",
+          "size": 115047,
+          "sha256": "91026a324dc1b217bb23c8cbcab65dc67c01de8e85ab58424bd8de8195493e19"
+        },
+        "runtime_entry": "payload/sillytavern-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/SillyTavern/attestations/sha256:409be2d74480215242c7a9f7cffad4fe305127996b07b5eccb9302da937e4eff"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "automatic"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "sexual-content",
+        "violence",
+        "strong-language",
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "adult"
+    }
+  }
+}
