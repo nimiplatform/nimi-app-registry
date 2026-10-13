@@ -65,16 +65,23 @@ function fixture(t, change = () => {}, options = {}) {
     [`${api}/attestations/sha256:${digest(packageBytes)}`, { attestations: [{ bundle: { mediaType: 'unit-test-bundle', dsseEnvelope: {} } }] }],
     ...assets.map((asset, index) => [asset.browser_download_url, assetData[index][1]]),
   ]);
-  const calls = [];
+  const calls = [], fetchCalls = [], apiCommands = [];
   t.mock.method(globalThis, 'fetch', async (url) => {
+    fetchCalls.push(url);
     calls.push(url); assert.ok(responses.has(url), `unexpected request ${url}`);
     const value = responses.get(url); return new Response(Buffer.isBuffer(value) ? value : JSON.stringify(value));
   });
   const commands = [];
   const verification = { result: [{ verificationResult: { signature: { certificate: { buildTrigger: 'push' } } } }] };
   t.mock.method(childProcess, 'execFileSync', (command, args, options) => {
-    commands.push({ command, args, token: options.env.GH_TOKEN });
     assert.equal(command, 'gh');
+    if (args[0] === 'api') {
+      apiCommands.push({ command, args });
+      const url = `https://api.github.com${args.at(-1)}`;
+      calls.push(url); assert.ok(responses.has(url), `unexpected API request ${url}`);
+      return JSON.stringify(responses.get(url));
+    }
+    commands.push({ command, args, token: options.env.GH_TOKEN });
     assert.deepEqual(args.slice(0, 2), ['attestation', 'verify']);
     assert.deepEqual(readFileSync(args[2]), packageBytes, 'verifier receives the exact downloaded package');
     const bundlePath = args[args.indexOf('--bundle') + 1];
@@ -83,7 +90,7 @@ function fixture(t, change = () => {}, options = {}) {
     return JSON.stringify(verification.result);
   });
   const input = { publisher: { github_namespace: 'publisher', namespace_kind: 'organization', assurance: 'pseudonymous', verified_domain_ref: null, kyc_ref: null }, license_files: ['LICENSE'], package: { kind: 'nimiapp', runtime_kind: 'native', registration_mode: 'app-managed', sandbox_ref: 'ordinary-user-process-no-sandbox' }, support: { diagnostics_bundle_fields: ['app_version'], redaction_rules: ['credentials'], issue_categories: ['startup'], escalation_url: `${repository}/issues`, kill_switch_visibility: 'visible', recovery_instructions: 'Restart the App from Nimi.' }, update_channel: 'stable', rollback_marker: 'none' };
-  return { repository, tag, input, release, calls, commands, verification, responses, assets, api, license };
+  return { repository, tag, input, release, calls, fetchCalls, apiCommands, commands, verification, responses, assets, api, license };
 }
 
 test('preparation derives immutable facts and runs the existing complete candidate verifier', async (t) => {
@@ -96,6 +103,8 @@ test('preparation derives immutable facts and runs the existing complete candida
   assert.equal(submission.candidate.targets[0].native_trust.windows_code_signing, 'unsigned');
   assert.ok(f.calls.includes(f.assets[1].browser_download_url), 'existing verifier reads actual archive bytes');
   assert.ok(f.calls.some((url) => url.includes('/attestations/sha256:')));
+  assert.ok(f.apiCommands.length > 0, 'gh reads metadata with its existing authentication');
+  assert.ok(f.fetchCalls.every((url) => url.startsWith(`${f.repository}/releases/download/`)), 'only public asset bytes use fetch without an explicit token');
   assert.equal('admission' in submission, false);
   const [{ args }] = f.commands;
   for (const [flag, value] of Object.entries({

@@ -25,10 +25,43 @@ function repositoryParts(repository) {
 }
 
 export async function requestJson(url, token, label) {
+  let endpoint;
+  try { endpoint = new URL(url); }
+  catch { fail(`${label} must use a supported GitHub API URL`); }
+  if (endpoint.origin !== 'https://api.github.com' || endpoint.username || endpoint.password || endpoint.hash
+    || !/^\/repos\/[A-Za-z0-9-]+\/[A-Za-z0-9._-]+(?:\/|$)/u.test(endpoint.pathname)) {
+    fail(`${label} must use a supported GitHub API URL`);
+  }
+  if (!token) {
+    let output;
+    try {
+      // gh owns its existing login. Never extract a credential to call fetch.
+      output = childProcess.execFileSync('gh', [
+        'api', '--hostname', 'github.com', '--method', 'GET',
+        '--header', 'Accept: application/vnd.github+json',
+        '--header', 'X-GitHub-Api-Version: 2022-11-28',
+        `${endpoint.pathname}${endpoint.search}`,
+      ], {
+        encoding: 'utf8', maxBuffer: 16 * 1024 * 1024, timeout: 60_000,
+        windowsHide: true, stdio: ['ignore', 'pipe', 'pipe'],
+        env: { ...process.env, GH_PROMPT_DISABLED: '1', GH_DEBUG: '' },
+      });
+    } catch (error) {
+      if (error.code === 'ENOENT') fail(`${label} requires the GitHub CLI (gh) when no explicit token is supplied`);
+      // Child output may contain response bodies or credential diagnostics.
+      // Report only a bounded HTTP status/exit code, never the raw output.
+      const httpStatus = /\(HTTP ([1-5][0-9]{2})\)/u.exec(error.stderr?.toString() || '')?.[1];
+      const detail = httpStatus ? `HTTP ${httpStatus}` : Number.isInteger(error.status) ? `exit ${error.status}` : 'process error';
+      fail(`${label} failed via gh api (${detail}); check gh auth status --hostname github.com and repository access`);
+    }
+    try { return JSON.parse(output); }
+    catch { fail(`${label} returned invalid JSON from gh api`); }
+  }
   const response = await fetch(url, {
+    method: 'GET', redirect: 'error',
     headers: {
       Accept: 'application/vnd.github+json',
-      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      Authorization: `Bearer ${token}`,
       'X-GitHub-Api-Version': '2022-11-28',
     },
   });
