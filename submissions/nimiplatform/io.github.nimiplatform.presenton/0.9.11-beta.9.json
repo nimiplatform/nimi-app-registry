@@ -1,0 +1,207 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "io.github.nimiplatform.presenton",
+    "display_name": "Presenton",
+    "version": "0.9.11-beta.9",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/presenton",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "23d6fd64bfcbd46b331098ed89454717fd1719faccbf632f8234b962aa43ed1a"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.9.11-beta.9",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/presenton/rulesets/24907490",
+      "commit_sha": "bc15fb2b6d46b65e2c59d367070b3186a207a5d5",
+      "release_id": 412089063,
+      "release_url": "https://github.com/nimiplatform/presenton/releases/tag/v0.9.11-beta.9",
+      "release_notes_url": "https://github.com/nimiplatform/presenton/releases/tag/v0.9.11-beta.9",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 638197518,
+      "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.9.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.9/io.github.nimiplatform.presenton-0.9.11-beta.9.candidate.json",
+      "size": 2159,
+      "sha256": "0800f97c671fd01872ace3bde7a5d139d6988ea6e876bb949f60f271fee8db9e"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "image.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "10 MB–10 GB depending on imported media",
+          "path_pattern": "~/Library/Application Support/Presenton Nimi/workspaces/",
+          "purpose": "Presentation databases, templates, uploaded documents, generated images and document retrieval caches, partitioned by the Nimi-managed App workspace identifier"
+        },
+        {
+          "expected_size_band": "10 MB–10 GB depending on imported media",
+          "path_pattern": "%APPDATA%/Presenton Nimi/workspaces/",
+          "purpose": "Windows presentation databases, templates, uploaded documents, generated images and document retrieval caches, partitioned by the Nimi-managed App workspace identifier"
+        },
+        {
+          "expected_size_band": "Up to hundreds of MB per presentation",
+          "path_pattern": "User-selected download destinations",
+          "purpose": "Exported PDF and PPTX presentations"
+        }
+      ]
+    },
+    "update_channel": "beta",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "presentations",
+        "images",
+        "export",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/presenton/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 638193192,
+        "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.9-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.9/io.github.nimiplatform.presenton-0.9.11-beta.9-macos-aarch64.nimiapp",
+        "size": 1733014629,
+        "sha256": "acc48f209805c6bdd80a4c3dd1672e449e3412d6d98b7288a7973ebda7200e3b",
+        "app_info": {
+          "asset_id": 638197442,
+          "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.9-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.9/io.github.nimiplatform.presenton-0.9.11-beta.9-macos-aarch64.app-info.json",
+          "size": 107358,
+          "sha256": "971c1c77d6d6787d097a512f5f756194e2e72406c9a842424856a1e243a0227a"
+        },
+        "runtime_entry": "payload/presenton-shell.app/Contents/MacOS/presenton-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/presenton/attestations/sha256:acc48f209805c6bdd80a4c3dd1672e449e3412d6d98b7288a7973ebda7200e3b"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 638194770,
+        "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.9-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.9/io.github.nimiplatform.presenton-0.9.11-beta.9-windows-x86_64.nimiapp",
+        "size": 1859746930,
+        "sha256": "09e0102cfb92aec64f354da76d1c17d44dadaa4600b10023faae2ca1c97e1d50",
+        "app_info": {
+          "asset_id": 638197464,
+          "asset_name": "io.github.nimiplatform.presenton-0.9.11-beta.9-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/presenton/releases/download/v0.9.11-beta.9/io.github.nimiplatform.presenton-0.9.11-beta.9-windows-x86_64.app-info.json",
+          "size": 108109,
+          "sha256": "a4842c26120e88dc75383cebf634501113a07f842ebd9e37a2531ec19d489ef6"
+        },
+        "runtime_entry": "payload/presenton-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/presenton/attestations/sha256:09e0102cfb92aec64f354da76d1c17d44dadaa4600b10023faae2ca1c97e1d50"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
