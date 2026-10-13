@@ -1,0 +1,215 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "org.nimiplatform.deeptutor",
+    "display_name": "DeepTutor",
+    "version": "1.6.16",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/DeepTutor",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "cd2f54e1e5066644023203dcbd956776a9f4ef6eb8b6225afe1ffa2d380fede4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.6.16",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/DeepTutor/rulesets/24907482",
+      "commit_sha": "6b4b3f4d85e98ffb321aa87c54533c6466ba8aa2",
+      "release_id": 411579462,
+      "release_url": "https://github.com/nimiplatform/DeepTutor/releases/tag/v1.6.16",
+      "release_notes_url": "https://github.com/nimiplatform/DeepTutor/releases/tag/v1.6.16",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 636761169,
+      "asset_name": "org.nimiplatform.deeptutor-1.6.16.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.16/org.nimiplatform.deeptutor-1.6.16.candidate.json",
+      "size": 2068,
+      "sha256": "021781307a0f092baf4260e714875627a8f4bfd9f37bb2c724c0064fe335d1ce"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed",
+      "audio.synthesize",
+      "audio.transcribe",
+      "image.generate",
+      "video.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "100 MiB–20 GiB, depending on imported materials",
+          "path_pattern": "<Nimi data root>/app-hosts/*/apps/*/user-data/workspace/**",
+          "purpose": "Desktop-prepared Host workspace on Windows and macOS for learning sessions, uploaded materials, retrieval indexes, notebooks, App settings and logs"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "knowledge-base",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/DeepTutor/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 636756408,
+        "asset_name": "org.nimiplatform.deeptutor-1.6.16-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.16/org.nimiplatform.deeptutor-1.6.16-macos-aarch64.nimiapp",
+        "size": 1608058701,
+        "sha256": "99ab94833eeb004691464b6f42d241dd4f4bff01dd0349d0ebb939149981795d",
+        "app_info": {
+          "asset_id": 636761087,
+          "asset_name": "org.nimiplatform.deeptutor-1.6.16-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.16/org.nimiplatform.deeptutor-1.6.16-macos-aarch64.app-info.json",
+          "size": 298865,
+          "sha256": "ae2f3fd88011b4d79320deb7b187fa8a25af453ee7a4d674c3b846ebe4b1b990"
+        },
+        "runtime_entry": "payload/deeptutor-shell.app/Contents/MacOS/deeptutor-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/DeepTutor/attestations/sha256:99ab94833eeb004691464b6f42d241dd4f4bff01dd0349d0ebb939149981795d"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 636758988,
+        "asset_name": "org.nimiplatform.deeptutor-1.6.16-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.16/org.nimiplatform.deeptutor-1.6.16-windows-x86_64.nimiapp",
+        "size": 1968815378,
+        "sha256": "68bd9b9a1457430b24a6202dccc99e20800e27d2a7342dc5c6902c776c03ae61",
+        "app_info": {
+          "asset_id": 636761121,
+          "asset_name": "org.nimiplatform.deeptutor-1.6.16-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/DeepTutor/releases/download/v1.6.16/org.nimiplatform.deeptutor-1.6.16-windows-x86_64.app-info.json",
+          "size": 298866,
+          "sha256": "1ab199426675073df819867fb48ffe97d2d99f23d9183d99b4923055a3b5aa67"
+        },
+        "runtime_entry": "payload/deeptutor-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/DeepTutor/attestations/sha256:68bd9b9a1457430b24a6202dccc99e20800e27d2a7342dc5c6902c776c03ae61"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "automatic"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "video",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
