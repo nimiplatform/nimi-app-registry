@@ -116,6 +116,9 @@ only `{schema_version:1,candidate}`
 after validation succeeds. The Release must be final, immutable and not a
 prerelease. A different existing output is not overwritten. This can download
 large `.nimiapp` packages; reuse the successful result unless inputs change.
+Large transfers use bounded byte ranges, with limited retries for interrupted
+transport. Every range must match its declared position and size, and the
+complete package must still match the published SHA-256 before validation.
 
 Move the result into its canonical
 `submissions/<publisher>/<app_id>/<version>.json` path for the publisher PR.
