@@ -1,0 +1,142 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "io.github.nimiplatform.jev-search",
+    "display_name": "Jev Search",
+    "version": "0.1.1",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/jev-search",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "6ddbee32133009b21da4e67387d18769fb77755df0acb763e272c309ed845098"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.1",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/jev-search/rulesets/25118766",
+      "commit_sha": "b8373c095fe9c1ebf233d0ea8c8ff3bbe5a4724c",
+      "release_id": 413210000,
+      "release_url": "https://github.com/nimiplatform/jev-search/releases/tag/v0.1.1",
+      "release_notes_url": "https://github.com/nimiplatform/jev-search/releases/tag/v0.1.1",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 641759201,
+      "asset_name": "io.github.nimiplatform.jev-search-0.1.1.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/jev-search/releases/download/v0.1.1/io.github.nimiplatform.jev-search-0.1.1.candidate.json",
+      "size": 1112,
+      "sha256": "fc5edf7cdb76fc1c5bb61eae206ce45e06ada0a600da62f8489d7f9efc242ce0"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.decide"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/jev-search/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 641758171,
+        "asset_name": "io.github.nimiplatform.jev-search-0.1.1-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/jev-search/releases/download/v0.1.1/io.github.nimiplatform.jev-search-0.1.1-windows-x86_64.nimiapp",
+        "size": 609442177,
+        "sha256": "a847fa1e59dd0e18ed09692713b1b8858def098b74f023a75e7b9c34189df652",
+        "app_info": {
+          "asset_id": 641759160,
+          "asset_name": "io.github.nimiplatform.jev-search-0.1.1-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/jev-search/releases/download/v0.1.1/io.github.nimiplatform.jev-search-0.1.1-windows-x86_64.app-info.json",
+          "size": 71734,
+          "sha256": "bc29962ac9cc8feeb541b50611bea1c58674db47d05cd016ede06df73379a69a"
+        },
+        "runtime_entry": "payload/jev-search-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/jev-search/attestations/sha256:a847fa1e59dd0e18ed09692713b1b8858def098b74f023a75e7b9c34189df652"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "present",
+        "outputs": [
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "present",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "required",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
