@@ -1,0 +1,223 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.open-notebook@1.14.7",
+  "publisher_submission": {
+    "pull_number": 97,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.open-notebook/1.14.7.json",
+    "head_sha": "cadbf222fd178c8a435cf4eb3d51c6fe93a1a649"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-version-update",
+      "decided_at": "2026-10-14T03:58:33.887Z"
+    }
+  },
+  "candidate": {
+    "app_id": "io.github.nimiplatform.open-notebook",
+    "display_name": "Open Notebook",
+    "version": "1.14.7",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/open-notebook",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "5262176eef0dc9e46c8825249000585f115b7ef5fab500bf1f530717bf2ce0b9"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.14.7",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/open-notebook/rulesets/24907486",
+      "commit_sha": "2552ca15efc85e048d7c37548580da04847d6fd8",
+      "release_id": 411573275,
+      "release_url": "https://github.com/nimiplatform/open-notebook/releases/tag/v1.14.7",
+      "release_notes_url": "https://github.com/nimiplatform/open-notebook/releases/tag/v1.14.7",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 636742710,
+      "asset_name": "io.github.nimiplatform.open-notebook-1.14.7.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/open-notebook/releases/download/v1.14.7/io.github.nimiplatform.open-notebook-1.14.7.candidate.json",
+      "size": 2148,
+      "sha256": "8935d2a8b7896e806bc6b06010f2f6b231861d8ce686e80720b4bd0f91727570"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed",
+      "audio.transcribe",
+      "audio.synthesize"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "10 MB–20 GB according to imported sources and generated audio",
+          "path_pattern": "~/Library/Application Support/Open Notebook — Nimi/",
+          "purpose": "Account-scoped notebook databases, source uploads, chat checkpoints and podcast media on macOS"
+        },
+        {
+          "expected_size_band": "10 MB–20 GB according to imported sources and generated audio",
+          "path_pattern": "%APPDATA%/Open Notebook — Nimi/",
+          "purpose": "Account-scoped notebook databases, source uploads, chat checkpoints and podcast media on Windows"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "research",
+        "podcasts",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/open-notebook/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 636739473,
+        "asset_name": "io.github.nimiplatform.open-notebook-1.14.7-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/open-notebook/releases/download/v1.14.7/io.github.nimiplatform.open-notebook-1.14.7-macos-aarch64.nimiapp",
+        "size": 1321662309,
+        "sha256": "6d3f22059b22735e060e04f1a6c311581a37caa3e1a3c6bf6205ec67c404bffa",
+        "app_info": {
+          "asset_id": 636742627,
+          "asset_name": "io.github.nimiplatform.open-notebook-1.14.7-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/open-notebook/releases/download/v1.14.7/io.github.nimiplatform.open-notebook-1.14.7-macos-aarch64.app-info.json",
+          "size": 38993,
+          "sha256": "930503c4f04e8165ac0a6c0c9d86d2d1c678aa4c398da9012a6597647bb564c9"
+        },
+        "runtime_entry": "payload/open-notebook-shell.app/Contents/MacOS/open-notebook-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/open-notebook/attestations/sha256:6d3f22059b22735e060e04f1a6c311581a37caa3e1a3c6bf6205ec67c404bffa"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 636741196,
+        "asset_name": "io.github.nimiplatform.open-notebook-1.14.7-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/open-notebook/releases/download/v1.14.7/io.github.nimiplatform.open-notebook-1.14.7-windows-x86_64.nimiapp",
+        "size": 1430936566,
+        "sha256": "9e300515f313d399667a73c4637d5326eb186fdf0f254b382eb76106c2fdc00d",
+        "app_info": {
+          "asset_id": 636742678,
+          "asset_name": "io.github.nimiplatform.open-notebook-1.14.7-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/open-notebook/releases/download/v1.14.7/io.github.nimiplatform.open-notebook-1.14.7-windows-x86_64.app-info.json",
+          "size": 39116,
+          "sha256": "feb2e7a36517eaf13889e0eb77f2acd866863641ad70f86c6110c35d3c99dce1"
+        },
+        "runtime_entry": "payload/open-notebook-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/open-notebook/attestations/sha256:9e300515f313d399667a73c4637d5326eb186fdf0f254b382eb76106c2fdc00d"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
