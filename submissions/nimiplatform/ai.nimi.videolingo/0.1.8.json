@@ -1,0 +1,163 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "ai.nimi.videolingo",
+    "display_name": "VideoLingo",
+    "version": "0.1.8",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/VideoLingo",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.8",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/VideoLingo/rulesets/25119761",
+      "commit_sha": "e87c2a27f78823e85a355089fb577b47689afefd",
+      "release_id": 413253198,
+      "release_url": "https://github.com/nimiplatform/VideoLingo/releases/tag/v0.1.8",
+      "release_notes_url": "https://github.com/nimiplatform/VideoLingo/releases/tag/v0.1.8",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 641934336,
+      "asset_name": "ai.nimi.videolingo-0.1.8.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/VideoLingo/releases/download/v0.1.8/ai.nimi.videolingo-0.1.8.candidate.json",
+      "size": 1054,
+      "sha256": "818bbf76346b1a60d0cb520a0d0318ccced9f33a9eb82f4ce283d315fad7f3cb"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "audio.transcribe",
+      "audio.separate",
+      "text.generate",
+      "text.annotate",
+      "audio.synthesize",
+      "voice.create"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/VideoLingo/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 641933063,
+        "asset_name": "ai.nimi.videolingo-0.1.8-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/VideoLingo/releases/download/v0.1.8/ai.nimi.videolingo-0.1.8-windows-x86_64.nimiapp",
+        "size": 1085712851,
+        "sha256": "7090aea97978c0a2612b0d7b3e971fd5d0934660198aef5ecfb2f0eff0418261",
+        "app_info": {
+          "asset_id": 641934275,
+          "asset_name": "ai.nimi.videolingo-0.1.8-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/VideoLingo/releases/download/v0.1.8/ai.nimi.videolingo-0.1.8-windows-x86_64.app-info.json",
+          "size": 157566,
+          "sha256": "e7b82cec6d3cc5daa43b5d59b4ef78cfda79df14d952fa3abc4cf8eaef175240"
+        },
+        "runtime_entry": "payload/videolingo-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/VideoLingo/attestations/sha256:7090aea97978c0a2612b0d7b3e971fd5d0934660198aef5ecfb2f0eff0418261"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "video",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [
+          "realistic-voice-replication"
+        ],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
