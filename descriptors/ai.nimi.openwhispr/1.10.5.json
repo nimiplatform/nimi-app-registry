@@ -1,0 +1,192 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "ai.nimi.openwhispr@1.10.5",
+  "publisher_submission": {
+    "pull_number": 105,
+    "path": "submissions/nimiplatform/ai.nimi.openwhispr/1.10.5.json",
+    "head_sha": "6a1fbbe69b62f79c132088381c0713e49db1d488"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-admission-with-recorded-limits",
+      "decided_at": "2026-10-14T15:28:31.191Z"
+    }
+  },
+  "candidate": {
+    "app_id": "ai.nimi.openwhispr",
+    "display_name": "OpenWhispr",
+    "version": "1.10.5",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/openwhispr",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "ecf1a12d3dc51085d2f3a720dc177c7da3cd075ea3fadcc6a1b719fb44ed30e0"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v1.10.5",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/openwhispr/rulesets/25058144",
+      "commit_sha": "6a43e0e6f9cd430d208284f2d67428af339e8592",
+      "release_id": 412526182,
+      "release_url": "https://github.com/nimiplatform/openwhispr/releases/tag/v1.10.5",
+      "release_notes_url": "https://github.com/nimiplatform/openwhispr/releases/tag/v1.10.5",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 639847548,
+      "asset_name": "ai.nimi.openwhispr-1.10.5.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/openwhispr/releases/download/v1.10.5/ai.nimi.openwhispr-1.10.5.candidate.json",
+      "size": 1051,
+      "sha256": "69c833676ae9f80b58a294c561691701596304e43f9b49cd6a3bf1d453b184b2"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "audio.transcribe",
+      "text.generate",
+      "text.embed",
+      "audio.speaker.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Megabytes for notes/settings; gigabytes depending on retained audio",
+          "path_pattern": "%USERPROFILE%/.openwhispr-nimi/**",
+          "purpose": "OpenWhispr notes, recordings, history, settings and optional business service credentials"
+        },
+        {
+          "expected_size_band": "Megabytes for notes/settings; gigabytes depending on retained audio",
+          "path_pattern": "~/Library/Application Support/OpenWhispr-Nimi/**",
+          "purpose": "macOS App-owned notes, recordings, history and settings"
+        },
+        {
+          "expected_size_band": "Megabytes for notes/settings; gigabytes depending on retained audio",
+          "path_pattern": "~/.config/OpenWhispr-Nimi/**",
+          "purpose": "Linux App-owned notes, recordings, history and settings"
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/openwhispr/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 639843997,
+        "asset_name": "ai.nimi.openwhispr-1.10.5-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/openwhispr/releases/download/v1.10.5/ai.nimi.openwhispr-1.10.5-windows-x86_64.nimiapp",
+        "size": 800049462,
+        "sha256": "8a199f85899e5a5197a24bc3aeb72c9eec030be0e64b84e93ef5670eed9bf319",
+        "app_info": {
+          "asset_id": 639847493,
+          "asset_name": "ai.nimi.openwhispr-1.10.5-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/openwhispr/releases/download/v1.10.5/ai.nimi.openwhispr-1.10.5-windows-x86_64.app-info.json",
+          "size": 126581,
+          "sha256": "e5c5b11d4bfcd44530817fda34acdaee39b515a1605529aa5607fae23854d31e"
+        },
+        "runtime_entry": "payload/OpenWhispr.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/openwhispr/attestations/sha256:8a199f85899e5a5197a24bc3aeb72c9eec030be0e64b84e93ef5670eed9bf319"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "user-confirmed"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [
+          "subscription"
+        ],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [
+          "contacts",
+          "biometric"
+        ],
+        "telemetry": [
+          "usage-analytics"
+        ],
+        "third_party_account": "optional",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [
+        "biometric-identification"
+      ],
+      "intended_audience": "general"
+    }
+  }
+}
