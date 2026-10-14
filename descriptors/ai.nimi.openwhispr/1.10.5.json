@@ -1,5 +1,27 @@
 {
   "schema_version": 1,
+  "descriptor_id": "ai.nimi.openwhispr@1.10.5",
+  "publisher_submission": {
+    "pull_number": 105,
+    "path": "submissions/nimiplatform/ai.nimi.openwhispr/1.10.5.json",
+    "head_sha": "6a1fbbe69b62f79c132088381c0713e49db1d488"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-admission-with-recorded-limits",
+      "decided_at": "2026-10-14T15:28:31.191Z"
+    }
+  },
   "candidate": {
     "app_id": "ai.nimi.openwhispr",
     "display_name": "OpenWhispr",
