@@ -212,8 +212,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "org.nimiplatform.sillytavern@1.19.5",
-          "path": "descriptors/org.nimiplatform.sillytavern/1.19.5.json"
+          "descriptor_id": "org.nimiplatform.sillytavern@1.19.7",
+          "path": "descriptors/org.nimiplatform.sillytavern/1.19.7.json"
+        },
+        "windows-x86_64": {
+          "descriptor_id": "org.nimiplatform.sillytavern@1.19.7",
+          "path": "descriptors/org.nimiplatform.sillytavern/1.19.7.json"
         }
       }
     },
