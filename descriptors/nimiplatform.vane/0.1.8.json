@@ -1,0 +1,213 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "nimiplatform.vane@0.1.8",
+  "publisher_submission": {
+    "pull_number": 102,
+    "path": "submissions/nimiplatform/nimiplatform.vane/0.1.8.json",
+    "head_sha": "cd682b3a508a0053760b605460d271980669dba5"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-version-update",
+      "decided_at": "2026-10-14T04:08:06.192Z"
+    }
+  },
+  "candidate": {
+    "app_id": "nimiplatform.vane",
+    "display_name": "Vane",
+    "version": "0.1.8",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/Vane",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "d76e1037fdcc8ab04db9e8ffcfe6104effc513cd7530401f8f45e98941822ba6"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.8",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/Vane/rulesets/23202803",
+      "commit_sha": "0b38230f2758ec83136fd7cb3f2cf8565a4b1021",
+      "release_id": 412095841,
+      "release_url": "https://github.com/nimiplatform/Vane/releases/tag/v0.1.8",
+      "release_notes_url": "https://github.com/nimiplatform/Vane/releases/tag/v0.1.8",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 638214635,
+      "asset_name": "nimiplatform.vane-0.1.8.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.8/nimiplatform.vane-0.1.8.candidate.json",
+      "size": 1979,
+      "sha256": "7ba154161f0697db8629f7f601dd6498eb79611181670c4965a8c381dbc081e7"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "search",
+        "documents",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/Vane/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 638212686,
+        "asset_name": "nimiplatform.vane-0.1.8-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.8/nimiplatform.vane-0.1.8-macos-aarch64.nimiapp",
+        "size": 824215738,
+        "sha256": "8ab11709b097d85053ae3d2a9ba9d2a373f8752d9b75e852dcb596eaabfdc680",
+        "app_info": {
+          "asset_id": 638214564,
+          "asset_name": "nimiplatform.vane-0.1.8-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.8/nimiplatform.vane-0.1.8-macos-aarch64.app-info.json",
+          "size": 62889,
+          "sha256": "4d10be0296b003b7838fa05da529639525aebc606bde1bc919d8fc6d5e84cbef"
+        },
+        "runtime_entry": "payload/vane-shell.app/Contents/MacOS/vane-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/Vane/attestations/sha256:8ab11709b097d85053ae3d2a9ba9d2a373f8752d9b75e852dcb596eaabfdc680"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 638213453,
+        "asset_name": "nimiplatform.vane-0.1.8-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.8/nimiplatform.vane-0.1.8-windows-x86_64.nimiapp",
+        "size": 909174165,
+        "sha256": "0cc2974106ed923ebdace9f29786ccd778cd02a46f6b71e260173436f796f8ac",
+        "app_info": {
+          "asset_id": 638214597,
+          "asset_name": "nimiplatform.vane-0.1.8-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/Vane/releases/download/v0.1.8/nimiplatform.vane-0.1.8-windows-x86_64.app-info.json",
+          "size": 63286,
+          "sha256": "3040c080663b91362e5ae40814d10868b14f682a4fa2456a04c20ddcba6a5d16"
+        },
+        "runtime_entry": "payload/vane-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/Vane/attestations/sha256:0cc2974106ed923ebdace9f29786ccd778cd02a46f6b71e260173436f796f8ac"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [
+          "precise-location"
+        ],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
