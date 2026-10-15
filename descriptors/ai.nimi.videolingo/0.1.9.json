@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "ai.nimi.videolingo@0.1.9",
+  "publisher_submission": {
+    "pull_number": 111,
+    "path": "submissions/nimiplatform/ai.nimi.videolingo/0.1.9.json",
+    "head_sha": "5eb4214f3a705ea5313bec18be0081a752587af6"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-admission-with-recorded-limits",
+      "decided_at": "2026-10-15T09:54:05.794467Z"
+    }
+  },
+  "candidate": {
+    "app_id": "ai.nimi.videolingo",
+    "display_name": "VideoLingo",
+    "version": "0.1.9",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/VideoLingo",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "c71d239df91726fc519c6eb72d318ec65820627232b2f796219e87dcf35d0ab4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.9",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/VideoLingo/rulesets/25119761",
+      "commit_sha": "e54f849d161ed6b647498d0151b23516c8169c41",
+      "release_id": 413642404,
+      "release_url": "https://github.com/nimiplatform/VideoLingo/releases/tag/v0.1.9",
+      "release_notes_url": "https://github.com/nimiplatform/VideoLingo/releases/tag/v0.1.9",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 643404888,
+      "asset_name": "ai.nimi.videolingo-0.1.9.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/VideoLingo/releases/download/v0.1.9/ai.nimi.videolingo-0.1.9.candidate.json",
+      "size": 1054,
+      "sha256": "8da94ca3b532aae2cb695e84bbb480a67176e2a887ea90590a342f0c196c686b"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "audio.transcribe",
+      "audio.separate",
+      "text.generate",
+      "text.annotate",
+      "audio.synthesize",
+      "voice.create"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/VideoLingo/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 643402921,
+        "asset_name": "ai.nimi.videolingo-0.1.9-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/VideoLingo/releases/download/v0.1.9/ai.nimi.videolingo-0.1.9-windows-x86_64.nimiapp",
+        "size": 1085730043,
+        "sha256": "448ea61f3c54571c2994598e8d977ff81a458f858675de549c3a60bc2981be58",
+        "app_info": {
+          "asset_id": 643404850,
+          "asset_name": "ai.nimi.videolingo-0.1.9-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/VideoLingo/releases/download/v0.1.9/ai.nimi.videolingo-0.1.9-windows-x86_64.app-info.json",
+          "size": 174694,
+          "sha256": "a92357556f23d2bfca6f2352593626d3116554f01f359c9e08b50c3a17104c44"
+        },
+        "runtime_entry": "payload/videolingo-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/VideoLingo/attestations/sha256:448ea61f3c54571c2994598e8d977ff81a458f858675de549c3a60bc2981be58"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "video",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [
+          "realistic-voice-replication"
+        ],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
