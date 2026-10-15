@@ -1,0 +1,164 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.jev-search@0.1.2",
+  "publisher_submission": {
+    "pull_number": 108,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.jev-search/0.1.2.json",
+    "head_sha": "d4a28bc48643adbb0c91e0459e95886368f4e635"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-admission-with-recorded-limits",
+      "decided_at": "2026-10-15T02:04:45.533Z"
+    }
+  },
+  "candidate": {
+    "app_id": "io.github.nimiplatform.jev-search",
+    "display_name": "Jev Search",
+    "version": "0.1.2",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/jev-search",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "6ddbee32133009b21da4e67387d18769fb77755df0acb763e272c309ed845098"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.2",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/jev-search/rulesets/25118766",
+      "commit_sha": "a9082899c3bcb1f2850f99df3e203801ffb9567f",
+      "release_id": 413223589,
+      "release_url": "https://github.com/nimiplatform/jev-search/releases/tag/v0.1.2",
+      "release_notes_url": "https://github.com/nimiplatform/jev-search/releases/tag/v0.1.2",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 641811210,
+      "asset_name": "io.github.nimiplatform.jev-search-0.1.2.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/jev-search/releases/download/v0.1.2/io.github.nimiplatform.jev-search-0.1.2.candidate.json",
+      "size": 1112,
+      "sha256": "1fdc13d24e8f42bdc88753bc96c18d90c66ba0f9c8e66772b2479f4bf71637d7"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.decide"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/jev-search/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 641810314,
+        "asset_name": "io.github.nimiplatform.jev-search-0.1.2-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/jev-search/releases/download/v0.1.2/io.github.nimiplatform.jev-search-0.1.2-windows-x86_64.nimiapp",
+        "size": 609443633,
+        "sha256": "2206be4c5b0c903ebd7d2f5fe0894e0e9792b507c4a20689c036fec2b94e4aa8",
+        "app_info": {
+          "asset_id": 641811172,
+          "asset_name": "io.github.nimiplatform.jev-search-0.1.2-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/jev-search/releases/download/v0.1.2/io.github.nimiplatform.jev-search-0.1.2-windows-x86_64.app-info.json",
+          "size": 73189,
+          "sha256": "b8dd9d4fe2db6b0f8ae2b6db46b41086da5312497d047e2a32ad50716613e4da"
+        },
+        "runtime_entry": "payload/jev-search-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/jev-search/attestations/sha256:2206be4c5b0c903ebd7d2f5fe0894e0e9792b507c4a20689c036fec2b94e4aa8"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "present",
+        "outputs": [
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "present",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "required",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
