@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.jev-ultrafast@0.1.3",
+  "publisher_submission": {
+    "pull_number": 110,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.jev-ultrafast/0.1.3.json",
+    "head_sha": "2a435209f967e14184d388f0ebed1437bb222e75"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "user-authorized-admission-with-recorded-limits",
+      "decided_at": "2026-10-15T02:07:15.212Z"
+    }
+  },
+  "candidate": {
+    "app_id": "io.github.nimiplatform.jev-ultrafast",
+    "display_name": "Jev Ultrafast",
+    "version": "0.1.3",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/jev-ultrafast",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "5afa3d97bf1e6f998d587fa101e3fe0d0c416840b7fe77bcd6ae97690a334631"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.3",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/jev-ultrafast/rulesets/25123413",
+      "commit_sha": "23353f058d223694ba392096ef42b00bc55d820a",
+      "release_id": 413257565,
+      "release_url": "https://github.com/nimiplatform/jev-ultrafast/releases/tag/v0.1.3",
+      "release_notes_url": "https://github.com/nimiplatform/jev-ultrafast/releases/tag/v0.1.3",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 641952932,
+      "asset_name": "io.github.nimiplatform.jev-ultrafast-0.1.3.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/jev-ultrafast/releases/download/v0.1.3/io.github.nimiplatform.jev-ultrafast-0.1.3.candidate.json",
+      "size": 1127,
+      "sha256": "52c739c36127defe4410580f75a24204487c5d30767afb07b855c2a90542cfaa"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.decide",
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/jev-ultrafast/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 641951959,
+        "asset_name": "io.github.nimiplatform.jev-ultrafast-0.1.3-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/jev-ultrafast/releases/download/v0.1.3/io.github.nimiplatform.jev-ultrafast-0.1.3-windows-x86_64.nimiapp",
+        "size": 597258740,
+        "sha256": "da801c099f574554983c532f659aa2fd1f87bbae6969f93b11b996cdffd132d6",
+        "app_info": {
+          "asset_id": 641952877,
+          "asset_name": "io.github.nimiplatform.jev-ultrafast-0.1.3-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/jev-ultrafast/releases/download/v0.1.3/io.github.nimiplatform.jev-ultrafast-0.1.3-windows-x86_64.app-info.json",
+          "size": 66151,
+          "sha256": "725d2890671b68271fd3422f196ad9511828b9bb0eeda5e0b6d02d7b48e70fce"
+        },
+        "runtime_entry": "payload/jev-ultrafast-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/jev-ultrafast/attestations/sha256:da801c099f574554983c532f659aa2fd1f87bbae6969f93b11b996cdffd132d6"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "automatic"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [
+        "unmoderated-shared-content"
+      ],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
