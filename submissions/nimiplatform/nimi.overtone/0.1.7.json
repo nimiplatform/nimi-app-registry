@@ -1,0 +1,185 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.overtone",
+    "display_name": "Nimi Overtone",
+    "version": "0.1.7",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-overtone",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "1f1651cd5b5444ed57f4dcff243581cbb44626191da122994497afe67e53ceac"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.7",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-overtone/rulesets/22613687",
+      "commit_sha": "cb9debb2fa56cad3af8a78663fa02bec62de831a",
+      "release_id": 392355125,
+      "release_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/tag/v0.1.7",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/tag/v0.1.7",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 576393289,
+      "asset_name": "nimi.overtone-0.1.7.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.7/nimi.overtone-0.1.7.candidate.json",
+      "size": 1989,
+      "sha256": "49c8b93cb085f4e94751d622febec91134a9e19607e8f41884e2a10ff3020779"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-overtone/blob/cb9debb2fa56cad3af8a78663fa02bec62de831a/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "music.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Typically KiB to a few MiB of JSON, subject to browser storage quota.",
+          "path_pattern": "<Electron userData>/Local Storage/**",
+          "purpose": "Recoverable project drafts (brief, lyrics and take references), language, theme and volume preferences. Audio bytes are not stored here; take references point to Runtime artifacts. This storage is retained when the app is uninstalled from Nimi."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-overtone/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 576392006,
+        "asset_name": "nimi.overtone-0.1.7-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.7/nimi.overtone-0.1.7-macos-aarch64.nimiapp",
+        "size": 532539470,
+        "sha256": "20b4b331eb7b7c4279bc295c9a5cfe9be3cf9099a1017447b6f3141f8c77a344",
+        "app_info": {
+          "asset_id": 576393174,
+          "asset_name": "nimi.overtone-0.1.7-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.7/nimi.overtone-0.1.7-macos-aarch64.app-info.json",
+          "size": 313544,
+          "sha256": "0b7c2971066216e5c9069896e199cf19925a8f6fed54c6a55aafb8f8485f58df"
+        },
+        "runtime_entry": "payload/nimiapp-overtone-shell.app/Contents/MacOS/nimiapp-overtone-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-overtone/attestations/sha256:20b4b331eb7b7c4279bc295c9a5cfe9be3cf9099a1017447b6f3141f8c77a344"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 576392586,
+        "asset_name": "nimi.overtone-0.1.7-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.7/nimi.overtone-0.1.7-windows-x86_64.nimiapp",
+        "size": 560954967,
+        "sha256": "71b618a5c4452e0eeb7afdb8d35a0768a58a14f4711ee207e3948fe819501ed6",
+        "app_info": {
+          "asset_id": 576393235,
+          "asset_name": "nimi.overtone-0.1.7-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.7/nimi.overtone-0.1.7-windows-x86_64.app-info.json",
+          "size": 313545,
+          "sha256": "52f64cbe8b7a3c44a6ce9716be3bcb688916dc366558abc65c15e514b052d873"
+        },
+        "runtime_entry": "payload/nimiapp-overtone-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-overtone/attestations/sha256:71b618a5c4452e0eeb7afdb8d35a0768a58a14f4711ee207e3948fe819501ed6"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
