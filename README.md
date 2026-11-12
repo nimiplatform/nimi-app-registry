@@ -9,6 +9,44 @@ requests and required deterministic checks. Registry publication records
 admission only; Catalog discovery, installation, and execution belong to their
 separate Nimi Runtime and Desktop lifecycle owners.
 
+## Remote application sources
+
+`remote-clients.json` registers remote clients under the same Registry owner.
+The initial file is empty; schema support does not admit a website or establish
+remote Runtime availability. A Web client names its canonical App, publisher,
+exact HTTPS origin and same-origin callback, access declaration and capabilities.
+It does not pretend to be an immutable native package. Ordinary website content
+updates do not require release-byte proofs.
+
+A current maintainer explicitly reviews a change to this file in its own PR.
+The validator checks the actual review actor and the source revision. App and
+publisher identity cannot be reassigned; origin, callback, role, declaration or
+capability changes advance the revision. Pause/resume and display changes keep
+the source revision. Pause preserves the identity and user data. Git carries the
+review history; there is no additional approval ledger.
+
+As for native Apps, declarations may retain unknown domain names as raw input.
+Runtime alone activates its supported domains for the exact registered generation;
+an unknown name never grants a capability.
+
+The `official_manager` role is a maintainer-owned qualification. It never grants
+Runtime access by itself: current owner identity, a verified management session
+and the PC Home's once-per-application/source confirmation remain required.
+Browser or device changes do not add another permanent approval.
+
+Android entries use `kind: android-app-link` and add `android.package_name`
+and `android.certificate_sha256` (one uppercase, colon-separated SHA-256
+fingerprint). The HTTPS origin is the association host, not a browser CORS
+origin. Its exact same-origin callback must be declared by the signed App and
+verified through the host's Digital Asset Links. Maintainer review must check
+that real association; schema success or a publisher's native label is not
+proof. Package/signing identity changes advance the existing source revision;
+same-signature binary updates do not. The SDK/Kit native adapter checks the
+installed identity and OS-verified link, while PKCE, user identity, Home source
+confirmation and Runtime operation admission retain their existing owners.
+Other native carriers remain unavailable. These schema/code changes create no
+new approved source record by themselves.
+
 ## Ownership boundary
 
 - A publisher-owned branch may add exactly one file below
