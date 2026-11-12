@@ -1,4 +1,25 @@
 {
   "schema_version": 1,
-  "clients": {}
+  "clients": {
+    "nimiplatform.runtime-manager.web": {
+      "app_id": "nimiplatform.runtime-manager",
+      "display_name": "Nimi 官方远程管理",
+      "publisher": "nimiplatform",
+      "kind": "web",
+      "origin": "https://web.nimi.ai",
+      "redirect_uri": "https://web.nimi.ai/account/runtime",
+      "source_revision": 1,
+      "role": "official_manager",
+      "app_access": [],
+      "capability_contract_refs": [],
+      "status": "active",
+      "review": {
+        "decision": "approved",
+        "adjudicator_login": "snowzane",
+        "adjudicator_actor_id": 1681360,
+        "reason_code": "official-manager-production-source",
+        "decided_at": "2026-11-12T11:08:02Z"
+      }
+    }
+  }
 }
