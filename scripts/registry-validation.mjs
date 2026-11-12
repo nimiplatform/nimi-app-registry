@@ -8,6 +8,7 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import parseSpdxExpression from 'spdx-expression-parse';
 import { diffSafetyProfiles } from './safety-profile-validation.mjs';
+import { validateRemoteClientFacts, validateRemoteClientTransition } from './remote-client-validation.mjs';
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const submissionPathPattern = /^submissions\/([^/]+)\/([^/]+)\/([^/]+)\.json$/u;
@@ -79,13 +80,16 @@ async function loadValidators(schemaRoot = path.join(moduleRoot, 'schema')) {
   const submission = await readJsonFile(path.join(schemaRoot, 'submission.schema.json'));
   const descriptor = await readJsonFile(path.join(schemaRoot, 'approved-descriptor.schema.json'));
   const index = await readJsonFile(path.join(schemaRoot, 'index.schema.json'));
+  const remote = await readJsonFile(path.join(schemaRoot, 'remote-clients.schema.json'));
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   addFormats(ajv);
   ajv.addSchema(common);
+  ajv.addSchema(descriptor);
   return Object.freeze({
     submission: ajv.compile(submission),
-    descriptor: ajv.compile(descriptor),
+    descriptor: ajv.getSchema(descriptor.$id),
     index: ajv.compile(index),
+    remote: ajv.compile(remote),
   });
 }
 
@@ -314,6 +318,9 @@ export async function validateRegistryTree(root, options = {}) {
   const indexPath = path.join(resolvedRoot, 'index.json');
   const index = await readJsonFile(indexPath, 'index.json');
   validateWith(validators.index, index, 'index.json');
+  const remote = await readJsonFile(path.join(resolvedRoot, 'remote-clients.json'), 'remote-clients.json');
+  validateWith(validators.remote, remote, 'remote-clients.json');
+  validateRemoteClientFacts(remote);
 
   const submissionPaths = await listJsonFiles(resolvedRoot, 'submissions');
   if (!options.allowSubmissions && submissionPaths.length !== 0) fail('Registry main must not retain publisher submission files');
@@ -401,6 +408,16 @@ export async function validatePullRequestTransition(options) {
   const validators = await loadValidators(schemaRoot);
   const policy = await loadAdmissionPolicyAt(schemaRoot);
   const changes = gitChanges(gitRoot, baseSha, headSha);
+  if (changes.some(change => change.path === 'remote-clients.json')) {
+    exactChanges(changes, [{ status: 'M', path: 'remote-clients.json' }], 'remote source registration review');
+    const before = readJsonAt(gitRoot, baseSha, 'remote-clients.json', 'remote-clients.json');
+    const after = readJsonAt(gitRoot, headSha, 'remote-clients.json', 'remote-clients.json');
+    validateWith(validators.remote, after, 'remote-clients.json');
+    validateRemoteClientFacts(after);
+    const clients = validateRemoteClientTransition(before, after, context);
+    await validateRegistryTree(root, { schemaRoot, allowSubmissions: false });
+    return Object.freeze({ mode: 'remote-client-review', clients });
+  }
   const descriptorAdds = changes.filter((change) => change.status === 'A' && descriptorPathPattern.test(change.path));
   const touchesAdmission = changes.some((change) => change.path === 'index.json' || change.path.startsWith('descriptors/'));
 

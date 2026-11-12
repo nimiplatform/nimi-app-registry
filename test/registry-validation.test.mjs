@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -21,6 +21,9 @@ function writeJson(root, relativePath, value) {
   const absolute = path.join(root, ...relativePath.split('/'));
   mkdirSync(path.dirname(absolute), { recursive: true });
   writeFileSync(absolute, `${JSON.stringify(value, null, 2)}\n`);
+  if (relativePath === 'index.json' && !existsSync(path.join(root, 'remote-clients.json'))) {
+    writeJson(root, 'remote-clients.json', { schema_version: 1, clients: {} });
+  }
 }
 
 function git(root, ...args) {

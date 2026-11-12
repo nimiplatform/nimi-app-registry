@@ -81,6 +81,7 @@ function pullEventContext(event, baseSha, headSha) {
 // maintainer index edit with no descriptor or submission: it needs the actor's
 // maintainer permission but no publisher head, parent-commit or check-run facts.
 export function classifyChangedPaths(changedPaths) {
+  if (changedPaths.includes('remote-clients.json')) return 'remote-client-review';
   const touchesAdmission = changedPaths.some((entry) => entry === 'index.json' || entry.startsWith('descriptors/'));
   if (!touchesAdmission) return 'publisher-submission';
   if (changedPaths.length === 1 && changedPaths[0] === 'index.json') return 'maintainer-policy';
@@ -103,7 +104,7 @@ export async function pullRequestContext(options, deps = { githubJson, gitOutput
     token,
     'Registry collaborator permission',
   );
-  if (kind === 'maintainer-policy') return { ...context, finalizerPermission: permission.permission, candidateCheckPassed: false, token };
+  if (kind === 'maintainer-policy' || kind === 'remote-client-review') return { ...context, finalizerPermission: permission.permission, candidateCheckPassed: false, token };
   const parentLine = deps.gitOutput(options.gitRoot, ['rev-list', '--parents', '-n', '1', options.head]).split(/\s+/u);
   if (parentLine.length !== 2) throw new RegistryValidationError('finalization commit must have one parent');
   const checkRuns = await deps.githubJson(
@@ -148,7 +149,7 @@ async function main() {
     headSha: head,
     context,
   });
-  if (transition.mode === 'maintainer-policy') {
+  if (transition.mode === 'maintainer-policy' || transition.mode === 'remote-client-review') {
     // Policy-only changes carry no candidate; no publisher Release is read.
     process.stdout.write(`${JSON.stringify({ ok: true, mode: transition.mode, transition, external: null })}\n`);
     return;

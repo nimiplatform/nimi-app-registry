@@ -55,7 +55,15 @@ jobs:
             fi
             node --input-type=module -e 'import assert from "node:assert/strict"; import { readFileSync } from "node:fs"; assert.deepEqual(JSON.parse(readFileSync("candidate/index.json", "utf8")), { schema_version: 1, apps: {} });'
             echo 'registry_data=false' >> "$GITHUB_OUTPUT"
-          elif grep -Eq '^(submissions/|descriptors/|index\.json$)' <<<"$changed"; then
+          elif grep -Eq '^remote-clients\.json$' <<<"$changed" && ! git -C candidate cat-file -e "$BASE_SHA:remote-clients.json" 2>/dev/null; then
+            test "$HEAD_REPOSITORY" = "$GITHUB_REPOSITORY"
+            node --input-type=module -e 'import assert from "node:assert/strict"; import { readFileSync } from "node:fs"; assert.deepEqual(JSON.parse(readFileSync("candidate/remote-clients.json", "utf8")), { schema_version: 1, clients: {} });'
+            if grep -Eq '^(submissions/|descriptors/|index\.json$)' <<<"$changed"; then
+              echo 'Remote source foundation cannot introduce other admission data' >&2
+              exit 1
+            fi
+            echo 'registry_data=false' >> "$GITHUB_OUTPUT"
+          elif grep -Eq '^(submissions/|descriptors/|index\.json$|remote-clients\.json$)' <<<"$changed"; then
             echo 'registry_data=true' >> "$GITHUB_OUTPUT"
           else
             echo 'registry_data=false' >> "$GITHUB_OUTPUT"

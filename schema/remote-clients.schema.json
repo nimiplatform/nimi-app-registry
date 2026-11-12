@@ -1,0 +1,143 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://registry.nimi.ai/schema/remote-clients.schema.json",
+  "title": "Nimi remote application sources",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "clients"
+  ],
+  "properties": {
+    "schema_version": {
+      "const": 1
+    },
+    "clients": {
+      "type": "object",
+      "maxProperties": 10000,
+      "propertyNames": {
+        "$ref": "common.schema.json#/$defs/appId"
+      },
+      "additionalProperties": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "app_id",
+          "display_name",
+          "publisher",
+          "kind",
+          "origin",
+          "redirect_uri",
+          "source_revision",
+          "role",
+          "app_access",
+          "capability_contract_refs",
+          "status",
+          "review"
+        ],
+        "properties": {
+          "app_id": {
+            "$ref": "common.schema.json#/$defs/appId"
+          },
+          "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 120
+          },
+          "publisher": {
+            "$ref": "common.schema.json#/$defs/githubNamespace"
+          },
+          "kind": {
+            "enum": [
+              "web",
+              "android-app-link",
+              "android-dev-scheme"
+            ]
+          },
+          "origin": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "redirect_uri": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 2048
+          },
+          "source_revision": {
+            "type": "integer",
+            "minimum": 1,
+            "maximum": 2147483647
+          },
+          "role": {
+            "enum": [
+              "app",
+              "official_manager"
+            ]
+          },
+          "app_access": {
+            "$ref": "common.schema.json#/$defs/stringList"
+          },
+          "capability_contract_refs": {
+            "$ref": "common.schema.json#/$defs/stringList"
+          },
+          "status": {
+            "enum": [
+              "active",
+              "paused"
+            ]
+          },
+          "review": {
+            "$ref": "approved-descriptor.schema.json#/properties/admission/properties/review"
+          },
+          "android": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": [
+              "package_name",
+              "certificate_sha256"
+            ],
+            "properties": {
+              "package_name": {
+                "type": "string",
+                "maxLength": 255,
+                "pattern": "^[A-Za-z][A-Za-z0-9_]*(?:\\.[A-Za-z][A-Za-z0-9_]*)+$"
+              },
+              "certificate_sha256": {
+                "type": "string",
+                "pattern": "^(?:[0-9A-F]{2}:){31}[0-9A-F]{2}$"
+              }
+            }
+          }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": {
+                "kind": {
+                  "enum": [
+                    "android-app-link",
+                    "android-dev-scheme"
+                  ]
+                }
+              }
+            },
+            "then": {
+              "required": [
+                "android"
+              ],
+              "properties": {
+                "android": {}
+              }
+            },
+            "else": {
+              "properties": {
+                "android": false
+              }
+            }
+          }
+        ]
+      }
+    }
+  }
+}
