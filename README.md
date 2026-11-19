@@ -50,7 +50,7 @@ new approved source record by themselves.
   maintainer may add one final commit to that same PR, including when that
   maintainer authored the publisher submission. The commit deletes the
   submission, adds one immutable descriptor below
-  `descriptors/<app_id>/<version>.json`, and updates `index.json`.
+  `descriptors/<app_id>/<version>.json`, and updates `index.json`. For the first native admission of a new product, the maintainer also adds its product identity and verified repository ownership.
 - Automation validates facts and transitions. It never selects `approved` or
   authors a human decision.
 - Existing descriptors are append-only. A new App version requires a new
@@ -59,10 +59,10 @@ new approved source record by themselves.
   the target pointers its candidate carries (plus a new row initialized with an
   inactive kill switch at revision 0). Other rows and existing policy stay
   semantically identical; formatting or key order is not a change.
-- A base-owned maintainer policy pull request changes only `kill_switch` fields
-  of existing `index.json` rows: a current maintainer, valid field ranges, and a
-  revision incremented by one per changed row. It needs no candidate,
-  descriptor or publisher Release download. An active switch states a reason
+- A current maintainer changes a product's `kill_switch` in an independent
+  policy pull request and increments its revision by one. Run `pnpm run project:sources`
+  to include the affected Realm projections and any existing native index row in the same commit.
+  This also works for a Web-only product. An active switch states a reason
   naming the version, the misstated field and the actual difference, for
   example `v0.1.6 declares content_descriptors as empty; the App provides
   gambling content`; detailed grounds stay in the pull request. When the
