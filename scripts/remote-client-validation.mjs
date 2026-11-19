@@ -27,6 +27,11 @@ export function validateRemoteClientFacts(document, { localDevelopment = false }
   }
 }
 
+export function expectedSourceRevision(previous, next) {
+  if (!previous) return 1;
+  return previous.source_revision + Number(sourceFields.some(field => !isDeepStrictEqual(previous[field], next[field])));
+}
+
 // @nimi-authority: rule.nimi.platform.remote-clients.review-and-role
 export function validateRemoteClientTransition(before, after, context) {
   if (!['admin', 'maintain'].includes(context.finalizerPermission)) throw new Error('remote source change requires a current Registry maintainer');
@@ -40,8 +45,7 @@ export function validateRemoteClientTransition(before, after, context) {
     if (previous && (previous.app_id !== next.app_id || previous.publisher !== next.publisher)) {
       throw new Error(`${id}: client identity cannot be reassigned to another App or publisher`);
     }
-    const sourceChanged = previous && sourceFields.some(field => !isDeepStrictEqual(previous[field], next[field]));
-    const expected = previous ? previous.source_revision + (sourceChanged ? 1 : 0) : 1;
+    const expected = expectedSourceRevision(previous, next);
     if (next.source_revision !== expected) throw new Error(`${id}: source revision must be ${expected}`);
     if (next.review.adjudicator_login !== context.actorLogin || next.review.adjudicator_actor_id !== Number(context.actorId)) {
       throw new Error(`${id}: review must identify the actual maintainer actor`);

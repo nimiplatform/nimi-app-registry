@@ -8,7 +8,8 @@ import Ajv2020 from 'ajv/dist/2020.js';
 import addFormats from 'ajv-formats';
 import parseSpdxExpression from 'spdx-expression-parse';
 import { diffSafetyProfiles } from './safety-profile-validation.mjs';
-import { validateRemoteClientFacts, validateRemoteClientTransition } from './remote-client-validation.mjs';
+import { validateHostedTransition } from './hosted-review.mjs';
+import { readProducts, projectSources } from './hosted-products.mjs';
 
 const moduleRoot = path.resolve(path.dirname(fileURLToPath(import.meta.url)), '..');
 const submissionPathPattern = /^submissions\/([^/]+)\/([^/]+)\/([^/]+)\.json$/u;
@@ -75,12 +76,12 @@ async function listJsonFiles(root, relativeDir) {
   return found;
 }
 
-async function loadValidators(schemaRoot = path.join(moduleRoot, 'schema')) {
+export async function loadValidators(schemaRoot = path.join(moduleRoot, 'schema')) {
   const common = await readJsonFile(path.join(schemaRoot, 'common.schema.json'));
   const submission = await readJsonFile(path.join(schemaRoot, 'submission.schema.json'));
   const descriptor = await readJsonFile(path.join(schemaRoot, 'approved-descriptor.schema.json'));
   const index = await readJsonFile(path.join(schemaRoot, 'index.schema.json'));
-  const remote = await readJsonFile(path.join(schemaRoot, 'remote-clients.schema.json'));
+  const remote = await readJsonFile(path.join(schemaRoot, 'remote-source.schema.json'));
   const ajv = new Ajv2020({ allErrors: true, strict: true });
   addFormats(ajv);
   ajv.addSchema(common);
@@ -90,6 +91,8 @@ async function loadValidators(schemaRoot = path.join(moduleRoot, 'schema')) {
     descriptor: ajv.getSchema(descriptor.$id),
     index: ajv.compile(index),
     remote: ajv.compile(remote),
+    product: ajv.compile(await readJsonFile(path.join(schemaRoot, 'product.schema.json'))),
+    webRelease: ajv.compile(await readJsonFile(path.join(schemaRoot, 'web-release.schema.json'))),
   });
 }
 
@@ -318,9 +321,13 @@ export async function validateRegistryTree(root, options = {}) {
   const indexPath = path.join(resolvedRoot, 'index.json');
   const index = await readJsonFile(indexPath, 'index.json');
   validateWith(validators.index, index, 'index.json');
-  const remote = await readJsonFile(path.join(resolvedRoot, 'remote-clients.json'), 'remote-clients.json');
-  validateWith(validators.remote, remote, 'remote-clients.json');
-  validateRemoteClientFacts(remote);
+  const state = await readProducts(resolvedRoot, validators);
+  const frozenFile = path.join(resolvedRoot, 'remote-clients.json');
+  if (existsSync(frozenFile)) {
+    const frozen = await readJsonFile(frozenFile);
+    if (!state.products.size || !sameSemanticValue(frozen.clients, Object.fromEntries([...state.clients].map(([id,x])=>[id,x.source])))) fail('Legacy source table must be migrated without changing reviewed identities');
+  }
+  await projectSources(resolvedRoot, state.projections);
 
   const submissionPaths = await listJsonFiles(resolvedRoot, 'submissions');
   if (!options.allowSubmissions && submissionPaths.length !== 0) fail('Registry main must not retain publisher submission files');
@@ -342,10 +349,13 @@ export async function validateRegistryTree(root, options = {}) {
   }
 
   for (const [appId, row] of Object.entries(index.apps)) {
+    const owner = state.products.get(appId)?.product;
+    if (!owner || !sameSemanticValue(owner.kill_switch, row.kill_switch)) fail('Native index requires matching product policy: ' + appId);
     for (const [targetId, pointer] of Object.entries(row.latest_admitted_release_by_target)) {
       const resolved = descriptors.get(pointer.descriptor_id);
       if (!resolved) fail(`index pointer ${appId}/${targetId} references a missing descriptor_id`);
       if (resolved.descriptorPath !== pointer.path) fail(`index pointer ${appId}/${targetId} path disagrees with descriptor_id`);
+      if (resolved.descriptor.candidate.publisher.github_namespace.toLowerCase() !== owner.publisher.toLowerCase() || resolved.descriptor.candidate.source.repository !== owner.repository) fail('Native descriptor publisher differs from its product');
       if (resolved.descriptor.candidate.app_id !== appId) fail(`index pointer ${appId}/${targetId} crosses App identity`);
       if (resolved.descriptor.candidate.display_name !== row.display_name) fail(`index display_name for ${appId} disagrees with its descriptor`);
       if (!resolved.descriptor.candidate.targets.some((target) => target.target_id === targetId)) {
@@ -408,15 +418,41 @@ export async function validatePullRequestTransition(options) {
   const validators = await loadValidators(schemaRoot);
   const policy = await loadAdmissionPolicyAt(schemaRoot);
   const changes = gitChanges(gitRoot, baseSha, headSha);
-  if (changes.some(change => change.path === 'remote-clients.json')) {
-    exactChanges(changes, [{ status: 'M', path: 'remote-clients.json' }], 'remote source registration review');
-    const before = readJsonAt(gitRoot, baseSha, 'remote-clients.json', 'remote-clients.json');
-    const after = readJsonAt(gitRoot, headSha, 'remote-clients.json', 'remote-clients.json');
-    validateWith(validators.remote, after, 'remote-clients.json');
-    validateRemoteClientFacts(after);
-    const clients = validateRemoteClientTransition(before, after, context);
-    await validateRegistryTree(root, { schemaRoot, allowSubmissions: false });
-    return Object.freeze({ mode: 'remote-client-review', clients });
+  const frozenBase = gitOutput(gitRoot, ['ls-tree', '--name-only', baseSha, '--', 'remote-clients.json']) === 'remote-clients.json';
+  const migratedBase = gitOutput(gitRoot, ['ls-tree', '-d', '--name-only', baseSha, '--', 'products']) === 'products';
+  if (frozenBase && !migratedBase && changes.some(c=>c.path.startsWith('products/'))) {
+    if (!maintainerPermissions.has(context.finalizerPermission) || !changes.every(c=>c.status === 'A' &&
+      (/^products\/[^/]+\/(product\.json|sources\/[^/]+\.json)$/.test(c.path) || c.path.startsWith('projections/realm/')))) fail('A migration can add only existing reviewed facts');
+    const state = await readProducts(root, validators);
+    await validateRegistryTree(root, { schemaRoot });
+    return { mode: 'hosted-review', owners: [...state.products.values()].map(x=>x.product), releases: [] };
+  }
+  if (changes.some(c => c.path === 'remote-clients.json')) {
+    if (!frozenBase || !migratedBase || !maintainerPermissions.has(context.finalizerPermission)) fail('Only a maintainer can retire the frozen legacy table');
+    exactChanges(changes, [{status:'D',path:'remote-clients.json'}], 'retire frozen source table');
+    await validateRegistryTree(root, { schemaRoot });
+    return { mode:'hosted-review',owners:[],releases:[] };
+  }
+  if (frozenBase && migratedBase) fail('Finish the one-time source cutover before changing Registry data');
+  const nativeData = changes.some(c => c.path.startsWith('descriptors/') || c.path.startsWith('submissions/'));
+  if (!nativeData && changes.some(c => c.path.startsWith('products/') || c.path.startsWith('projections/'))) {
+    const state = await readProducts(root, validators);
+    await projectSources(root, state.projections);
+    const result = validateHostedTransition(changes, state, context,
+      name => readJsonAt(gitRoot, baseSha, name, name), name => readJsonAt(gitRoot, headSha, name, name));
+    if (changes.some(c => c.path === 'index.json')) {
+      await validateRegistryTree(root, { schemaRoot });
+      const prior = readJsonAt(gitRoot, baseSha, 'index.json', 'index.json');
+      const next = readJsonAt(gitRoot, headSha, 'index.json', 'index.json');
+      return { mode: 'maintainer-policy', killSwitchChanges: validateMaintainerPolicyChange(prior, next) };
+    }
+    if (changes.some(c => /^products\/[^/]+\/product\.json$/.test(c.path))) {
+      const index = readJsonAt(gitRoot, headSha, 'index.json', 'index.json');
+      for (const [id, row] of Object.entries(index.apps)) {
+        if (!sameSemanticValue(row.kill_switch, state.products.get(id)?.product.kill_switch)) fail('Native product policy projection missing: ' + id);
+      }
+    }
+    return result;
   }
   const descriptorAdds = changes.filter((change) => change.status === 'A' && descriptorPathPattern.test(change.path));
   const touchesAdmission = changes.some((change) => change.path === 'index.json' || change.path.startsWith('descriptors/'));
@@ -450,9 +486,13 @@ export async function validatePullRequestTransition(options) {
 
   if (descriptorAdds.length !== 1) fail('maintainer finalization must add exactly one approved descriptor');
   const descriptorPath = descriptorAdds[0].path;
+  const appId = descriptorPathPattern.exec(descriptorPath)[1];
+  const productPath = 'products/' + appId + '/product.json';
+  const productAddition = changes.filter(c => c.path === productPath && c.status === 'A');
   exactChanges(changes, [
     { status: 'A', path: descriptorPath },
     { status: 'M', path: 'index.json' },
+    ...productAddition,
   ], 'final pull-request projection');
 
   const parentLine = gitOutput(gitRoot, ['rev-list', '--parents', '-n', '1', headSha]).split(/\s+/u);
@@ -474,6 +514,7 @@ export async function validatePullRequestTransition(options) {
     { status: 'D', path: submissionPath },
     { status: 'A', path: descriptorPath },
     { status: 'M', path: 'index.json' },
+    ...productAddition,
   ], 'maintainer finalization commit');
 
   const submission = readJsonAt(gitRoot, publisherHeadSha, submissionPath, submissionPath);
@@ -501,5 +542,7 @@ export async function validatePullRequestTransition(options) {
   if (context.candidateCheckPassed !== true) fail('checked publisher head does not have a successful base-owned validate-registry result');
 
   await validateRegistryTree(root, { schemaRoot: options.schemaRoot, allowSubmissions: false });
-  return Object.freeze({ mode: 'maintainer-finalization', descriptorPath, submissionPath, publisherHeadSha, declaration: declarationReview(gitRoot, baseSha, descriptor.candidate) });
+  return Object.freeze({ mode: 'maintainer-finalization', descriptorPath, submissionPath, publisherHeadSha,
+    ...(productAddition.length ? { newProduct: readJsonAt(gitRoot, headSha, productPath, productPath) } : {}),
+    declaration: declarationReview(gitRoot, baseSha, descriptor.candidate) });
 }

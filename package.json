@@ -9,7 +9,8 @@
   },
   "scripts": {
     "check": "node scripts/validate-registry.mjs --all",
-    "test": "node --test test/*.test.mjs"
+    "test": "node --test test/*.test.mjs",
+    "project:sources": "node scripts/project-sources.mjs --write"
   },
   "dependencies": {
     "ajv": "8.20.0",

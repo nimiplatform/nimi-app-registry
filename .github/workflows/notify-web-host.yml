@@ -1,0 +1,16 @@
+name: Notify Nimi Web hosting
+on:
+  push:
+    branches: [main]
+    paths: ['products/**','projections/**','index.json']
+permissions: {}
+jobs:
+  notify:
+    if: vars.HOSTED_WEB_ENABLED == 'true'
+    runs-on: ubuntu-latest
+    environment: hosted-web-notify
+    steps:
+      - name: Wake the platform publisher
+        env:
+          GH_TOKEN: ${{ secrets.HOSTED_WEB_DISPATCH_TOKEN }}
+        run: gh workflow run publish-hosted-web.yml --repo nimiplatform/nimi --ref main

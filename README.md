@@ -11,19 +11,13 @@ separate Nimi Runtime and Desktop lifecycle owners.
 
 ## Remote application sources
 
-`remote-clients.json` registers remote clients under the same Registry owner.
-The initial file is empty; schema support does not admit a website or establish
-remote Runtime availability. A Web client names its canonical App, publisher,
-exact HTTPS origin and same-origin callback, access declaration and capabilities.
-It does not pretend to be an immutable native package. Ordinary website content
-updates do not require release-byte proofs.
+Product identities and permanent public slugs are reviewed under `products/<app_id>/product.json`. Per-source records in `sources/<client_id>.json` produce bounded, commit-pinned Realm projections. Development sources, Android association hosts and official management sources retain their exact qualifications. A hosted Web source derives its origin from the approved slug and uses the root callback.
 
-A current maintainer explicitly reviews a change to this file in its own PR.
-The validator checks the actual review actor and the source revision. App and
-publisher identity cannot be reassigned; origin, callback, role, declaration or
-capability changes advance the revision. Pause/resume and display changes keep
-the source revision. Pause preserves the identity and user data. Git carries the
-review history; there is no additional approval ledger.
+For a hosted release, run `node scripts/prepare-hosted-web.mjs --product products/<app_id>/product.json --version <version>` against the publisher's protected `web-v<version>` tag and immutable GitHub Release. The script verifies the public build metadata and produces candidate source and release fields without approving them. Include the source, the append-only `web/releases/<version>.json` and any first product metadata in one PR. A current human maintainer supplies the recorded review and finalizes that same PR with `node scripts/finalize-hosted-web.mjs --product products/<app_id>/product.json --candidate <candidate.json> --review <review.json>`. The review carries the maintainer's explicit decision, GitHub login and numeric actor ID, reason code and decision time. The trusted PR check verifies the actual actor and artifact. Keep local candidate/review input files outside admission paths. Run `pnpm run project:sources` before committing. This command also regenerates the native kill-switch projection when a product's policy changes.
+
+An ordinary content update changes the hosted version and its approved artifact, retaining the source revision. A material change in origin, callback, declarations, role or signing identity advances the source revision. A maintainer may pause an individual source, apply product policy with an independent revision, or change only `stable_version` to select a retained approved release compatible with current policy. Never reassign a public slug or client to another product.
+
+For a pre-cutover local development file use `node scripts/migrate-local-sources.mjs <old-file> <empty-local-directory>` once, then point the non-production Realm's `RUNTIME_CLIENT_REGISTRY_PATH` at that directory.
 
 As for native Apps, declarations may retain unknown domain names as raw input.
 Runtime alone activates its supported domains for the exact registered generation;

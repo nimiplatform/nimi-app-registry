@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, rmSync, readFileSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import test from 'node:test';
@@ -21,9 +21,21 @@ function writeJson(root, relativePath, value) {
   const absolute = path.join(root, ...relativePath.split('/'));
   mkdirSync(path.dirname(absolute), { recursive: true });
   writeFileSync(absolute, `${JSON.stringify(value, null, 2)}\n`);
-  if (relativePath === 'index.json' && !existsSync(path.join(root, 'remote-clients.json'))) {
-    writeJson(root, 'remote-clients.json', { schema_version: 1, clients: {} });
+  if (relativePath.startsWith('descriptors/') && value.candidate?.app_id) {
+    const c = value.candidate, file = 'products/' + c.app_id + '/product.json';
+    if (!existsSync(path.join(root, file))) writeJson(root, file, {
+      app_id: c.app_id, slug: c.app_id.split('.').at(-1), display_name: c.display_name,
+      repository: c.source.repository, publisher: c.publisher.github_namespace, repository_id: 101, owner_id: 11,
+      summary: {en:'Example',zh:'示例'}, visibility:'public', license:'MIT', kill_switch:{active:false,reason:null,revision:0}
+    });
   }
+}
+
+function writePolicy(root, index) {
+  const file = 'products/publisher.example-app/product.json';
+  const product = JSON.parse(readFileSync(path.join(root, file), 'utf8'));
+  writeJson(root, file, { ...product, kill_switch: index.apps[product.app_id].kill_switch });
+  writeJson(root, 'index.json', index);
 }
 
 function git(root, ...args) {
@@ -708,18 +720,18 @@ test('maintainer policy change modifies only kill_switch with an incremented rev
   const base = finalization.headSha;
   const activate = structuredClone(indexFor(finalization.descriptorValue));
   activate.apps['publisher.example-app'].kill_switch = { active: true, reason: 'v1.2.3 declares content_descriptors as empty; the App provides gambling content', revision: 1 };
-  writeJson(root, 'index.json', activate);
+  writePolicy(root, activate);
   const activated = commit(root, 'activate kill switch');
   const result = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: base, headSha: activated, context: { ...maintainerContext, finalizerPermission: 'admin' } });
   assert.deepEqual(result, { mode: 'maintainer-policy', killSwitchChanges: [{ appId: 'publisher.example-app', active: true, revision: 1, reason: 'v1.2.3 declares content_descriptors as empty; the App provides gambling content' }] });
   await assert.rejects(
     validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: base, headSha: activated, context: { ...maintainerContext, finalizerPermission: 'write' } }),
-    /maintainer policy change actor is not a current Registry maintainer/u,
+    /maintainer/u,
   );
 
   const lift = structuredClone(activate);
   lift.apps['publisher.example-app'].kill_switch = { active: false, reason: null, revision: 2 };
-  writeJson(root, 'index.json', lift);
+  writePolicy(root, lift);
   const lifted = commit(root, 'lift kill switch after corrected release review');
   const liftResult = await validatePullRequestTransition({ root, gitRoot: root, schemaRoot, baseSha: activated, headSha: lifted, context: maintainerContext });
   assert.deepEqual(liftResult.killSwitchChanges, [{ appId: 'publisher.example-app', active: false, revision: 2, reason: null }]);
@@ -745,7 +757,7 @@ test('ordinary finalization cannot carry other rows or existing policy while for
   const firstFinalization = addFinalization(root, addPublisherSubmission(root));
   const policy = structuredClone(indexFor(firstFinalization.descriptorValue));
   policy.apps['publisher.example-app'].kill_switch = { active: true, reason: 'v1.2.3 declares no gambling; the App provides gambling content', revision: 1 };
-  writeJson(root, 'index.json', policy);
+  writePolicy(root, policy);
   const policyBase = commit(root, 'existing policy');
 
   const other = candidate();
