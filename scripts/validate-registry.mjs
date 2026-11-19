@@ -105,7 +105,9 @@ export async function pullRequestContext(options, deps = { githubJson, gitOutput
     token,
     'Registry collaborator permission',
   );
-  if (kind === 'maintainer-policy' || kind === 'hosted-review') return { ...context, finalizerPermission: permission.permission, candidateCheckPassed: false, token };
+  // GitHub maps the built-in maintain role to the legacy write permission.
+  const finalizerPermission = permission.role_name ?? permission.permission;
+  if (kind === 'maintainer-policy' || kind === 'hosted-review') return { ...context, finalizerPermission, candidateCheckPassed: false, token };
   const parentLine = deps.gitOutput(options.gitRoot, ['rev-list', '--parents', '-n', '1', options.head]).split(/\s+/u);
   if (parentLine.length !== 2) throw new RegistryValidationError('finalization commit must have one parent');
   const checkRuns = await deps.githubJson(
@@ -119,7 +121,7 @@ export async function pullRequestContext(options, deps = { githubJson, gitOutput
     && check.conclusion === 'success'
     && check.app?.slug === 'github-actions'
   ));
-  return { ...context, finalizerPermission: permission.permission, candidateCheckPassed, token };
+  return { ...context, finalizerPermission, candidateCheckPassed, token };
 }
 
 async function candidateFromTransition(root, transition) {
