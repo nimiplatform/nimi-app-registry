@@ -1,0 +1,20 @@
+{
+  "app_id": "openmontage.studio",
+  "slug": "openmontage",
+  "display_name": "OpenMontage",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/OpenMontage",
+  "license": "AGPL-3.0-only",
+  "summary": {
+    "zh": "从素材与生成媒体制作带旁白的视频，转写、字幕与本地渲染由 Nimi 提供。",
+    "en": "Produce narrated videos from source footage and generated media, with transcription, subtitles, and local rendering powered by Nimi."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1366375528,
+  "owner_id": 263632129
+}

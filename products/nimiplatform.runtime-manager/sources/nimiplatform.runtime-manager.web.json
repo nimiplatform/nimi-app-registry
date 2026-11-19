@@ -1,0 +1,18 @@
+{
+  "client_id": "nimiplatform.runtime-manager.web",
+  "kind": "web",
+  "origin": "https://nimi.ai",
+  "redirect_uri": "https://nimi.ai/account/runtime",
+  "source_revision": 2,
+  "role": "official_manager",
+  "app_access": [],
+  "capability_contract_refs": [],
+  "status": "active",
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "official-manager-canonical-origin",
+    "decided_at": "2026-11-12T12:07:17Z"
+  }
+}

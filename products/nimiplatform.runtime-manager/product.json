@@ -1,0 +1,20 @@
+{
+  "app_id": "nimiplatform.runtime-manager",
+  "slug": "runtime-manager",
+  "display_name": "Nimi 官方远程管理",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimi",
+  "license": "MIT",
+  "summary": {
+    "zh": "管理自己的主 Runtime。",
+    "en": "Manage your primary Runtime."
+  },
+  "visibility": "hidden",
+  "kill_switch": {
+    "active": false,
+    "revision": 0,
+    "reason": null
+  },
+  "repository_id": 1165639035,
+  "owner_id": 263632129
+}

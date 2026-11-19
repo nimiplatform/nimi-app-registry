@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.storybook",
+  "slug": "storybook",
+  "display_name": "Storybook",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-storybook",
+  "license": "Apache-2.0",
+  "summary": {
+    "zh": "阅读和创作互动故事，让角色、选择与叙事共同推进故事体验。",
+    "en": "Read and create interactive stories where characters, choices, and narrative move together."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1271381816,
+  "owner_id": 263632129
+}

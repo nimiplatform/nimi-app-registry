@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.odd-bureau",
+  "slug": "odd-bureau",
+  "display_name": "奇物局",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-odd-bureau",
+  "license": "MIT",
+  "summary": {
+    "zh": "上传一张随手拍下的日常物品照片，让 AI 将它化作充满奇趣的可玩微世界。",
+    "en": "Upload a photo of an everyday object and let AI turn it into a small, playful world you can explore."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1366442434,
+  "owner_id": 263632129
+}

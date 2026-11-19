@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.realm-persona-studio",
+  "slug": "realm-persona-studio",
+  "display_name": "Realm Persona Studio",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-realm-persona-studio",
+  "license": "MIT",
+  "summary": {
+    "zh": "创建和管理自己的 Realm Persona，维护角色资料与创作草稿。",
+    "en": "Create and manage your own Realm Personas, keeping profiles and drafts in one place."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1273007265,
+  "owner_id": 263632129
+}

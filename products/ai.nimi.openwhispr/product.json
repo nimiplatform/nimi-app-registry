@@ -1,0 +1,20 @@
+{
+  "app_id": "ai.nimi.openwhispr",
+  "slug": "openwhispr",
+  "display_name": "OpenWhispr",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/openwhispr",
+  "license": "MIT",
+  "summary": {
+    "zh": "捕捉口语灵感：通过语音听写，将零碎录音自动提炼为结构化笔记。",
+    "en": "Capture ideas by speaking and turn short recordings into structured notes."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1409328000,
+  "owner_id": 263632129
+}

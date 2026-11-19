@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.polyagent",
+  "slug": "polyagent",
+  "display_name": "PolyAgent",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-polyagent",
+  "license": "Apache-2.0",
+  "summary": {
+    "zh": "预测市场研究与模拟交易：观察市场、设定策略约束，在模拟账本中推演想法。",
+    "en": "Observe prediction markets, establish strategic constraints, and track hypotheses in a simulated ledger."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1389250864,
+  "owner_id": 263632129
+}

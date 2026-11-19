@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.inscape",
+  "slug": "inscape",
+  "display_name": "Inscape",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-inscape",
+  "license": "MIT",
+  "summary": {
+    "zh": "面向成年人的本地性格探索与日常反思工具，用认知功能视角理解自己和关系。",
+    "en": "A local tool for adults exploring personality and everyday reflection through a cognitive-function lens."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1250932326,
+  "owner_id": 263632129
+}

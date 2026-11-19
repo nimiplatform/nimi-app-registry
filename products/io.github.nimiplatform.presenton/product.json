@@ -1,0 +1,20 @@
+{
+  "app_id": "io.github.nimiplatform.presenton",
+  "slug": "presenton",
+  "display_name": "Presenton",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/presenton",
+  "license": "Apache-2.0",
+  "summary": {
+    "zh": "交互式演示文稿助手：将粗略思路转化为结构清晰、设计优雅的幻灯片。",
+    "en": "Turn rough bullet points into well-structured, beautifully typeset slide decks."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1389453758,
+  "owner_id": 263632129
+}

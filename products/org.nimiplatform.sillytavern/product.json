@@ -1,0 +1,20 @@
+{
+  "app_id": "org.nimiplatform.sillytavern",
+  "slug": "sillytavern",
+  "display_name": "SillyTavern",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/SillyTavern",
+  "license": "AGPL-3.0",
+  "summary": {
+    "zh": "虚构角色沉浸对话平台：管理多元人设、世界书设定与长文本剧情互动。",
+    "en": "Bring fictional casts to life with multi-character lorebooks, persona profiles, and long-context dialogue."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1401428757,
+  "owner_id": 263632129
+}

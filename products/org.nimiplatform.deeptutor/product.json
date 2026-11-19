@@ -1,0 +1,20 @@
+{
+  "app_id": "org.nimiplatform.deeptutor",
+  "slug": "deeptutor",
+  "display_name": "DeepTutor",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/DeepTutor",
+  "license": "Apache-2.0",
+  "summary": {
+    "zh": "围绕专业文献与深度难题展开对话：拆解硬核概念、推演公式并沉淀系统笔记。",
+    "en": "Interrogate technical papers and tough problems: deconstruct concepts, work through derivations, and keep notes."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1372126433,
+  "owner_id": 263632129
+}

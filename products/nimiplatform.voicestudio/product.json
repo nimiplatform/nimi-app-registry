@@ -1,0 +1,20 @@
+{
+  "app_id": "nimiplatform.voicestudio",
+  "slug": "voicestudio",
+  "display_name": "VoiceStudio",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/VoiceStudio",
+  "license": "AGPL-3.0-only",
+  "summary": {
+    "zh": "个性化声音设计工坊：为故事、有声书与影视旁白定制独特声线。",
+    "en": "Design a distinctive voice for stories, audiobooks, and cinematic narration."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1369922487,
+  "owner_id": 263632129
+}
