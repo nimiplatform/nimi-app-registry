@@ -12,5 +12,12 @@
     "image.generate",
     "audio.synthesize"
   ],
-  "stable_version": "0.1.7"
+  "stable_version": "0.1.7",
+  "review": {
+    "decided_at": "2026-11-20T12:13:59.835Z",
+    "adjudicator_login": "snowzane",
+    "decision": "approved",
+    "reason_code": "maintainer-confirmed-admission",
+    "adjudicator_actor_id": 1681360
+  }
 }
