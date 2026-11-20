@@ -1,0 +1,17 @@
+{
+  "app_id": "nimi.storybook",
+  "client_id": "nimi.storybook.web",
+  "version": "0.1.10",
+  "source_revision": 1,
+  "commit_sha": "241ee4f6c4d2fe76d951c76b72268b1b98a2e896",
+  "release_id": 452438855,
+  "asset_id": 771060903,
+  "size": 6215665,
+  "sha256": "35ab3708c41cd323cc46c3f197715ed39b2f2e69779672a271c089c75ecb3643",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate"
+  ]
+}
