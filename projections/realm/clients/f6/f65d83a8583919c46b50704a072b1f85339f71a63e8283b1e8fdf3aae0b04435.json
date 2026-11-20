@@ -1,0 +1,27 @@
+{
+  "client_id": "nimi.inscape.web",
+  "source": {
+    "kind": "web",
+    "source_revision": 1,
+    "status": "active",
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "review": {
+      "adjudicator_login": "snowzane",
+      "decision": "approved",
+      "adjudicator_actor_id": 1681360,
+      "decided_at": "2026-11-20T12:09:05.965Z",
+      "reason_code": "maintainer-confirmed-admission"
+    },
+    "role": "app",
+    "origin": "https://inscape.nimi.xyz",
+    "redirect_uri": "https://inscape.nimi.xyz/",
+    "app_id": "nimi.inscape",
+    "display_name": "Inscape",
+    "publisher": "nimiplatform"
+  }
+}

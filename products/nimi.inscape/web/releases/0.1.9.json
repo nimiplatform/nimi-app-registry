@@ -1,0 +1,24 @@
+{
+  "app_id": "nimi.inscape",
+  "client_id": "nimi.inscape.web",
+  "version": "0.1.9",
+  "source_revision": 1,
+  "commit_sha": "d45e4f4ce6202c674f1c1b72388fbe3f0174c7c3",
+  "release_id": 452574972,
+  "asset_id": 771464837,
+  "size": 4914910,
+  "sha256": "11071896dcaa9040e559e5bf09d361cc0b058794b2676774446c642b37e03e4c",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate"
+  ],
+  "review": {
+    "adjudicator_login": "snowzane",
+    "decision": "approved",
+    "adjudicator_actor_id": 1681360,
+    "decided_at": "2026-11-20T12:09:05.965Z",
+    "reason_code": "maintainer-confirmed-admission"
+  }
+}
