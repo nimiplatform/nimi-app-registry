@@ -1,0 +1,19 @@
+{
+  "app_id": "nimi.parentos",
+  "client_id": "nimi.parentos.web",
+  "version": "0.1.10",
+  "source_revision": 1,
+  "commit_sha": "9b46d5fff00b3341e1a8cde77ca4cb469f9f8603",
+  "release_id": 452573490,
+  "asset_id": 771460977,
+  "size": 14804654,
+  "sha256": "60ac5f112b8ab53b1c5bfea47463b2c60cb5d9e0957c3011e24101508b9ddf61",
+  "app_access": [
+    "runtime.consume",
+    "app.activity"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "audio.transcribe"
+  ]
+}
