@@ -9,5 +9,12 @@
   "capability_contract_refs": [
     "text.generate"
   ],
-  "stable_version": "0.1.9"
+  "stable_version": "0.1.9",
+  "review": {
+    "adjudicator_login": "snowzane",
+    "decision": "approved",
+    "adjudicator_actor_id": 1681360,
+    "decided_at": "2026-11-20T12:09:05.965Z",
+    "reason_code": "maintainer-confirmed-admission"
+  }
 }
