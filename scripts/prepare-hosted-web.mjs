@@ -1,10 +1,12 @@
-import { readFile } from 'node:fs/promises';
+import { mkdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
-import { parseArgs } from 'node:util';
+import { isDeepStrictEqual, parseArgs } from 'node:util';
 import { requestJson, downloadExact, readNimiAppArchive } from './github-candidate-validation.mjs';
 import { verifyRepository, verifyHostedBundle } from './hosted-release-verification.mjs';
 
-const { values } = parseArgs({ options: { product: { type: 'string' }, version: { type: 'string' } } });
+const { values } = parseArgs({ options: {
+  product: { type: 'string' }, version: { type: 'string' }, 'write-draft': { type: 'boolean' },
+} });
 if (!values.product || !values.version || !/^[A-Za-z0-9.+-]+$/u.test(values.version))
   throw Error('Use --product product.json --version <Web version>');
 const filename = path.resolve(values.product);
@@ -68,4 +70,20 @@ const release = {
 };
 const origin = 'https://' + product.slug + '.nimi.xyz';
 verifyHostedBundle(bytes, product, { origin, redirect_uri: origin + '/' }, release);
+if (values['write-draft']) {
+  if (filename !== path.resolve('products', product.app_id, 'product.json'))
+    throw Error('Write the draft from the Registry root using its product.json.');
+  const target = path.join(path.dirname(filename), 'web/releases', release.version + '.json');
+  const serialize = (value) => JSON.stringify(value, null, 2) + '\n';
+  await mkdir(path.dirname(target), { recursive: true });
+  try {
+    await writeFile(target, serialize(release), { flag: 'wx' });
+  } catch (error) {
+    if (error.code !== 'EEXIST') throw error;
+    if (!isDeepStrictEqual(JSON.parse(await readFile(target, 'utf8')), release))
+      throw Error('This version already has a different draft or an approved release.');
+  }
+  await mkdir(path.dirname(clientPath), { recursive: true });
+  await writeFile(clientPath, serialize(source));
+}
 console.log(JSON.stringify({ source, release }, null, 2));

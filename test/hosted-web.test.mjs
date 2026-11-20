@@ -1,7 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtemp, mkdir, rm, writeFile } from 'node:fs/promises';
+import { mkdtemp, mkdir, readFile, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
@@ -86,6 +86,17 @@ test('the same PR can admit a typed hosted source and its first version; later r
     review,
   });
   const validators = await loadValidators(schemaRoot);
+  const draft = ({ review, ...facts }) => facts;
+  const read = async (file) => JSON.parse(await readFile(path.join(root, file), 'utf8'));
+  const finalize = async (base, record, decision) => {
+    const candidate = { source: draft(source), release: draft(record) };
+    const candidateFile = '.git/review-candidate.json', decisionFile = '.git/decision.json';
+    await write(candidateFile, candidate);
+    await write(decisionFile, decision);
+    const args = [fileURLToPath(new URL('../scripts/finalize-hosted-web.mjs', import.meta.url)),
+      '--product', stem + 'product.json', '--candidate', candidateFile, '--review', decisionFile, '--base', base];
+    return () => execFileSync(process.execPath, args, { cwd: root, stdio: 'pipe' });
+  };
   const project = async () => {
     const data = await readProducts(root, validators);
     await projectSources(root, data.projections, true);
@@ -94,15 +105,29 @@ test('the same PR can admit a typed hosted source and its first version; later r
   await write(stem + 'product.json', product);
   await write(stem + 'sources/' + id + '.json', source);
   await assert.rejects(project(), /Incompatible approved Web target/);
-  await write(stem + 'web/releases/1.0.0.json', release('1.0.0'));
+  const sourcePath = stem + 'sources/' + id + '.json';
+  const firstPath = stem + 'web/releases/1.0.0.json';
+  const admitFirst = await finalize(initial, release('1.0.0'), review);
+  await write(sourcePath, draft(source));
+  await write(firstPath, { ...draft(release('1.0.0')), size: 4999 });
+  assert.throws(admitFirst, /differ from the reviewed candidate/);
+  assert.equal((await read(sourcePath)).review, undefined);
+  await write(firstPath, draft(release('1.0.0')));
+  admitFirst();
+  admitFirst();
   await project();
   const first = commit();
   assert.equal((await check(initial, first)).releases.length, 1);
   await assert.rejects(check(initial, first, { actorId: 17 }), /reviewer|maintainer/);
   await assert.rejects(check(initial, first, { finalizerPermission: 'write' }), /maintainer/);
   source = { ...source, stable_version: '1.0.1' };
-  await write(stem + 'sources/' + id + '.json', source);
-  await write(stem + 'web/releases/1.0.1.json', release('1.0.1'));
+  const secondRelease = release('1.0.1');
+  const laterReview = { ...review, decided_at: '2026-11-20T10:00:00Z' };
+  await write(sourcePath, draft(source));
+  await write(stem + 'web/releases/1.0.1.json', draft(secondRelease));
+  (await finalize(first, secondRelease, laterReview))();
+  assert.deepEqual((await read(sourcePath)).review, review);
+  assert.deepEqual((await read(stem + 'web/releases/1.0.1.json')).review, laterReview);
   await project();
   const second = commit();
   assert.equal((await check(first, second)).releases.length, 1);

@@ -13,7 +13,26 @@ separate Nimi Runtime and Desktop lifecycle owners.
 
 Product identities and permanent public slugs are reviewed under `products/<app_id>/product.json`. Per-source records in `sources/<client_id>.json` produce bounded, commit-pinned Realm projections. Development sources, Android association hosts and official management sources retain their exact qualifications. A hosted Web source derives its origin from the approved slug and uses the root callback.
 
-For a hosted release, run `node scripts/prepare-hosted-web.mjs --product products/<app_id>/product.json --version <version>` against the publisher's protected `web-v<version>` tag and immutable GitHub Release. The script verifies the public build metadata and produces candidate source and release fields without approving them. Include the source, the append-only `web/releases/<version>.json` and any first product metadata in one PR. A current human maintainer supplies the recorded review and finalizes that same PR with `node scripts/finalize-hosted-web.mjs --product products/<app_id>/product.json --candidate <candidate.json> --review <review.json>`. The review carries the maintainer's explicit decision, GitHub login and numeric actor ID, reason code and decision time. The trusted PR check verifies the actual actor and artifact. Keep local candidate/review input files outside admission paths. Run `pnpm run project:sources` before committing. This command also regenerates the native kill-switch projection when a product's policy changes.
+### Publish a hosted Web version
+
+1. In the App repository, enable immutable Releases, protect `web-v*` against tag updates and deletion, then release `web-v<version>` using the managed workflow. Wait for the verified ZIP. The native `v*` channel has its own release and review.
+2. Start a Registry PR branch from current main. For first admission, include `products/<app_id>/product.json` with the permanent slug and publisher repository identity. From the Registry root run the command below. It verifies the public asset and writes two draft records under that product. Commit those records on the PR branch. Keep the candidate JSON outside the checkout. An external publisher using a fork should allow maintainer edits on that branch.
+
+   ```sh
+   node scripts/prepare-hosted-web.mjs --product products/<app_id>/product.json --version <version> --write-draft > ../candidate.json
+   ```
+
+3. A current human maintainer reviews the product, ownership, exact source, requested access and capabilities, immutable tag, version and ZIP digest. Inspect the diff for scope. On the exact PR head, regenerate the candidate with the same command **without** `--write-draft`. Record the decision separately in `../review.json` with `decision: "approved"`, `adjudicator_login`, numeric `adjudicator_actor_id`, `reason_code` and UTC `decided_at`. Use the Registry tools from the trusted base checkout with dependencies installed. From the PR worktree run:
+
+   ```sh
+   BASE_SHA=$(gh pr view <PR> --repo nimiplatform/nimi-app-registry --json baseRefOid --jq .baseRefOid)
+   node "$TOOLS/scripts/finalize-hosted-web.mjs" --product products/<app_id>/product.json --candidate ../candidate.json --review ../review.json --base "$BASE_SHA"
+   node "$TOOLS/scripts/project-sources.mjs" --write
+   node "$TOOLS/scripts/validate-registry.mjs" --all --schema-root "$TOOLS/schema"
+   ```
+
+   Set `TOOLS` to the trusted Registry checkout. Fetch the PR base commit if it is missing locally. The finalizer compares the two draft files with the candidate and reads the previously approved release and source revision from that commit. Push the reviewed records and generated projections to the same PR as the reviewing maintainer. Wait for `validate-registry` on that final commit, then merge. Clicking GitHub **Approve** alone leaves the release without its recorded decision.
+4. After merge, the platform reconciles Registry main, checks the exact bundle and Realm source, and switches the active hosted version. Open the product at `https://nimi.ai/apps/<slug>` and use its Web launch button. DNS, storage and production credentials belong to the platform. First-use consent takes place on the user's primary PC in Nimi Home.
 
 An ordinary content update changes the hosted version and its approved artifact, retaining the source revision. A material change in origin, callback, declarations, role or signing identity advances the source revision. A maintainer may pause an individual source, apply product policy with an independent revision, or change only `stable_version` to select a retained approved release compatible with current policy. Never reassign a public slug or client to another product.
 
