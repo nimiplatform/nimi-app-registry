@@ -16,5 +16,12 @@
     "audio.transcribe",
     "voice.create"
   ],
-  "stable_version": "0.1.2"
+  "stable_version": "0.1.2",
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "maintainer-confirmed-admission",
+    "decided_at": "2026-11-20T12:10:12.726Z"
+  }
 }
