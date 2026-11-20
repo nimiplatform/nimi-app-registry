@@ -1,0 +1,27 @@
+{
+  "client_id": "nimi.storybook.web",
+  "source": {
+    "kind": "web",
+    "source_revision": 1,
+    "status": "active",
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-11-20T08:53:56.236Z"
+    },
+    "role": "app",
+    "origin": "https://storybook.nimi.xyz",
+    "redirect_uri": "https://storybook.nimi.xyz/",
+    "app_id": "nimi.storybook",
+    "display_name": "Storybook",
+    "publisher": "nimiplatform"
+  }
+}
