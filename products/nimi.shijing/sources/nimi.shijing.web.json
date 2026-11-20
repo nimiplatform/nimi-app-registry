@@ -10,5 +10,12 @@
   "capability_contract_refs": [
     "text.generate"
   ],
-  "stable_version": "0.1.11"
+  "stable_version": "0.1.11",
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "verified-hosted-web",
+    "decided_at": "2026-11-20T03:41:26.825Z"
+  }
 }
