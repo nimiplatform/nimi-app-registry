@@ -403,6 +403,11 @@ function readJsonAt(gitRoot, revision, relativePath, label) {
   }
 }
 
+export function readOptionalJsonAt(gitRoot, revision, relativePath) {
+  const entry = gitOutput(gitRoot, ['ls-tree', '--name-only', revision, '--', relativePath]);
+  return entry ? readJsonAt(gitRoot, revision, relativePath, relativePath) : null;
+}
+
 function requireContextValue(value, label) {
   if (value === undefined || value === null || value === '') fail(`${label} is required for pull-request validation`);
   return value;
