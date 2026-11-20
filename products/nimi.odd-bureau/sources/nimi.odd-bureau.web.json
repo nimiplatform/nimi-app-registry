@@ -1,0 +1,20 @@
+{
+  "client_id": "nimi.odd-bureau.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "vision.locate",
+    "image.generate",
+    "video.generate",
+    "music.generate",
+    "audio.synthesize",
+    "audio.transcribe",
+    "voice.create"
+  ],
+  "stable_version": "0.1.2"
+}

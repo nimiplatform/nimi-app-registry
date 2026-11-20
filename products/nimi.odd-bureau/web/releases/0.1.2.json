@@ -1,0 +1,24 @@
+{
+  "app_id": "nimi.odd-bureau",
+  "client_id": "nimi.odd-bureau.web",
+  "version": "0.1.2",
+  "source_revision": 1,
+  "commit_sha": "4b186981ac3a8c945bd6777001a57e8231564833",
+  "release_id": 452562383,
+  "asset_id": 771428507,
+  "size": 11894848,
+  "sha256": "96db56e3e651f012ba015b7d65a2e4e66327a84af9bbcaac02867a498c223511",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "vision.locate",
+    "image.generate",
+    "video.generate",
+    "music.generate",
+    "audio.synthesize",
+    "audio.transcribe",
+    "voice.create"
+  ]
+}
