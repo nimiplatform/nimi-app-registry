@@ -1,0 +1,16 @@
+{
+  "client_id": "nimi.realm-persona-studio.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "realm.data",
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "image.generate",
+    "audio.synthesize"
+  ],
+  "stable_version": "0.1.7"
+}

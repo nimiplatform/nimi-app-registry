@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.realm-persona-studio",
+  "client_id": "nimi.realm-persona-studio.web",
+  "version": "0.1.7",
+  "source_revision": 1,
+  "commit_sha": "9378d8df34a49e2eb0598617fdab18ac91533fb8",
+  "release_id": 452567783,
+  "asset_id": 771445561,
+  "size": 21862641,
+  "sha256": "8fd5354272b380fdf58728dbaec1a8bc52ec23223a94e2d671512949fdd6d1dc",
+  "app_access": [
+    "realm.data",
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "image.generate",
+    "audio.synthesize"
+  ]
+}
