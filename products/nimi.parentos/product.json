@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.parentos",
+  "slug": "parentos",
+  "display_name": "ParentOS",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-parentos",
+  "license": "MIT",
+  "summary": {
+    "zh": "记录孩子的成长与家庭观察，整理成长档案和阶段提醒。",
+    "en": "Keep a child's growth journal and family observations, organized into records and stage reminders."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1248291852,
+  "owner_id": 263632129
+}

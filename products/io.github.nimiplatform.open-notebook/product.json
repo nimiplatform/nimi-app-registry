@@ -1,0 +1,20 @@
+{
+  "app_id": "io.github.nimiplatform.open-notebook",
+  "slug": "open-notebook",
+  "display_name": "Open Notebook",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/open-notebook",
+  "license": "MIT",
+  "summary": {
+    "zh": "个人研究工作区：将资料文献、问答思索与灵感播客融为一体，沉淀知识网络。",
+    "en": "Weave documents, Q&A reflections, and podcast audio into an interconnected web of knowledge."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1389457976,
+  "owner_id": 263632129
+}

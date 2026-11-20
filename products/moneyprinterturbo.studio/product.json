@@ -1,0 +1,20 @@
+{
+  "app_id": "moneyprinterturbo.studio",
+  "slug": "moneyprinterturbo",
+  "display_name": "MoneyPrinterTurbo",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/MoneyPrinterTurbo",
+  "license": "MIT",
+  "summary": {
+    "zh": "一站式短视频生成工具：串联文案创意、画面素材、AI 配音与字幕排版。",
+    "en": "Make short videos in one place, from script ideas and visuals to AI voiceover and subtitle layout."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1401420236,
+  "owner_id": 263632129
+}

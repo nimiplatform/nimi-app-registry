@@ -1,0 +1,20 @@
+{
+  "app_id": "io.github.nimiplatform.next-ai-draw-io",
+  "slug": "next-ai-draw-io",
+  "display_name": "Next AI Draw.io",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/next-ai-draw-io",
+  "license": "Apache-2.0",
+  "summary": {
+    "zh": "用自然语言、图像和文档创建与编辑 draw.io 图表，并可恢复历史或导出成果。",
+    "en": "Create and edit draw.io diagrams with natural language, images, and documents, then restore history or export your work."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1369370542,
+  "owner_id": 263632129
+}

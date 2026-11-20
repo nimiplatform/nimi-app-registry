@@ -1,0 +1,20 @@
+{
+  "app_id": "nimiplatform.vane",
+  "slug": "vane",
+  "display_name": "Vane",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/Vane",
+  "license": "MIT",
+  "summary": {
+    "zh": "用 Nimi 托管的 AI 搜索、研究与阅读文档。",
+    "en": "Search, research, and read documents with Nimi-managed AI."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1366303360,
+  "owner_id": 263632129
+}

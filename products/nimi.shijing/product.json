@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.shijing",
+  "slug": "shijing",
+  "display_name": "时镜 ShiJing",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-shijing",
+  "license": "MIT",
+  "summary": {
+    "zh": "结合四柱与节气等确定性排盘，提供个人节律观察与解读。",
+    "en": "A personal rhythm companion built on deterministic traditional calendar charting, with readings to reflect on."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1248791516,
+  "owner_id": 263632129
+}

@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.realm-world-studio",
+  "slug": "realm-world-studio",
+  "display_name": "Realm World Studio",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-realm-world-studio",
+  "license": "MIT",
+  "summary": {
+    "zh": "与 AI 共创世界设定与角色构想，审阅草稿，创建并整理自己的 Realm 世界。",
+    "en": "Co-create world settings and character ideas with AI, review drafts, and organize your own Realm worlds."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1270911585,
+  "owner_id": 263632129
+}

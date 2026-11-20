@@ -1,0 +1,20 @@
+{
+  "app_id": "ai.nimi.videolingo",
+  "slug": "videolingo",
+  "display_name": "VideoLingo",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/VideoLingo",
+  "license": "Apache-2.0",
+  "summary": {
+    "zh": "让视频跨越语言：串联语音转写、翻译、双语字幕校对与配音。",
+    "en": "Bring your videos into new languages with transcription, translation, bilingual subtitle review, and dubbing."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1368438208,
+  "owner_id": 263632129
+}

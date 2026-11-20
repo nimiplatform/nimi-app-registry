@@ -1,0 +1,20 @@
+{
+  "app_id": "io.github.nimiplatform.jev-search",
+  "slug": "jev-search",
+  "display_name": "Jev Search",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/jev-search",
+  "license": "MIT",
+  "summary": {
+    "zh": "用自然语言搜索全网信息，筛选感兴趣的来源，整理出清晰的参考链接。",
+    "en": "Search the web in plain language, filter for sources that interest you, and organize the links for reference."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1381653444,
+  "owner_id": 263632129
+}

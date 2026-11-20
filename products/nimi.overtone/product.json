@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.overtone",
+  "slug": "overtone",
+  "display_name": "Nimi Overtone",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimiapp-overtone",
+  "license": "MIT",
+  "summary": {
+    "zh": "整理音乐创作项目、歌词与音频候选，比较和管理创作版本。",
+    "en": "Organize music projects, lyrics, and audio takes, and compare creative versions."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1249021757,
+  "owner_id": 263632129
+}

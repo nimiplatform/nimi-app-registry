@@ -1,0 +1,20 @@
+{
+  "app_id": "nimi.zhiyu",
+  "slug": "zhiyu",
+  "display_name": "织羽",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/nimi",
+  "license": "MIT",
+  "summary": {
+    "zh": "与 Nimi 伙伴日常相处，延续对话与记忆，体验已配置的语音和形象。",
+    "en": "Spend time with your Nimi companions, pick up past conversations with their existing memories, and use the voices and avatars you’ve set up."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "revision": 0,
+    "reason": null
+  },
+  "repository_id": 1165639035,
+  "owner_id": 263632129
+}

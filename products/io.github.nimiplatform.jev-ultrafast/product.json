@@ -1,0 +1,20 @@
+{
+  "app_id": "io.github.nimiplatform.jev-ultrafast",
+  "slug": "jev-ultrafast",
+  "display_name": "Jev Ultrafast",
+  "publisher": "nimiplatform",
+  "repository": "https://github.com/nimiplatform/jev-ultrafast",
+  "license": "MIT",
+  "summary": {
+    "zh": "为浏览器设定目标，让它自主观察网页、做出决策并连续执行自动化操作。",
+    "en": "Set a goal and let your browser read the page, make decisions, and run multi-step workflows."
+  },
+  "visibility": "public",
+  "kill_switch": {
+    "active": false,
+    "reason": null,
+    "revision": 0
+  },
+  "repository_id": 1381653076,
+  "owner_id": 263632129
+}
