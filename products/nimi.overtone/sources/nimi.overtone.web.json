@@ -1,0 +1,24 @@
+{
+  "client_id": "nimi.overtone.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "music.generate",
+    "music.transcribe",
+    "audio.voice.convert",
+    "audio.separate"
+  ],
+  "stable_version": "0.1.9",
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "maintainer-confirmed-admission",
+    "decided_at": "2026-11-20T12:09:30.000Z"
+  }
+}
