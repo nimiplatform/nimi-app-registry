@@ -1,0 +1,14 @@
+{
+  "client_id": "nimi.shijing.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume",
+    "app.activity"
+  ],
+  "capability_contract_refs": [
+    "text.generate"
+  ],
+  "stable_version": "0.1.11"
+}

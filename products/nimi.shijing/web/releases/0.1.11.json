@@ -1,0 +1,18 @@
+{
+  "app_id": "nimi.shijing",
+  "client_id": "nimi.shijing.web",
+  "version": "0.1.11",
+  "source_revision": 1,
+  "commit_sha": "626de3184ce44c92bf2be82605d95f8c9a2f3313",
+  "release_id": 452195002,
+  "asset_id": 770133533,
+  "size": 7534584,
+  "sha256": "de56543b7d6e2d1da9d2a7def7576e83fa5d781bcc2e75b4d1f5c19e58f49f76",
+  "app_access": [
+    "runtime.consume",
+    "app.activity"
+  ],
+  "capability_contract_refs": [
+    "text.generate"
+  ]
+}
