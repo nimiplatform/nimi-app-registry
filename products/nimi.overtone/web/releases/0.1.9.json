@@ -1,0 +1,21 @@
+{
+  "app_id": "nimi.overtone",
+  "client_id": "nimi.overtone.web",
+  "version": "0.1.9",
+  "source_revision": 1,
+  "commit_sha": "db20cda381c4d7ef2b28fbb0621a305d46d0737e",
+  "release_id": 452567897,
+  "asset_id": 771445877,
+  "size": 4931931,
+  "sha256": "360e4df096daee028b39a5449ecf0f8bb8b533d5ae8a7856416b4e143d265d85",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "music.generate",
+    "music.transcribe",
+    "audio.voice.convert",
+    "audio.separate"
+  ]
+}

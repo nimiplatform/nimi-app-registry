@@ -1,0 +1,17 @@
+{
+  "client_id": "nimi.overtone.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "music.generate",
+    "music.transcribe",
+    "audio.voice.convert",
+    "audio.separate"
+  ],
+  "stable_version": "0.1.9"
+}
