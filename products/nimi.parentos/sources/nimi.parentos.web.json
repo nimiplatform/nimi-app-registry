@@ -1,0 +1,22 @@
+{
+  "client_id": "nimi.parentos.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume",
+    "app.activity"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "audio.transcribe"
+  ],
+  "stable_version": "0.1.10",
+  "review": {
+    "adjudicator_actor_id": 1681360,
+    "decided_at": "2026-11-20T12:09:56.825Z",
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "reason_code": "maintainer-confirmed-admission"
+  }
+}
