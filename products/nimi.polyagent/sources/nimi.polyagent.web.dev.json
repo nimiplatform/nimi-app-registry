@@ -1,0 +1,21 @@
+{
+  "client_id": "nimi.polyagent.web.dev",
+  "kind": "web",
+  "origin": "https://127.0.0.1:4544",
+  "redirect_uri": "https://127.0.0.1:4544/",
+  "source_revision": 1,
+  "role": "app",
+  "app_access": [
+    "agent.work",
+    "app.activity"
+  ],
+  "capability_contract_refs": [],
+  "status": "active",
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "maintainer-approved-paper-trading-development-source",
+    "decided_at": "2026-11-20T14:16:50Z"
+  }
+}
