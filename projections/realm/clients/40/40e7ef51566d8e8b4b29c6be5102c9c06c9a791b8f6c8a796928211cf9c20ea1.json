@@ -1,0 +1,34 @@
+{
+  "client_id": "nimi.odd-bureau.web",
+  "source": {
+    "kind": "web",
+    "source_revision": 1,
+    "status": "active",
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "vision.locate",
+      "image.generate",
+      "video.generate",
+      "music.generate",
+      "audio.synthesize",
+      "audio.transcribe",
+      "voice.create"
+    ],
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-11-20T12:10:12.726Z"
+    },
+    "role": "app",
+    "origin": "https://odd-bureau.nimi.xyz",
+    "redirect_uri": "https://odd-bureau.nimi.xyz/",
+    "app_id": "nimi.odd-bureau",
+    "display_name": "奇物局",
+    "publisher": "nimiplatform"
+  }
+}

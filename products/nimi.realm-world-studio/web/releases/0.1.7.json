@@ -1,0 +1,26 @@
+{
+  "app_id": "nimi.realm-world-studio",
+  "client_id": "nimi.realm-world-studio.web",
+  "version": "0.1.7",
+  "source_revision": 1,
+  "commit_sha": "42a4eaab02cc09c4b6f779989058fae3590fde0f",
+  "release_id": 452562053,
+  "asset_id": 771427599,
+  "size": 4368584,
+  "sha256": "2ebf0eeb4271cd504c41eddfc7d160364a9d2e6f5ba0e38dcba5df006128aa27",
+  "app_access": [
+    "realm.data",
+    "runtime.consume",
+    "app.activity"
+  ],
+  "capability_contract_refs": [
+    "text.generate"
+  ],
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "maintainer-confirmed-admission",
+    "decided_at": "2026-11-20T12:12:26.770Z"
+  }
+}

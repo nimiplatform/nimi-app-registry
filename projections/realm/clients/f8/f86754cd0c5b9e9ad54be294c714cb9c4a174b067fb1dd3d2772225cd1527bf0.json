@@ -1,0 +1,30 @@
+{
+  "client_id": "nimi.realm-persona-studio.web",
+  "source": {
+    "kind": "web",
+    "source_revision": 1,
+    "status": "active",
+    "app_access": [
+      "realm.data",
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "image.generate",
+      "audio.synthesize"
+    ],
+    "review": {
+      "decided_at": "2026-11-20T12:13:59.835Z",
+      "adjudicator_login": "snowzane",
+      "decision": "approved",
+      "reason_code": "maintainer-confirmed-admission",
+      "adjudicator_actor_id": 1681360
+    },
+    "role": "app",
+    "origin": "https://realm-persona-studio.nimi.xyz",
+    "redirect_uri": "https://realm-persona-studio.nimi.xyz/",
+    "app_id": "nimi.realm-persona-studio",
+    "display_name": "Realm Persona Studio",
+    "publisher": "nimiplatform"
+  }
+}

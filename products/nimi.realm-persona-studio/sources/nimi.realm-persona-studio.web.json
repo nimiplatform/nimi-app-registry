@@ -1,0 +1,23 @@
+{
+  "client_id": "nimi.realm-persona-studio.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "realm.data",
+    "runtime.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "image.generate",
+    "audio.synthesize"
+  ],
+  "stable_version": "0.1.7",
+  "review": {
+    "decided_at": "2026-11-20T12:13:59.835Z",
+    "adjudicator_login": "snowzane",
+    "decision": "approved",
+    "reason_code": "maintainer-confirmed-admission",
+    "adjudicator_actor_id": 1681360
+  }
+}
