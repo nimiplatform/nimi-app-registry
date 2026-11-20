@@ -1,0 +1,14 @@
+{
+  "client_id": "nimi.polyagent.web.dev",
+  "kind": "web",
+  "origin": "https://127.0.0.1:4544",
+  "redirect_uri": "https://127.0.0.1:4544/",
+  "source_revision": 1,
+  "role": "app",
+  "app_access": [
+    "agent.work",
+    "app.activity"
+  ],
+  "capability_contract_refs": [],
+  "status": "active"
+}
