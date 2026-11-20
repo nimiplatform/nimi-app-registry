@@ -1,0 +1,141 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://registry.nimi.ai/schema/product.schema.json",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "app_id",
+    "slug",
+    "display_name",
+    "publisher",
+    "repository",
+    "owner_id",
+    "repository_id",
+    "license",
+    "summary",
+    "visibility",
+    "kill_switch"
+  ],
+  "properties": {
+    "app_id": {
+      "$ref": "common.schema.json#/$defs/appId"
+    },
+    "slug": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 63,
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?$"
+    },
+    "display_name": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 120
+    },
+    "publisher": {
+      "$ref": "common.schema.json#/$defs/githubNamespace"
+    },
+    "repository": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 220,
+      "pattern": "^https://github\\.com/[A-Za-z0-9-]+/[A-Za-z0-9._-]+$"
+    },
+    "owner_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "repository_id": {
+      "type": "integer",
+      "minimum": 1
+    },
+    "license": {
+      "type": "string",
+      "minLength": 1,
+      "maxLength": 180
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "en",
+        "zh"
+      ],
+      "properties": {
+        "en": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "zh": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        }
+      }
+    },
+    "visibility": {
+      "enum": [
+        "public",
+        "hidden"
+      ]
+    },
+    "kill_switch": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "active",
+        "reason",
+        "revision"
+      ],
+      "properties": {
+        "active": {
+          "type": "boolean"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string",
+              "minLength": 1,
+              "maxLength": 500
+            },
+            {
+              "type": "null"
+            }
+          ]
+        },
+        "revision": {
+          "type": "integer",
+          "minimum": 0,
+          "maximum": 2147483647
+        }
+      },
+      "allOf": [
+        {
+          "if": {
+            "properties": {
+              "active": {
+                "const": true
+              }
+            }
+          },
+          "then": {
+            "properties": {
+              "reason": {
+                "type": "string",
+                "minLength": 1,
+                "maxLength": 500
+              }
+            }
+          },
+          "else": {
+            "properties": {
+              "reason": {
+                "type": "null"
+              }
+            }
+          }
+        }
+      ]
+    }
+  }
+}

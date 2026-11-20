@@ -198,7 +198,7 @@ function canonicalEntryName(value) {
   return value;
 }
 
-function readNimiAppArchive(bytes, label) {
+export function readNimiAppArchive(bytes, label) {
   if (bytes.length < 22 || bytes.readUInt32LE(bytes.length - 22) !== 0x06054b50) fail(`${label} has no canonical ZIP end record`);
   const endOffset = bytes.length - 22;
   const count = bytes.readUInt16LE(endOffset + 10);
@@ -377,7 +377,7 @@ export async function verifyTagRules(owner, repo, tag, token) {
   fail(`publisher tag ${tag} is not protected against update and deletion`);
 }
 
-async function verifyBuildProvenance(bytes, candidate, target, attestations, token) {
+export async function verifyBuildProvenance(bytes, candidate, target, attestations, token, workflowName = 'nimi-app-release.yml') {
   if (!Array.isArray(attestations.attestations) || attestations.attestations.length === 0) {
     fail(`${target.target_id} has no GitHub build provenance attestation`);
   }
@@ -403,7 +403,7 @@ async function verifyBuildProvenance(bytes, candidate, target, attestations, tok
         '--source-ref', `refs/tags/${candidate.release.tag}`,
         '--source-digest', candidate.release.commit_sha,
         '--signer-digest', candidate.release.commit_sha,
-        '--cert-identity', `${candidate.source.repository}/.github/workflows/nimi-app-release.yml@refs/tags/${candidate.release.tag}`,
+        '--cert-identity', `${candidate.source.repository}/.github/workflows/${workflowName}@refs/tags/${candidate.release.tag}`,
         '--cert-oidc-issuer', 'https://token.actions.githubusercontent.com',
         '--format', 'json',
       ], {
@@ -443,7 +443,7 @@ async function verifyLicenseFiles(owner, repo, candidate, token) {
   return digests;
 }
 
-function releaseAsset(release, expected, label) {
+export function releaseAsset(release, expected, label) {
   const asset = (release.assets || []).find((candidate) => candidate.id === expected.asset_id);
   if (!asset) fail(`${label} asset_id is absent from the immutable Release`);
   if (

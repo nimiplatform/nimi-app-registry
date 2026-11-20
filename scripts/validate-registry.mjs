@@ -81,7 +81,8 @@ function pullEventContext(event, baseSha, headSha) {
 // maintainer index edit with no descriptor or submission: it needs the actor's
 // maintainer permission but no publisher head, parent-commit or check-run facts.
 export function classifyChangedPaths(changedPaths) {
-  if (changedPaths.includes('remote-clients.json')) return 'remote-client-review';
+  if (changedPaths.includes('remote-clients.json')) return 'hosted-review';
+  if (changedPaths.some(p => p.startsWith('products/') || p.startsWith('projections/')) && !changedPaths.some(p => p.startsWith('descriptors/') || p.startsWith('submissions/'))) return 'hosted-review';
   const touchesAdmission = changedPaths.some((entry) => entry === 'index.json' || entry.startsWith('descriptors/'));
   if (!touchesAdmission) return 'publisher-submission';
   if (changedPaths.length === 1 && changedPaths[0] === 'index.json') return 'maintainer-policy';
@@ -104,7 +105,9 @@ export async function pullRequestContext(options, deps = { githubJson, gitOutput
     token,
     'Registry collaborator permission',
   );
-  if (kind === 'maintainer-policy' || kind === 'remote-client-review') return { ...context, finalizerPermission: permission.permission, candidateCheckPassed: false, token };
+  // GitHub maps the built-in maintain role to the legacy write permission.
+  const finalizerPermission = permission.role_name ?? permission.permission;
+  if (kind === 'maintainer-policy' || kind === 'hosted-review') return { ...context, finalizerPermission, candidateCheckPassed: false, token };
   const parentLine = deps.gitOutput(options.gitRoot, ['rev-list', '--parents', '-n', '1', options.head]).split(/\s+/u);
   if (parentLine.length !== 2) throw new RegistryValidationError('finalization commit must have one parent');
   const checkRuns = await deps.githubJson(
@@ -118,7 +121,7 @@ export async function pullRequestContext(options, deps = { githubJson, gitOutput
     && check.conclusion === 'success'
     && check.app?.slug === 'github-actions'
   ));
-  return { ...context, finalizerPermission: permission.permission, candidateCheckPassed, token };
+  return { ...context, finalizerPermission, candidateCheckPassed, token };
 }
 
 async function candidateFromTransition(root, transition) {
@@ -149,10 +152,20 @@ async function main() {
     headSha: head,
     context,
   });
-  if (transition.mode === 'maintainer-policy' || transition.mode === 'remote-client-review') {
+  if (transition.mode === 'hosted-review') {
+    const { verifyHostedReview } = await import('./hosted-release-verification.mjs');
+    await verifyHostedReview(transition, context.token);
+    process.stdout.write(JSON.stringify({ ok: true, mode: transition.mode }) + '\n');
+    return;
+  }
+  if (transition.mode === 'maintainer-policy') {
     // Policy-only changes carry no candidate; no publisher Release is read.
     process.stdout.write(`${JSON.stringify({ ok: true, mode: transition.mode, transition, external: null })}\n`);
     return;
+  }
+  if (transition.newProduct) {
+    const { verifyRepository } = await import('./hosted-release-verification.mjs');
+    await verifyRepository(transition.newProduct, context.token);
   }
   const candidate = await candidateFromTransition(root, transition);
   const external = await validatePublishedGitHubCandidate(candidate, { token: context.token });

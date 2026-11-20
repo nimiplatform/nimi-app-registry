@@ -1,12 +1,13 @@
 import assert from 'node:assert/strict';
 import { execFileSync } from 'node:child_process';
-import { mkdtempSync, rmSync, writeFileSync } from 'node:fs';
+import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from 'node:fs';
 import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import test from 'node:test';
 import { validatePullRequestTransition, validateRegistryTree } from '../scripts/registry-validation.mjs';
 import { validateRemoteClientFacts, validateRemoteClientTransition } from '../scripts/remote-client-validation.mjs';
+import { projectionPath } from '../scripts/hosted-products.mjs';
 import { classifyChangedPaths } from '../scripts/validate-registry.mjs';
 
 const schemaRoot = fileURLToPath(new URL('../schema/', import.meta.url));
@@ -23,10 +24,26 @@ const registration = () => ({
 function setup(t) {
   const root = mkdtempSync(path.join(os.tmpdir(), 'nimi-remote-registry-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
-  const write = value => writeFileSync(path.join(root, 'remote-clients.json'), JSON.stringify(value));
+  const fixtureProduct = { app_id:'publisher.editor', slug:'editor', publisher:'publisher', display_name:'Editor', repository:'https://github.com/publisher/editor',
+    repository_id:101, owner_id:11, summary:{en:'Editor',zh:'编辑器'},license:'MIT',visibility:'public',kill_switch:{active:false,reason:null,revision:0} };
+  const dir = path.join(root, 'products/publisher.editor');
+  mkdirSync(path.join(dir,'sources'),{recursive:true});
+  writeFileSync(path.join(dir,'product.json'),JSON.stringify(fixtureProduct));
+  const write = value => {
+    for (const [id, {app_id, publisher, display_name, ...source}] of Object.entries(value.clients)) {
+      writeFileSync(path.join(dir,'sources',id+'.json'),JSON.stringify({ client_id:id,...source }));
+      const clientFile=path.join(root,projectionPath('clients',id));
+      mkdirSync(path.dirname(clientFile),{recursive:true});
+      writeFileSync(clientFile,JSON.stringify({client_id:id,source:{app_id,publisher,display_name,...source}}));
+      if(source.kind === 'web') {
+        const originFile=path.join(root,projectionPath('origins',source.origin));
+        mkdirSync(path.dirname(originFile),{recursive:true});
+        writeFileSync(originFile, JSON.stringify({origin:source.origin,active:source.status==='active'}));
+      }
+    }
+  };
   const git = (...args) => execFileSync('git', args, { cwd: root, encoding: 'utf8', windowsHide: true }).trim();
   writeFileSync(path.join(root, 'index.json'), JSON.stringify({ schema_version: 1, apps: {} }));
-  write(empty());
   git('init', '-q'); git('config', 'user.name', 'Test'); git('config', 'user.email', 'test@example.invalid');
   const commit = () => { git('add', '.'); git('-c', 'core.hooksPath=', 'commit', '-qm', 'test'); return git('rev-parse', 'HEAD'); };
   return { root, write, commit };
@@ -38,12 +55,12 @@ test('remote admission uses the same Registry review actor and cannot be smuggle
   write({ schema_version: 1, clients: { 'publisher.editor.web': registration() } });
   const headSha = commit();
   const options = { root, gitRoot: root, schemaRoot, baseSha, headSha, context };
-  assert.deepEqual(await validatePullRequestTransition(options), { mode: 'remote-client-review', clients: ['publisher.editor.web'] });
+  assert.equal((await validatePullRequestTransition(options)).mode, 'hosted-review');
   await assert.rejects(validatePullRequestTransition({ ...options, context: { ...context, finalizerPermission: 'write' } }), /maintainer/);
   await assert.rejects(validatePullRequestTransition({ ...options, context: { ...context, actorId: 99 } }), /actual maintainer/);
   writeFileSync(path.join(root, 'unrelated.txt'), 'cannot mix');
-  await assert.rejects(validatePullRequestTransition({ ...options, headSha: commit() }), /remote source registration review/);
-  assert.equal(classifyChangedPaths(['remote-clients.json']), 'remote-client-review');
+  await assert.rejects(validatePullRequestTransition({ ...options, headSha: commit() }), /unrelated files/);
+  assert.equal(classifyChangedPaths(['products/publisher.editor/sources/publisher.editor.web.json']), 'hosted-review');
 });
 
 test('exact website origin, callback and App access declaration are validated by the tree reader', async t => {

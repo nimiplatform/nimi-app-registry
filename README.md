@@ -11,19 +11,13 @@ separate Nimi Runtime and Desktop lifecycle owners.
 
 ## Remote application sources
 
-`remote-clients.json` registers remote clients under the same Registry owner.
-The initial file is empty; schema support does not admit a website or establish
-remote Runtime availability. A Web client names its canonical App, publisher,
-exact HTTPS origin and same-origin callback, access declaration and capabilities.
-It does not pretend to be an immutable native package. Ordinary website content
-updates do not require release-byte proofs.
+Product identities and permanent public slugs are reviewed under `products/<app_id>/product.json`. Per-source records in `sources/<client_id>.json` produce bounded, commit-pinned Realm projections. Development sources, Android association hosts and official management sources retain their exact qualifications. A hosted Web source derives its origin from the approved slug and uses the root callback.
 
-A current maintainer explicitly reviews a change to this file in its own PR.
-The validator checks the actual review actor and the source revision. App and
-publisher identity cannot be reassigned; origin, callback, role, declaration or
-capability changes advance the revision. Pause/resume and display changes keep
-the source revision. Pause preserves the identity and user data. Git carries the
-review history; there is no additional approval ledger.
+For a hosted release, run `node scripts/prepare-hosted-web.mjs --product products/<app_id>/product.json --version <version>` against the publisher's protected `web-v<version>` tag and immutable GitHub Release. The script verifies the public build metadata and produces candidate source and release fields without approving them. Include the source, the append-only `web/releases/<version>.json` and any first product metadata in one PR. A current human maintainer supplies the recorded review and finalizes that same PR with `node scripts/finalize-hosted-web.mjs --product products/<app_id>/product.json --candidate <candidate.json> --review <review.json>`. The review carries the maintainer's explicit decision, GitHub login and numeric actor ID, reason code and decision time. The trusted PR check verifies the actual actor and artifact. Keep local candidate/review input files outside admission paths. Run `pnpm run project:sources` before committing. This command also regenerates the native kill-switch projection when a product's policy changes.
+
+An ordinary content update changes the hosted version and its approved artifact, retaining the source revision. A material change in origin, callback, declarations, role or signing identity advances the source revision. A maintainer may pause an individual source, apply product policy with an independent revision, or change only `stable_version` to select a retained approved release compatible with current policy. Never reassign a public slug or client to another product.
+
+For a pre-cutover local development file use `node scripts/migrate-local-sources.mjs <old-file> <empty-local-directory>` once, then point the non-production Realm's `RUNTIME_CLIENT_REGISTRY_PATH` at that directory.
 
 As for native Apps, declarations may retain unknown domain names as raw input.
 Runtime alone activates its supported domains for the exact registered generation;
@@ -56,7 +50,7 @@ new approved source record by themselves.
   maintainer may add one final commit to that same PR, including when that
   maintainer authored the publisher submission. The commit deletes the
   submission, adds one immutable descriptor below
-  `descriptors/<app_id>/<version>.json`, and updates `index.json`.
+  `descriptors/<app_id>/<version>.json`, and updates `index.json`. For the first native admission of a new product, the maintainer also adds its product identity and verified repository ownership.
 - Automation validates facts and transitions. It never selects `approved` or
   authors a human decision.
 - Existing descriptors are append-only. A new App version requires a new
@@ -65,10 +59,10 @@ new approved source record by themselves.
   the target pointers its candidate carries (plus a new row initialized with an
   inactive kill switch at revision 0). Other rows and existing policy stay
   semantically identical; formatting or key order is not a change.
-- A base-owned maintainer policy pull request changes only `kill_switch` fields
-  of existing `index.json` rows: a current maintainer, valid field ranges, and a
-  revision incremented by one per changed row. It needs no candidate,
-  descriptor or publisher Release download. An active switch states a reason
+- A current maintainer changes a product's `kill_switch` in an independent
+  policy pull request and increments its revision by one. Run `pnpm run project:sources`
+  to include the affected Realm projections and any existing native index row in the same commit.
+  This also works for a Web-only product. An active switch states a reason
   naming the version, the misstated field and the actual difference, for
   example `v0.1.6 declares content_descriptors as empty; the App provides
   gambling content`; detailed grounds stay in the pull request. When the

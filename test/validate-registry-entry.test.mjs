@@ -22,7 +22,7 @@ test('policy-only pull requests fetch maintainer permission without parent-commi
   const deps = {
     readJson: async () => ({ number: 7, sender: { login: 'registry-maintainer', id: 9876 }, pull_request: { base: { sha: base }, head: { sha: head, repo: { owner: { login: 'nimiplatform' } } } } }),
     gitOutput: (_root, args) => { gitCalls.push(args[0]); return args[0] === 'diff' ? 'index.json\n' : `${head} ${base}`; },
-    githubJson: async (url) => { requests.push(url); return url.includes('/permission') ? { permission: 'maintain' } : { check_runs: [] }; },
+    githubJson: async (url) => { requests.push(url); return url.includes('/permission') ? { permission: 'write', role_name: 'maintain' } : { check_runs: [] }; },
   };
   const context = await pullRequestContext({ gitRoot: '.', base, head, event: 'event.json' }, deps);
   assert.equal(context.finalizerPermission, 'maintain');
