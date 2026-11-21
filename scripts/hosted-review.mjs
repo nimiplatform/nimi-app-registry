@@ -19,7 +19,9 @@ export function validateHostedTransition(changes, state, context, before, after)
   const releases = [],
     owners = [],
     policies = new Set(),
+    attributions = new Set(),
     identities = new Set();
+  const baseIndex = before('index.json');
   let otherChanges = false;
   for (const change of changes) {
     const name = change.path;
@@ -38,6 +40,9 @@ export function validateHostedTransition(changes, state, context, before, after)
         for (const key of ['app_id', 'slug', 'publisher', 'repository', 'repository_id', 'owner_id'])
           if (previous[key] !== entry.product[key])
             throw new Error('Published product ownership and slug cannot be reassigned.');
+        if (baseIndex?.apps?.[appId] && !equal(previous.summary, entry.product.summary)) {
+          throw new Error('Products with admitted native releases cannot edit product.json summary independently; publish a reviewed release.');
+        }
         if (!equal(previous.kill_switch, entry.product.kill_switch)) {
           if (
             !equal(omit(previous, ['kill_switch']), omit(entry.product, ['kill_switch'])) ||
@@ -45,6 +50,11 @@ export function validateHostedTransition(changes, state, context, before, after)
           )
             throw new Error('Product policy requires an independent incremented revision.');
           policies.add(appId);
+        } else if (
+          (!equal(previous.origin, entry.product.origin) || !equal(previous.upstream, entry.product.upstream)) &&
+          equal(omit(previous, ['origin', 'upstream']), omit(entry.product, ['origin', 'upstream']))
+        ) {
+          attributions.add(appId);
         } else otherChanges = true;
       } else {
         if (!equal(entry.product.kill_switch, zeroPolicy))
@@ -78,14 +88,31 @@ export function validateHostedTransition(changes, state, context, before, after)
       releases.push({ product: entry.product, release, source: admittedClient(entry.product, entry.hosted) });
     }
   }
-  if (!identities.size || (policies.size && otherChanges) || (!policies.size && identities.size !== 1))
-    throw new Error('Review one product, or only explicit product policy changes.');
+  const hasPolicies = policies.size > 0;
+  const hasAttributions = attributions.size > 0;
+  const activeModes = Number(hasPolicies) + Number(hasAttributions) + Number(otherChanges);
+  if (!identities.size || activeModes !== 1 || (otherChanges && identities.size !== 1))
+    throw new Error('Review one product, only explicit product policy changes, or only product origin/upstream attribution projections.');
   if (changes.some((c) => c.path === 'index.json')) {
     const prior = before('index.json');
-    for (const id of policies)
-      if (prior.apps[id]) prior.apps[id].kill_switch = state.products.get(id).product.kill_switch;
+    if (hasPolicies) {
+      for (const id of policies)
+        if (prior.apps[id]) prior.apps[id].kill_switch = state.products.get(id).product.kill_switch;
+    } else if (hasAttributions) {
+      for (const id of attributions) {
+        if (!prior.apps[id]) continue;
+        const prod = state.products.get(id).product;
+        if (prod.origin === undefined) delete prior.apps[id].origin;
+        else prior.apps[id].origin = prod.origin;
+        if (prod.upstream === undefined) delete prior.apps[id].upstream;
+        else prior.apps[id].upstream = prod.upstream;
+      }
+    }
     if (!equal(prior, after('index.json')))
-      throw new Error('Only native product policy projections may change in this review.');
+      throw new Error('Only matching native product policy or attribution projections may change in this review.');
+  }
+  if (hasAttributions) {
+    return { mode: 'attribution-projection', owners: [], releases: [], attributed: [...attributions].sort() };
   }
   return { mode: 'hosted-review', owners, releases };
 }

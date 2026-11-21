@@ -1,4 +1,5 @@
 import { validatePublishedAppInfo } from './app-info-validation.mjs';
+import { validateStorefrontMediaArchiveEntries } from './storefront-media-validation.mjs';
 import childProcess from 'node:child_process';
 import { createHash } from 'node:crypto';
 import { mkdtemp, rm, writeFile } from 'node:fs/promises';
@@ -315,6 +316,7 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
   }
   const archivedLicenseSha = createHash('sha256').update(entries.get('LICENSE').bytes).digest('hex');
   if (!sourceLicenseDigests.has(archivedLicenseSha)) fail(`${label} LICENSE does not match a reviewed source license file`);
+  return info;
 }
 
 // @nimi-authority: rule.nimi.platform.app-ecosystem.p-dev-004
@@ -474,6 +476,16 @@ export function validateAggregate(bytes, candidate) {
   ) {
     fail('aggregate asset identity does not match the candidate');
   }
+  const expectedStorefrontMedia = candidate.storefront_media === undefined
+    ? undefined
+    : {
+      asset_name: candidate.storefront_media.asset_name,
+      size: candidate.storefront_media.size,
+      sha256: candidate.storefront_media.sha256,
+    };
+  if (!sameValue(aggregate.storefront_media, expectedStorefrontMedia)) {
+    fail('aggregate storefront_media does not match the candidate');
+  }
   for (const target of candidate.targets) {
     const aggregateTarget = aggregate.targets.find((item) => item.target_id === target.target_id);
     const expected = {
@@ -526,12 +538,14 @@ export async function validatePublishedGitHubCandidate(candidate, options = {}) 
   const aggregateBytes = await downloadExact(candidate.aggregate.asset_url, candidate.aggregate.size, candidate.aggregate.sha256, 'aggregate');
   validateAggregate(aggregateBytes, candidate);
 
+  const parsedInfos = [];
   for (const target of candidate.targets) {
     releaseAsset(release, target, target.target_id);
     const bytes = await downloadExact(target.asset_url, target.size, target.sha256, target.target_id);
     releaseAsset(release, target.app_info, `${target.target_id} App info`);
     const infoBytes = await downloadExact(target.app_info.asset_url, target.app_info.size, target.app_info.sha256, `${target.target_id} App info`);
-    validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes);
+    const info = validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes);
+    parsedInfos.push({ targetId: target.target_id, info });
     const attestationRef = `https://api.github.com/repos/${owner}/${repo}/attestations/sha256:${target.sha256}`;
     if (!sameValue(target.provenance_attestation_refs, [attestationRef])) {
       fail(`${target.target_id} provenance_attestation_refs must bind the exact GitHub digest lookup`);
@@ -544,5 +558,59 @@ export async function validatePublishedGitHubCandidate(candidate, options = {}) 
     await verifyBuildProvenance(bytes, candidate, target, attestations, token);
   }
 
-  return Object.freeze({ repository: `${owner}/${repo}`, releaseId: release.id, targets: candidate.targets.length });
+  const firstInfo = parsedInfos[0].info;
+  for (const entry of parsedInfos.slice(1)) {
+    for (const sharedField of ['display_name', 'summary', 'icon', 'readme_markdown', 'release_notes_markdown', 'safety_profile', 'storefront']) {
+      if (!sameValue(entry.info[sharedField], firstInfo[sharedField])) {
+        fail(`App info ${sharedField} for ${entry.targetId} differs from ${parsedInfos[0].targetId}; one release shares one presentation`);
+      }
+    }
+  }
+  const hasDeclaredMedia = Boolean(firstInfo.storefront?.media);
+  const hasMediaArchive = candidate.storefront_media !== undefined;
+  if (hasDeclaredMedia !== hasMediaArchive) {
+    fail('storefront.media manifest in app-info.json and candidate.storefront_media archive must both be present or both be absent');
+  }
+  let storefrontImageCount = 0;
+  if (hasMediaArchive) {
+    releaseAsset(release, candidate.storefront_media, 'storefront_media');
+    const mediaZipBytes = await downloadExact(
+      candidate.storefront_media.asset_url,
+      candidate.storefront_media.size,
+      candidate.storefront_media.sha256,
+      'storefront_media',
+    );
+    const mediaEntries = readNimiAppArchive(mediaZipBytes, 'storefront_media');
+    storefrontImageCount = validateStorefrontMediaArchiveEntries(mediaEntries, firstInfo.storefront.media);
+  }
+
+  const storefrontReview = firstInfo.storefront
+    ? Object.freeze({
+      category: firstInfo.storefront.category,
+      defaultLocale: firstInfo.storefront.default_locale,
+      locales: Object.fromEntries(
+        Object.entries(firstInfo.storefront.locales || {}).map(([locale, entry]) => [
+          locale,
+          Object.freeze({
+            displayName: entry.display_name ?? null,
+            summary: entry.summary ?? null,
+            tags: entry.tags || [],
+            highlights: (entry.highlights || []).map((h) => h.title),
+            hasLocalizedIntroduction: Boolean(entry.introduction_markdown),
+          }),
+        ]),
+      ),
+      mediaImageCount: storefrontImageCount,
+    })
+    : null;
+
+  return Object.freeze({
+    repository: `${owner}/${repo}`,
+    releaseId: release.id,
+    releaseUrl: release.html_url,
+    displayName: firstInfo.display_name,
+    summary: firstInfo.summary,
+    targets: candidate.targets.length,
+    storefrontReview,
+  });
 }

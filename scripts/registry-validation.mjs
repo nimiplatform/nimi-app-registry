@@ -178,6 +178,9 @@ function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descri
     for (const field of ['visibility', 'admission_status', 'kill_switch']) {
       if (!sameSemanticValue(baseRow[field], headRow[field])) fail(`maintainer finalization must not change ${field} for ${appId}; use a maintainer policy change`);
     }
+    for (const field of ['origin', 'upstream']) {
+      if (!sameSemanticValue(baseRow[field], headRow[field])) fail(`maintainer finalization must not change ${field} for ${appId}; use a maintainer attribution change`);
+    }
   } else {
     if (!sameSemanticValue(headRow.kill_switch, NEW_ROW_KILL_SWITCH)) fail(`new index row ${appId} must start with an inactive kill switch at revision 0`);
     if (headRow.admission_status !== 'approved') fail(`new index row ${appId} must record approved admission`);
@@ -195,7 +198,7 @@ function validateMaintainerPolicyChange(baseIndex, headIndex) {
   const changed = [];
   for (const [appId, baseRow] of Object.entries(baseApps)) {
     const headRow = headApps[appId];
-    for (const field of ['display_name', 'visibility', 'admission_status', 'latest_admitted_release_by_target']) {
+    for (const field of ['display_name', 'visibility', 'admission_status', 'origin', 'upstream', 'latest_admitted_release_by_target']) {
       if (!sameSemanticValue(baseRow[field], headRow[field])) fail(`maintainer policy change must not change ${field} for ${appId}`);
     }
     if (sameSemanticValue(baseRow.kill_switch, headRow.kill_switch)) continue;
@@ -268,6 +271,16 @@ function validateCandidateFacts(candidate, label) {
   const targetIds = new Set();
   const assetIds = new Set([candidate.aggregate.asset_id]);
   const assetNames = new Set([candidate.aggregate.asset_name]);
+  if (candidate.storefront_media !== undefined) {
+    const sm = candidate.storefront_media;
+    const expectedName = `${candidate.app_id}-${candidate.version}-storefront-media.zip`;
+    if (sm.asset_name !== expectedName || sm.size > 8388608 || assetIds.has(sm.asset_id) || assetNames.has(sm.asset_name)) {
+      fail(`${label} has an invalid or colliding storefront_media asset`);
+    }
+    assetIds.add(sm.asset_id);
+    assetNames.add(sm.asset_name);
+    validateTaggedReleaseAsset(candidate, sm, `${label} storefront_media`);
+  }
   for (const target of candidate.targets) {
     if (targetIds.has(target.target_id)) fail(`${label} contains duplicate target_id ${target.target_id}`);
     if (assetIds.has(target.asset_id)) fail(`${label} contains duplicate asset_id ${target.asset_id}`);
@@ -351,6 +364,9 @@ export async function validateRegistryTree(root, options = {}) {
   for (const [appId, row] of Object.entries(index.apps)) {
     const owner = state.products.get(appId)?.product;
     if (!owner || !sameSemanticValue(owner.kill_switch, row.kill_switch)) fail('Native index requires matching product policy: ' + appId);
+    if (!sameSemanticValue(owner.origin, row.origin) || !sameSemanticValue(owner.upstream, row.upstream)) {
+      fail('Native index requires matching product origin/upstream projection: ' + appId);
+    }
     for (const [targetId, pointer] of Object.entries(row.latest_admitted_release_by_target)) {
       const resolved = descriptors.get(pointer.descriptor_id);
       if (!resolved) fail(`index pointer ${appId}/${targetId} references a missing descriptor_id`);
@@ -447,6 +463,9 @@ export async function validatePullRequestTransition(options) {
       name => readJsonAt(gitRoot, baseSha, name, name), name => readJsonAt(gitRoot, headSha, name, name));
     if (changes.some(c => c.path === 'index.json')) {
       await validateRegistryTree(root, { schemaRoot });
+      if (result.mode === 'attribution-projection') {
+        return result;
+      }
       const prior = readJsonAt(gitRoot, baseSha, 'index.json', 'index.json');
       const next = readJsonAt(gitRoot, headSha, 'index.json', 'index.json');
       return { mode: 'maintainer-policy', killSwitchChanges: validateMaintainerPolicyChange(prior, next) };
@@ -454,7 +473,11 @@ export async function validatePullRequestTransition(options) {
     if (changes.some(c => /^products\/[^/]+\/product\.json$/.test(c.path))) {
       const index = readJsonAt(gitRoot, headSha, 'index.json', 'index.json');
       for (const [id, row] of Object.entries(index.apps)) {
-        if (!sameSemanticValue(row.kill_switch, state.products.get(id)?.product.kill_switch)) fail('Native product policy projection missing: ' + id);
+        const owner = state.products.get(id)?.product;
+        if (!sameSemanticValue(row.kill_switch, owner?.kill_switch)) fail('Native product policy projection missing: ' + id);
+        if (!sameSemanticValue(row.origin, owner?.origin) || !sameSemanticValue(row.upstream, owner?.upstream)) {
+          fail('Native product attribution projection missing: ' + id);
+        }
       }
     }
     return result;

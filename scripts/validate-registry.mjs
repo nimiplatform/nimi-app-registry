@@ -130,21 +130,21 @@ async function candidateFromTransition(root, transition) {
   return value.candidate;
 }
 
-async function main() {
-  const parsed = parseArgs(process.argv.slice(2));
-  const root = path.resolve(parsed.root || process.cwd());
-  const schemaRoot = path.resolve(parsed.schemaRoot || path.join(root, 'schema'));
-  if (parsed.mode === 'all') {
-    const summary = await validateRegistryTree(root, { schemaRoot });
-    process.stdout.write(`${JSON.stringify({ ok: true, mode: 'all', ...summary })}\n`);
-    return;
-  }
-
-  const gitRoot = path.resolve(parsed.gitRoot || root);
-  const base = parsed.base || process.env.REGISTRY_BASE_SHA || '';
-  const head = parsed.head || process.env.REGISTRY_HEAD_SHA || '';
-  const context = await pullRequestContext({ ...parsed, root, gitRoot, base, head });
-  const transition = await validatePullRequestTransition({
+export async function validatePullRequestCli(
+  options,
+  deps = {
+    pullRequestContext,
+    validatePullRequestTransition,
+    validatePublishedGitHubCandidate,
+  },
+) {
+  const root = path.resolve(options.root || process.cwd());
+  const gitRoot = path.resolve(options.gitRoot || root);
+  const schemaRoot = path.resolve(options.schemaRoot || path.join(root, 'schema'));
+  const base = options.base || process.env.REGISTRY_BASE_SHA || '';
+  const head = options.head || process.env.REGISTRY_HEAD_SHA || '';
+  const context = await deps.pullRequestContext({ ...options, root, gitRoot, base, head });
+  const transition = await deps.validatePullRequestTransition({
     root,
     gitRoot,
     schemaRoot,
@@ -155,21 +155,33 @@ async function main() {
   if (transition.mode === 'hosted-review') {
     const { verifyHostedReview } = await import('./hosted-release-verification.mjs');
     await verifyHostedReview(transition, context.token);
-    process.stdout.write(JSON.stringify({ ok: true, mode: transition.mode }) + '\n');
-    return;
+    return { ok: true, mode: transition.mode };
   }
-  if (transition.mode === 'maintainer-policy') {
-    // Policy-only changes carry no candidate; no publisher Release is read.
-    process.stdout.write(`${JSON.stringify({ ok: true, mode: transition.mode, transition, external: null })}\n`);
-    return;
+  if (transition.mode === 'maintainer-policy' || transition.mode === 'attribution-projection') {
+    // Policy-only and attribution-projection changes carry no candidate; no publisher Release is read.
+    return { ok: true, mode: transition.mode, transition, external: null };
   }
   if (transition.newProduct) {
     const { verifyRepository } = await import('./hosted-release-verification.mjs');
     await verifyRepository(transition.newProduct, context.token);
   }
   const candidate = await candidateFromTransition(root, transition);
-  const external = await validatePublishedGitHubCandidate(candidate, { token: context.token });
-  process.stdout.write(`${JSON.stringify({ ok: true, mode: transition.mode, transition, external })}\n`);
+  const external = await deps.validatePublishedGitHubCandidate(candidate, { token: context.token });
+  return { ok: true, mode: transition.mode, transition, external };
+}
+
+async function main() {
+  const parsed = parseArgs(process.argv.slice(2));
+  const root = path.resolve(parsed.root || process.cwd());
+  const schemaRoot = path.resolve(parsed.schemaRoot || path.join(root, 'schema'));
+  if (parsed.mode === 'all') {
+    const summary = await validateRegistryTree(root, { schemaRoot });
+    process.stdout.write(`${JSON.stringify({ ok: true, mode: 'all', ...summary })}\n`);
+    return;
+  }
+
+  const result = await validatePullRequestCli(parsed);
+  process.stdout.write(`${JSON.stringify(result)}\n`);
 }
 
 if (process.argv[1] && path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)) {

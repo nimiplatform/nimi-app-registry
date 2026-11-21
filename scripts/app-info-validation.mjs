@@ -2,6 +2,7 @@ import { createHash } from 'node:crypto';
 import { isDeepStrictEqual } from 'node:util';
 import { PNG } from 'pngjs';
 import { normalizeSafetyProfile } from './safety-profile-validation.mjs';
+import { validateAppInfoStorefront } from './storefront-media-validation.mjs';
 
 // Implements the Platform P-NAPP-042 publisher information contract.
 // @nimi-authority: rule.nimi.platform.app-ecosystem.p-napp-043b
@@ -9,7 +10,7 @@ export function validatePublishedAppInfo(raw, candidate, target) {
   const fail = (field) => { throw new Error(`App info ${field} is invalid or differs from the reviewed candidate`); };
   if (!Buffer.isBuffer(raw) || raw.length === 0 || raw.length > 1048576 || raw.length !== target.app_info.size || createHash('sha256').update(raw).digest('hex') !== target.app_info.sha256) fail('asset bytes');
   const info = JSON.parse(new TextDecoder('utf-8', { fatal: true }).decode(raw));
-  const allowed = ['format', 'app_id', 'version', 'target_id', 'display_name', 'summary', 'icon', 'readme_markdown', 'release_notes_markdown', 'license', 'app_access', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy', 'author', 'homepage_url', 'support_url', 'safety_profile'];
+  const allowed = ['format', 'app_id', 'version', 'target_id', 'display_name', 'summary', 'icon', 'readme_markdown', 'release_notes_markdown', 'license', 'app_access', 'capability_contract_refs', 'required_standardized_feature_refs', 'storage_policy', 'author', 'homepage_url', 'support_url', 'safety_profile', 'storefront'];
   if (Object.keys(info).some((key) => !allowed.includes(key)) || info.format !== 'nimi.app-info/v1' || info.target_id !== target.target_id) fail('format or target');
   // safety_profile is compared as declared: absent on both sides is undeclared,
   // a declared copy must be canonical and identical to the reviewed candidate.
@@ -56,5 +57,9 @@ export function validatePublishedAppInfo(raw, candidate, target) {
   if (!ended) fail('complete icon');
   const decoded = PNG.sync.read(icon, { checkCRC: true });
   if (!decoded.data.some((value, index) => index % 4 === 3 && value !== 0)) fail('visible icon');
+  if (info.storefront !== undefined) {
+    try { validateAppInfoStorefront(info.storefront); }
+    catch (error) { throw new Error(`App info ${error.message}`); }
+  }
   return info;
 }
