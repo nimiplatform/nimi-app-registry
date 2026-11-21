@@ -107,7 +107,7 @@
       "origin": "nimi-official"
     },
     "nimi.shijing": {
-      "display_name": "时镜 ShiJing",
+      "display_name": "时镜",
       "visibility": "public",
       "admission_status": "approved",
       "kill_switch": {
@@ -117,12 +117,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "nimi.shijing@0.1.10",
-          "path": "descriptors/nimi.shijing/0.1.10.json"
+          "descriptor_id": "nimi.shijing@0.1.11",
+          "path": "descriptors/nimi.shijing/0.1.11.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "nimi.shijing@0.1.10",
-          "path": "descriptors/nimi.shijing/0.1.10.json"
+          "descriptor_id": "nimi.shijing@0.1.11",
+          "path": "descriptors/nimi.shijing/0.1.11.json"
         }
       },
       "origin": "nimi-official"
