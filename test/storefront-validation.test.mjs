@@ -72,7 +72,7 @@ test('storefront validation verifies bijection between media manifest and archiv
   assert.throws(() => validateStorefrontMediaArchiveEntries(entries, storefront.media), /file count/);
 });
 
-test('product and index schemas enforce origin and upstream pairing while keeping origin optional during PR-1 bootstrap', async () => {
+test('product and index schemas require origin and enforce origin and upstream pairing', async () => {
   const validators = await loadValidators();
   const baseProduct = {
     app_id: 'nimi.shijing',
@@ -87,7 +87,7 @@ test('product and index schemas enforce origin and upstream pairing while keepin
     visibility: 'public',
     kill_switch: { active: false, reason: null, revision: 0 },
   };
-  assert.equal(validators.product(baseProduct), true);
+  assert.equal(validators.product(baseProduct), false);
   assert.equal(validators.product({ ...baseProduct, origin: 'nimi-official' }), true);
   assert.equal(validators.product({ ...baseProduct, origin: 'open-source-adapted' }), false);
   assert.equal(
@@ -194,6 +194,7 @@ test('validatePullRequestCli dispatches attribution-projection without reading a
     license: 'MIT',
     summary: { en: 'Rhythm', zh: '节律' },
     visibility: 'public',
+    origin: 'community',
     kill_switch: { active: false, reason: null, revision: 0 },
   };
   await writeJson('products/nimi.shijing/product.json', prodBase);

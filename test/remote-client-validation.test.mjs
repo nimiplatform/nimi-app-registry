@@ -25,7 +25,7 @@ function setup(t) {
   const root = mkdtempSync(path.join(os.tmpdir(), 'nimi-remote-registry-'));
   t.after(() => rmSync(root, { recursive: true, force: true }));
   const fixtureProduct = { app_id:'publisher.editor', slug:'editor', publisher:'publisher', display_name:'Editor', repository:'https://github.com/publisher/editor',
-    repository_id:101, owner_id:11, summary:{en:'Editor',zh:'编辑器'},license:'MIT',visibility:'public',kill_switch:{active:false,reason:null,revision:0} };
+    repository_id:101, owner_id:11, summary:{en:'Editor',zh:'编辑器'},license:'MIT',visibility:'public',origin:'community',kill_switch:{active:false,reason:null,revision:0} };
   const dir = path.join(root, 'products/publisher.editor');
   mkdirSync(path.join(dir,'sources'),{recursive:true});
   writeFileSync(path.join(dir,'product.json'),JSON.stringify(fixtureProduct));
