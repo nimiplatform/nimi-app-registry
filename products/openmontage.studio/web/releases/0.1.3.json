@@ -1,0 +1,24 @@
+{
+  "app_id": "openmontage.studio",
+  "client_id": "openmontage.studio.web",
+  "version": "0.1.3",
+  "source_revision": 1,
+  "commit_sha": "528657fc6b1dba9fc63b51e337a88068a4ba4b7e",
+  "release_id": 453438028,
+  "asset_id": 774413042,
+  "size": 5096756,
+  "sha256": "7dd4757b70624c9c104837c66cc20e4db05667c948ff910550c412a854701635",
+  "app_access": [
+    "runtime.consume",
+    "integration.provide",
+    "integration.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "image.generate",
+    "audio.synthesize",
+    "audio.transcribe",
+    "video.generate",
+    "music.generate"
+  ]
+}

@@ -1,0 +1,20 @@
+{
+  "client_id": "openmontage.studio.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume",
+    "integration.provide",
+    "integration.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "image.generate",
+    "audio.synthesize",
+    "audio.transcribe",
+    "video.generate",
+    "music.generate"
+  ],
+  "stable_version": "0.1.3"
+}
