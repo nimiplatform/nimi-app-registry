@@ -16,5 +16,10 @@
     "revision": 0
   },
   "repository_id": 1372126433,
-  "owner_id": 263632129
+  "owner_id": 263632129,
+  "origin": "open-source-adapted",
+  "upstream": {
+    "name": "DeepTutor",
+    "url": "https://github.com/HKUDS/DeepTutor"
+  }
 }

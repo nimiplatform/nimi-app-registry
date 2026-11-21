@@ -16,5 +16,10 @@
     "revision": 0
   },
   "repository_id": 1366375528,
-  "owner_id": 263632129
+  "owner_id": 263632129,
+  "origin": "open-source-adapted",
+  "upstream": {
+    "name": "OpenMontage",
+    "url": "https://github.com/OpenMontageInc/OpenMontage"
+  }
 }

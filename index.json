@@ -19,7 +19,8 @@
           "descriptor_id": "nimi.inscape@0.1.8",
           "path": "descriptors/nimi.inscape/0.1.8.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.overtone": {
       "display_name": "Nimi Overtone",
@@ -39,7 +40,8 @@
           "descriptor_id": "nimi.overtone@0.1.8",
           "path": "descriptors/nimi.overtone/0.1.8.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.parentos": {
       "display_name": "ParentOS",
@@ -59,7 +61,8 @@
           "descriptor_id": "nimi.parentos@0.1.9",
           "path": "descriptors/nimi.parentos/0.1.9.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.realm-persona-studio": {
       "display_name": "Realm Persona Studio",
@@ -79,7 +82,8 @@
           "descriptor_id": "nimi.realm-persona-studio@0.1.6",
           "path": "descriptors/nimi.realm-persona-studio/0.1.6.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.realm-world-studio": {
       "display_name": "Realm World Studio",
@@ -99,7 +103,8 @@
           "descriptor_id": "nimi.realm-world-studio@0.1.6",
           "path": "descriptors/nimi.realm-world-studio/0.1.6.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.shijing": {
       "display_name": "时镜 ShiJing",
@@ -119,7 +124,8 @@
           "descriptor_id": "nimi.shijing@0.1.10",
           "path": "descriptors/nimi.shijing/0.1.10.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.storybook": {
       "display_name": "Storybook",
@@ -139,7 +145,8 @@
           "descriptor_id": "nimi.storybook@0.1.9",
           "path": "descriptors/nimi.storybook/0.1.9.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimiplatform.vane": {
       "display_name": "Vane",
@@ -159,6 +166,11 @@
           "descriptor_id": "nimiplatform.vane@0.1.10",
           "path": "descriptors/nimiplatform.vane/0.1.10.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "Vane",
+        "url": "https://github.com/ItzCrazyKns/Vane"
       }
     },
     "openmontage.studio": {
@@ -179,6 +191,11 @@
           "descriptor_id": "openmontage.studio@0.1.3",
           "path": "descriptors/openmontage.studio/0.1.3.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "OpenMontage",
+        "url": "https://github.com/OpenMontageInc/OpenMontage"
       }
     },
     "io.github.nimiplatform.next-ai-draw-io": {
@@ -199,6 +216,11 @@
           "descriptor_id": "io.github.nimiplatform.next-ai-draw-io@0.4.23",
           "path": "descriptors/io.github.nimiplatform.next-ai-draw-io/0.4.23.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "next-ai-draw-io",
+        "url": "https://github.com/DayuanJiang/next-ai-draw-io"
       }
     },
     "org.nimiplatform.sillytavern": {
@@ -219,6 +241,11 @@
           "descriptor_id": "org.nimiplatform.sillytavern@1.19.7",
           "path": "descriptors/org.nimiplatform.sillytavern/1.19.7.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "SillyTavern",
+        "url": "https://github.com/SillyTavern/SillyTavern"
       }
     },
     "org.nimiplatform.deeptutor": {
@@ -239,6 +266,11 @@
           "descriptor_id": "org.nimiplatform.deeptutor@1.6.18",
           "path": "descriptors/org.nimiplatform.deeptutor/1.6.18.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "DeepTutor",
+        "url": "https://github.com/HKUDS/DeepTutor"
       }
     },
     "io.github.nimiplatform.open-notebook": {
@@ -259,6 +291,11 @@
           "descriptor_id": "io.github.nimiplatform.open-notebook@1.15.1",
           "path": "descriptors/io.github.nimiplatform.open-notebook/1.15.1.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "open-notebook",
+        "url": "https://github.com/lfnovo/open-notebook"
       }
     },
     "io.github.nimiplatform.presenton": {
@@ -279,6 +316,11 @@
           "descriptor_id": "io.github.nimiplatform.presenton@0.9.11-beta.10",
           "path": "descriptors/io.github.nimiplatform.presenton/0.9.11-beta.10.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "presenton",
+        "url": "https://github.com/presenton/presenton"
       }
     },
     "nimi.odd-bureau": {
@@ -299,7 +341,8 @@
           "descriptor_id": "nimi.odd-bureau@0.1.1",
           "path": "descriptors/nimi.odd-bureau/0.1.1.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "nimi.polyagent": {
       "display_name": "PolyAgent",
@@ -319,7 +362,8 @@
           "descriptor_id": "nimi.polyagent@0.1.0",
           "path": "descriptors/nimi.polyagent/0.1.0.json"
         }
-      }
+      },
+      "origin": "nimi-official"
     },
     "moneyprinterturbo.studio": {
       "display_name": "MoneyPrinterTurbo",
@@ -335,6 +379,11 @@
           "descriptor_id": "moneyprinterturbo.studio@0.1.1",
           "path": "descriptors/moneyprinterturbo.studio/0.1.1.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "MoneyPrinterTurbo",
+        "url": "https://github.com/harry0703/MoneyPrinterTurbo"
       }
     },
     "ai.nimi.openwhispr": {
@@ -351,6 +400,11 @@
           "descriptor_id": "ai.nimi.openwhispr@1.10.5",
           "path": "descriptors/ai.nimi.openwhispr/1.10.5.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "OpenWhispr",
+        "url": "https://github.com/OpenWhispr/openwhispr"
       }
     },
     "nimiplatform.voicestudio": {
@@ -367,6 +421,11 @@
           "descriptor_id": "nimiplatform.voicestudio@0.5.9",
           "path": "descriptors/nimiplatform.voicestudio/0.5.9.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "VoiceStudio",
+        "url": "https://github.com/debpalash/VoiceStudio"
       }
     },
     "io.github.nimiplatform.jev-search": {
@@ -383,6 +442,11 @@
           "descriptor_id": "io.github.nimiplatform.jev-search@0.1.2",
           "path": "descriptors/io.github.nimiplatform.jev-search/0.1.2.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "jev-search",
+        "url": "https://github.com/superagents-lab/jev-search"
       }
     },
     "io.github.nimiplatform.jev-ultrafast": {
@@ -399,6 +463,11 @@
           "descriptor_id": "io.github.nimiplatform.jev-ultrafast@0.1.3",
           "path": "descriptors/io.github.nimiplatform.jev-ultrafast/0.1.3.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "jev-ultrafast",
+        "url": "https://github.com/browser-use/jev-ultrafast"
       }
     },
     "ai.nimi.videolingo": {
@@ -415,6 +484,11 @@
           "descriptor_id": "ai.nimi.videolingo@0.1.9",
           "path": "descriptors/ai.nimi.videolingo/0.1.9.json"
         }
+      },
+      "origin": "open-source-adapted",
+      "upstream": {
+        "name": "VideoLingo",
+        "url": "https://github.com/Huanshere/VideoLingo"
       }
     }
   }

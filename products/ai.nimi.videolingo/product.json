@@ -16,5 +16,10 @@
     "revision": 0
   },
   "repository_id": 1368438208,
-  "owner_id": 263632129
+  "owner_id": 263632129,
+  "origin": "open-source-adapted",
+  "upstream": {
+    "name": "VideoLingo",
+    "url": "https://github.com/Huanshere/VideoLingo"
+  }
 }

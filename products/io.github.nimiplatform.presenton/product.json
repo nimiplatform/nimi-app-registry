@@ -16,5 +16,10 @@
     "revision": 0
   },
   "repository_id": 1389453758,
-  "owner_id": 263632129
+  "owner_id": 263632129,
+  "origin": "open-source-adapted",
+  "upstream": {
+    "name": "presenton",
+    "url": "https://github.com/presenton/presenton"
+  }
 }
