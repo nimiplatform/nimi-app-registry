@@ -20,5 +20,12 @@
     "audio.transcribe",
     "video.generate",
     "music.generate"
-  ]
+  ],
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "maintainer-confirmed-admission",
+    "decided_at": "2026-11-21T04:35:09.815Z"
+  }
 }
