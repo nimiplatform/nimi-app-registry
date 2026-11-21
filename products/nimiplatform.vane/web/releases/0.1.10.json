@@ -1,0 +1,20 @@
+{
+  "app_id": "nimiplatform.vane",
+  "client_id": "nimiplatform.vane.web",
+  "version": "0.1.10",
+  "source_revision": 1,
+  "commit_sha": "3e27a00f2f52b3975f81b7c3c50efb230a96d82e",
+  "release_id": 453401063,
+  "asset_id": 774228270,
+  "size": 7931900,
+  "sha256": "db2f2cdef3b90c6c6a47412dd0460b714163ea78783a1ef243fa7fcf4af554b6",
+  "app_access": [
+    "runtime.consume",
+    "integration.provide",
+    "integration.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "text.embed"
+  ]
+}

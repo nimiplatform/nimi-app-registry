@@ -1,0 +1,16 @@
+{
+  "client_id": "nimiplatform.vane.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume",
+    "integration.provide",
+    "integration.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "text.embed"
+  ],
+  "stable_version": "0.1.10"
+}
