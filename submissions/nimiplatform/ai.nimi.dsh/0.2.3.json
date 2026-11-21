@@ -1,0 +1,187 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "ai.nimi.dsh",
+    "display_name": "Nimi DSH",
+    "version": "0.2.3",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/deepseek-harness",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "ebb4f09972aee8608be255debaf78451a68e95c290f55c240dec2ecfa16ea6be"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.2.3",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/deepseek-harness/rulesets/27793978",
+      "commit_sha": "2c507236c46e8cad4041496a5a13d7018f2a9d13",
+      "release_id": 453775916,
+      "release_url": "https://github.com/nimiplatform/deepseek-harness/releases/tag/v0.2.3",
+      "release_notes_url": "https://github.com/nimiplatform/deepseek-harness/releases/tag/v0.2.3",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 775960755,
+      "asset_name": "ai.nimi.dsh-0.2.3.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/deepseek-harness/releases/download/v0.2.3/ai.nimi.dsh-0.2.3.candidate.json",
+      "size": 2122,
+      "sha256": "a1ce9cd19ee629cd3f58bd4e70d7b0189f7b0eb7e3d912b33aac931d0f06a42a"
+    },
+    "storefront_media": {
+      "asset_id": 775960793,
+      "asset_name": "ai.nimi.dsh-0.2.3-storefront-media.zip",
+      "asset_url": "https://github.com/nimiplatform/deepseek-harness/releases/download/v0.2.3/ai.nimi.dsh-0.2.3-storefront-media.zip",
+      "size": 595428,
+      "sha256": "19a6c0528f19551ed76fe917d147ed30d0cdd03b7382bdd605ab759c38ed693f"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume",
+      "app.activity",
+      "integration.provide",
+      "integration.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "audio.transcribe"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Depends on the number and size of tasks.",
+          "path_pattern": "<user-home>/.nimi-dsh/**",
+          "purpose": "Account-partitioned sessions, workspace files, and App settings."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/deepseek-harness/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart Nimi DSH from Nimi Home. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 775956716,
+        "asset_name": "ai.nimi.dsh-0.2.3-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/deepseek-harness/releases/download/v0.2.3/ai.nimi.dsh-0.2.3-macos-aarch64.nimiapp",
+        "size": 1212980200,
+        "sha256": "e5838de7cbf2f4f7295838cdeaf00307052d6a87bd75b47ecc1e26b61b86163d",
+        "app_info": {
+          "asset_id": 775960659,
+          "asset_name": "ai.nimi.dsh-0.2.3-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/deepseek-harness/releases/download/v0.2.3/ai.nimi.dsh-0.2.3-macos-aarch64.app-info.json",
+          "size": 392530,
+          "sha256": "ade306afd69e3e81b8e0d1922e9eb55cf990390463df493698e6a46768b2d5ec"
+        },
+        "runtime_entry": "payload/NimiDSH.app/Contents/MacOS/NimiDSH",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/deepseek-harness/attestations/sha256:e5838de7cbf2f4f7295838cdeaf00307052d6a87bd75b47ecc1e26b61b86163d"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 775958742,
+        "asset_name": "ai.nimi.dsh-0.2.3-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/deepseek-harness/releases/download/v0.2.3/ai.nimi.dsh-0.2.3-windows-x86_64.nimiapp",
+        "size": 1251493141,
+        "sha256": "d9013d038a6e71dffa770ec307db79b86a3ec9c04dc53e08a65efaaa28aa2799",
+        "app_info": {
+          "asset_id": 775960689,
+          "asset_name": "ai.nimi.dsh-0.2.3-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/deepseek-harness/releases/download/v0.2.3/ai.nimi.dsh-0.2.3-windows-x86_64.app-info.json",
+          "size": 392531,
+          "sha256": "14253b39b3d7e3f18f267f5329f222d98963a9aa9ad01b38f25923960ebaf279"
+        },
+        "runtime_entry": "payload/NimiDSH.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/deepseek-harness/attestations/sha256:d9013d038a6e71dffa770ec307db79b86a3ec9c04dc53e08a65efaaa28aa2799"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
