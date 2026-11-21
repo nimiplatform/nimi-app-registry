@@ -1,0 +1,206 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "moneyprinterturbo.studio@0.1.1",
+  "publisher_submission": {
+    "pull_number": 128,
+    "path": "submissions/nimiplatform/moneyprinterturbo.studio/0.1.1.json",
+    "head_sha": "24aba3c7fb9c72698bb8b069d57441d1a7555cbd"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-11-21T01:04:44.027Z"
+    }
+  },
+  "candidate": {
+    "app_id": "moneyprinterturbo.studio",
+    "display_name": "MoneyPrinterTurbo",
+    "version": "0.1.1",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/MoneyPrinterTurbo",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "87dd19b6a0779e14a91c1b06423ef251df37e89666160c031130a26bae68c229"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.1",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/MoneyPrinterTurbo/rulesets/25061804",
+      "commit_sha": "ce7133fd6c12b11e0816aec8288f3b1ccbab47e4",
+      "release_id": 453337621,
+      "release_url": "https://github.com/nimiplatform/MoneyPrinterTurbo/releases/tag/v0.1.1",
+      "release_notes_url": "https://github.com/nimiplatform/MoneyPrinterTurbo/releases/tag/v0.1.1",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 773934486,
+      "asset_name": "moneyprinterturbo.studio-0.1.1.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/MoneyPrinterTurbo/releases/download/v0.1.1/moneyprinterturbo.studio-0.1.1.candidate.json",
+      "size": 1093,
+      "sha256": "c2a3056aa2864bed443005c07e385a0da42d08391ab6859e9167f9e1a5ab7ea7"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume",
+      "integration.provide",
+      "integration.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "text.embed",
+      "audio.synthesize",
+      "audio.transcribe",
+      "image.generate",
+      "video.generate",
+      "voice.create",
+      "music.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "task_id",
+        "stage",
+        "job_id",
+        "media_tools"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "business_account_keys",
+        "user_media"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime",
+        "media",
+        "stock-services",
+        "publication"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/MoneyPrinterTurbo/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Stop the task in the App. Restart it through Nimi. Inspect known Jobs and saved stage results, then explicitly continue; an uncertain submission without a Job ID must be checked before a new charged request."
+    },
+    "targets": [
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 773932483,
+        "asset_name": "moneyprinterturbo.studio-0.1.1-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/MoneyPrinterTurbo/releases/download/v0.1.1/moneyprinterturbo.studio-0.1.1-windows-x86_64.nimiapp",
+        "size": 1108097702,
+        "sha256": "81529957756296ff4e7e7a670275cd3614cbddb66b579bd2b9797a0b1395716f",
+        "app_info": {
+          "asset_id": 773934441,
+          "asset_name": "moneyprinterturbo.studio-0.1.1-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/MoneyPrinterTurbo/releases/download/v0.1.1/moneyprinterturbo.studio-0.1.1-windows-x86_64.app-info.json",
+          "size": 32294,
+          "sha256": "97dfedf647a54e4c4da1b1ac228b3faff37aa3eadcf6851c11b68f5a4b2a933d"
+        },
+        "runtime_entry": "payload/moneyprinterturbo-nimi-app-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/MoneyPrinterTurbo/attestations/sha256:81529957756296ff4e7e7a670275cd3614cbddb66b579bd2b9797a0b1395716f"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "video",
+            "publication_control": "user-confirmed"
+          }
+        ],
+        "risk_features": [
+          "realistic-voice-replication"
+        ],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "optional",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
