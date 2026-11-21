@@ -288,6 +288,18 @@
         }
       }
     },
+    "productOrigin": {
+      "enum": ["nimi-official", "open-source-adapted", "community"]
+    },
+    "productUpstream": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["name", "url"],
+      "properties": {
+        "name": { "type": "string", "minLength": 1, "maxLength": 120 },
+        "url": { "$ref": "#/$defs/httpsUri" }
+      }
+    },
     "aggregateAsset": {
       "type": "object",
       "additionalProperties": false,
@@ -548,6 +560,18 @@
         "source": { "$ref": "#/$defs/source" },
         "release": { "$ref": "#/$defs/release" },
         "aggregate": { "$ref": "#/$defs/aggregateAsset" },
+        "storefront_media": {
+          "allOf": [
+            { "$ref": "#/$defs/aggregateAsset" },
+            {
+              "type": "object",
+              "properties": {
+                "size": { "type": "integer", "maximum": 8388608 },
+                "asset_name": { "type": "string", "pattern": "-storefront-media\\.zip$" }
+              }
+            }
+          ]
+        },
         "package": { "$ref": "#/$defs/package" },
         "app_access": { "$ref": "#/$defs/stringList" },
         "capability_contract_refs": { "$ref": "#/$defs/stringList" },

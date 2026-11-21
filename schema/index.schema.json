@@ -24,6 +24,8 @@
           "display_name": { "type": "string", "minLength": 1, "maxLength": 120 },
           "visibility": { "enum": ["public", "hidden"] },
           "admission_status": { "const": "approved" },
+          "origin": { "$ref": "common.schema.json#/$defs/productOrigin" },
+          "upstream": { "$ref": "common.schema.json#/$defs/productUpstream" },
           "kill_switch": {
             "type": "object",
             "additionalProperties": false,
@@ -60,7 +62,29 @@
               }
             }
           }
-        }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "origin": { "const": "open-source-adapted" } },
+              "required": ["origin"]
+            },
+            "then": {
+              "properties": { "upstream": { "$ref": "common.schema.json#/$defs/productUpstream" } },
+              "required": ["upstream"]
+            }
+          },
+          {
+            "if": {
+              "properties": { "upstream": { "type": "object" } },
+              "required": ["upstream"]
+            },
+            "then": {
+              "properties": { "origin": { "const": "open-source-adapted" } },
+              "required": ["origin"]
+            }
+          }
+        ]
       }
     }
   }

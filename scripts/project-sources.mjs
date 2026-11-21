@@ -23,6 +23,14 @@ for (const [id, row] of Object.entries(index.apps)) {
     row.kill_switch = product.kill_switch;
     changed = true;
   }
+  for (const field of ['origin', 'upstream']) {
+    if (!isDeepStrictEqual(row[field], product[field])) {
+      if (!args.includes('--write')) throw new Error(`Native index ${field} projection differs: ${id}`);
+      if (product[field] === undefined) delete row[field];
+      else row[field] = product[field];
+      changed = true;
+    }
+  }
 }
 if (changed) await writeFile(indexPath, JSON.stringify(index, null, 2) + '\n');
 console.log('Verified ' + projections.size + ' source projections.');

@@ -86,6 +86,24 @@ export async function prepareSubmission({ repository, tag, input, token = '', po
     targets.push(nativeTarget(source, asset, appInfo, apiRoot));
   }
   const firstInfo = information[0].info;
+  let storefrontMediaAsset;
+  if (aggregate.storefront_media !== undefined) {
+    const expectedName = `${aggregate.app_id}-${aggregate.version}-storefront-media.zip`;
+    if (aggregate.storefront_media?.asset_name !== expectedName) {
+      fail(`Aggregate storefront_media must be named ${expectedName}`);
+    }
+    storefrontMediaAsset = releaseAsset(release, expectedName, repository, tag);
+    if (storefrontMediaAsset.size > 8388608) fail('Storefront media archive exceeds 8 MiB limit');
+    if (
+      storefrontMediaAsset.size !== aggregate.storefront_media.size
+      || storefrontMediaAsset.sha256 !== aggregate.storefront_media.sha256
+    ) {
+      fail('Storefront media release asset disagrees with aggregate candidate');
+    }
+  }
+  if (Boolean(firstInfo.storefront?.media) !== Boolean(storefrontMediaAsset)) {
+    fail('storefront.media declaration in app-info.json and storefront_media archive must both be present or both be absent');
+  }
   const licenses = [];
   for (const file of input.license_files) {
     if (typeof file !== 'string' || !/^[A-Za-z0-9._@+/-]+$/u.test(file) || file.startsWith('/') || file.split('/').some((part) => !part || part === '.' || part === '..')) fail('License paths must be repository-relative files');
@@ -99,7 +117,9 @@ export async function prepareSubmission({ repository, tag, input, token = '', po
     publisher: input.publisher,
     source: { repository, license: { spdx_expression: firstInfo.license?.identifier, files: licenses } },
     release: { tag, tag_protection_ref: tagProtection, commit_sha: commit, release_id: release.id, release_url: release.html_url, release_notes_url: release.html_url, immutable: true, prerelease: false },
-    aggregate: aggregateAsset, package: input.package,
+    aggregate: aggregateAsset,
+    ...(storefrontMediaAsset ? { storefront_media: storefrontMediaAsset } : {}),
+    package: input.package,
     app_access: firstInfo.app_access, capability_contract_refs: firstInfo.capability_contract_refs,
     required_standardized_feature_refs: firstInfo.required_standardized_feature_refs,
     storage_policy: firstInfo.storage_policy, update_channel: input.update_channel,
@@ -109,7 +129,11 @@ export async function prepareSubmission({ repository, tag, input, token = '', po
     ...(firstInfo.safety_profile === undefined ? {} : { safety_profile: firstInfo.safety_profile }),
   };
   for (const [index, entry] of information.entries()) {
-    if (!isDeepStrictEqual(entry.info.safety_profile, firstInfo.safety_profile)) fail(`App information for ${targets[index].target_id} declares a different safety_profile than ${targets[0].target_id}; one release carries one declaration`);
+    for (const sharedField of ['display_name', 'summary', 'icon', 'readme_markdown', 'release_notes_markdown', 'safety_profile', 'storefront']) {
+      if (!isDeepStrictEqual(entry.info[sharedField], firstInfo[sharedField])) {
+        fail(`App information ${sharedField} for ${targets[index].target_id} differs from ${targets[0].target_id}; one release carries one presentation`);
+      }
+    }
   }
   const submission = { schema_version: 1, candidate };
   await validatePublisherSubmission(submission);
