@@ -1,0 +1,26 @@
+{
+  "app_id": "moneyprinterturbo.studio",
+  "client_id": "moneyprinterturbo.studio.web",
+  "version": "0.1.1",
+  "source_revision": 1,
+  "commit_sha": "ce7133fd6c12b11e0816aec8288f3b1ccbab47e4",
+  "release_id": 453346643,
+  "asset_id": 773976660,
+  "size": 4030072,
+  "sha256": "549afbcc06fc07f9e0b37d3ebbd6df9275e36e827200fa2949f9f58263306ced",
+  "app_access": [
+    "runtime.consume",
+    "integration.provide",
+    "integration.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "text.embed",
+    "audio.synthesize",
+    "audio.transcribe",
+    "image.generate",
+    "video.generate",
+    "voice.create",
+    "music.generate"
+  ]
+}
