@@ -17,6 +17,7 @@
           "display_name",
           "visibility",
           "admission_status",
+          "origin",
           "kill_switch",
           "latest_admitted_release_by_target"
         ],

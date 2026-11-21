@@ -56,6 +56,7 @@ test('the same PR can admit a typed hosted source and its first version; later r
     repository: 'https://github.com/publisher/studio',
     summary: { en: 'Editor', zh: '编辑器' },
     visibility: 'public',
+    origin: 'community',
     license: 'MIT',
     kill_switch: { active: false, reason: null, revision: 0 },
   };

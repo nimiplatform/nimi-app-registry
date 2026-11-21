@@ -26,7 +26,7 @@ function writeJson(root, relativePath, value) {
     if (!existsSync(path.join(root, file))) writeJson(root, file, {
       app_id: c.app_id, slug: c.app_id.split('.').at(-1), display_name: c.display_name,
       repository: c.source.repository, publisher: c.publisher.github_namespace, repository_id: 101, owner_id: 11,
-      summary: {en:'Example',zh:'示例'}, visibility:'public', license:'MIT', kill_switch:{active:false,reason:null,revision:0}
+      summary: {en:'Example',zh:'示例'}, visibility:'public', origin:'community', license:'MIT', kill_switch:{active:false,reason:null,revision:0}
     });
   }
 }
@@ -172,6 +172,7 @@ function indexFor(descriptorValue) {
         display_name: candidateValue.display_name,
         visibility: 'public',
         admission_status: 'approved',
+        origin: 'community',
         kill_switch: { active: false, reason: null, revision: 0 },
         latest_admitted_release_by_target: {
           'windows-x86_64': {

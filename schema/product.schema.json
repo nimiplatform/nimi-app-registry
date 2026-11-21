@@ -14,6 +14,7 @@
     "license",
     "summary",
     "visibility",
+    "origin",
     "kill_switch"
   ],
   "properties": {
