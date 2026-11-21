@@ -1,0 +1,29 @@
+{
+  "client_id": "moneyprinterturbo.studio.web",
+  "kind": "hosted-web",
+  "source_revision": 1,
+  "status": "active",
+  "app_access": [
+    "runtime.consume",
+    "integration.provide",
+    "integration.consume"
+  ],
+  "capability_contract_refs": [
+    "text.generate",
+    "text.embed",
+    "audio.synthesize",
+    "audio.transcribe",
+    "image.generate",
+    "video.generate",
+    "voice.create",
+    "music.generate"
+  ],
+  "stable_version": "0.1.1",
+  "review": {
+    "decision": "approved",
+    "adjudicator_login": "snowzane",
+    "adjudicator_actor_id": 1681360,
+    "reason_code": "maintainer-confirmed-admission",
+    "decided_at": "2026-11-21T01:56:03.798Z"
+  }
+}
