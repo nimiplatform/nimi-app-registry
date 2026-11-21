@@ -1,0 +1,188 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.shijing",
+    "display_name": "时镜",
+    "version": "0.1.11",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-shijing",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "5830b56c92e055435c7eee5796fe5ba80645debe4d456dc070ef24f8697ab0c4"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.11",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-shijing/rulesets/22027407",
+      "commit_sha": "2b41a0be3f4eef8d6bd5d231bd99b7361379f6cf",
+      "release_id": 453662556,
+      "release_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/tag/v0.1.11",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/tag/v0.1.11",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 775454719,
+      "asset_name": "nimi.shijing-0.1.11.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.11/nimi.shijing-0.1.11.candidate.json",
+      "size": 2178,
+      "sha256": "bdff25dd0012ddc52e07261759879cc2808b4b1f147c7c28fc6d60772a175932"
+    },
+    "storefront_media": {
+      "asset_id": 775454762,
+      "asset_name": "nimi.shijing-0.1.11-storefront-media.zip",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.11/nimi.shijing-0.1.11-storefront-media.zip",
+      "size": 415988,
+      "sha256": "8c7dd4ecac6246e2400837a3fa1828b70cc2e484a02e533a31de77023d5145c8"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-shijing/blob/2b41a0be3f4eef8d6bd5d231bd99b7361379f6cf/src-electron/main.ts"
+    },
+    "app_access": [
+      "runtime.consume",
+      "app.activity"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-shijing/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 775452237,
+        "asset_name": "nimi.shijing-0.1.11-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.11/nimi.shijing-0.1.11-macos-aarch64.nimiapp",
+        "size": 726554283,
+        "sha256": "cbf1bcfe4bce4da48a0ebdcfd203648153eb22f13e44f5d389a4ad2da7d9e7e2",
+        "app_info": {
+          "asset_id": 775454609,
+          "asset_name": "nimi.shijing-0.1.11-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.11/nimi.shijing-0.1.11-macos-aarch64.app-info.json",
+          "size": 418132,
+          "sha256": "2239305046d161506a97ce03b6c0e00575a34e42c6e751982d210dc4ec1b21ea"
+        },
+        "runtime_entry": "payload/nimiapp-shijing-shell.app/Contents/MacOS/nimiapp-shijing-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-shijing/attestations/sha256:cbf1bcfe4bce4da48a0ebdcfd203648153eb22f13e44f5d389a4ad2da7d9e7e2"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 775453572,
+        "asset_name": "nimi.shijing-0.1.11-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.11/nimi.shijing-0.1.11-windows-x86_64.nimiapp",
+        "size": 798212350,
+        "sha256": "b058998afd7a35b34cdf784bbc4698b95aeb4d1525fd58d204b5650db76248c8",
+        "app_info": {
+          "asset_id": 775454672,
+          "asset_name": "nimi.shijing-0.1.11-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-shijing/releases/download/v0.1.11/nimi.shijing-0.1.11-windows-x86_64.app-info.json",
+          "size": 418133,
+          "sha256": "16ba9bde2ed8b20f624aa6307b41f0fb91bb312c933aa32b9e1fb37ce8092b33"
+        },
+        "runtime_entry": "payload/nimiapp-shijing-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-shijing/attestations/sha256:b058998afd7a35b34cdf784bbc4698b95aeb4d1525fd58d204b5650db76248c8"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "not-applicable",
+            "exposure": "in-app-only",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [
+          "precise-location",
+          "health",
+          "financial"
+        ],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
