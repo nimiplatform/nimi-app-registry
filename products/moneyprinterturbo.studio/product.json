@@ -16,5 +16,10 @@
     "revision": 0
   },
   "repository_id": 1401420236,
-  "owner_id": 263632129
+  "owner_id": 263632129,
+  "origin": "open-source-adapted",
+  "upstream": {
+    "name": "MoneyPrinterTurbo",
+    "url": "https://github.com/harry0703/MoneyPrinterTurbo"
+  }
 }
