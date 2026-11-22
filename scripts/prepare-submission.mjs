@@ -25,6 +25,32 @@ function releaseAsset(release, name, repository, tag) {
 
 function nativeTarget(source, asset, appInfo, apiRoot) {
   const facts = source.native_trust;
+  if (source.os === 'any') {
+    if (
+      source.target_id !== 'desktop-universal'
+      || source.arch !== 'any'
+      || source.runtime_entry !== 'payload/index.html'
+      || facts?.posture !== 'nimi-managed-carrier'
+      || facts?.certificate_subject !== null
+      || source.execution_profile?.launch_mode !== 'nimi-managed-web-v1'
+    ) {
+      fail(`${source.target_id} managed-web target facts are incomplete or inconsistent`);
+    }
+    return {
+      target_id: 'desktop-universal', os: 'any', arch: 'any', ...asset,
+      app_info: appInfo, runtime_entry: 'payload/index.html',
+      provenance_attestation_refs: [`${apiRoot}/attestations/sha256:${asset.sha256}`],
+      execution_profile_ref: 'nimi-managed-web-v1',
+      native_trust: {
+        signing_subject: null,
+        observed_subject: null,
+        entitlements_ref: null,
+        windows_code_signing: 'not-applicable',
+        macos_notarization: 'not-applicable',
+        macos_developer_id_subject: null,
+      },
+    };
+  }
   if (!facts || !['production-unsigned', 'observed-valid-native-signature'].includes(facts.posture)) fail(`${source.target_id} native trust is not a production observation`);
   const signed = facts.posture === 'observed-valid-native-signature';
   const common = { signing_subject: signed ? 'publisher' : null, observed_subject: facts.certificate_subject, entitlements_ref: null };

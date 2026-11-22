@@ -16,7 +16,7 @@
     },
     "version": {
       "type": "string",
-      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?(?:\\+[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?$"
+      "pattern": "^(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
     },
     "commitSha": {
       "type": "string",
@@ -55,12 +55,12 @@
     },
     "descriptorId": {
       "type": "string",
-      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+@(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?(?:\\+[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?$",
+      "pattern": "^[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+@(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$",
       "maxLength": 200
     },
     "descriptorPath": {
       "type": "string",
-      "pattern": "^descriptors/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+/(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?(?:\\+[0-9A-Za-z]+(?:[.-][0-9A-Za-z]+)*)?\\.json$"
+      "pattern": "^descriptors/[a-z0-9](?:[a-z0-9-]*[a-z0-9])?(?:\\.[a-z0-9](?:[a-z0-9-]*[a-z0-9])?)+/(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)\\.(?:0|[1-9][0-9]*)(?:-(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?\\.json$"
     },
     "stringList": {
       "type": "array",
@@ -194,14 +194,27 @@
       "required": ["kind", "runtime_kind", "registration_mode", "sandbox_ref"],
       "properties": {
         "kind": { "const": "nimiapp" },
-        "runtime_kind": { "const": "native" },
+        "runtime_kind": { "enum": ["native", "managed-web"] },
         "registration_mode": { "const": "app-managed" },
         "sandbox_ref": {
           "type": "string",
           "minLength": 1,
           "maxLength": 160
         }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": { "runtime_kind": { "const": "managed-web" } },
+            "required": ["runtime_kind"]
+          },
+          "then": {
+            "type": "object",
+            "properties": { "sandbox_ref": { "const": "nimi-managed-web-v1" } }
+          }
+        }
+      ]
     },
     "storagePolicy": {
       "type": "object",
@@ -332,8 +345,8 @@
       ],
       "properties": {
         "target_id": { "$ref": "#/$defs/targetId" },
-        "os": { "enum": ["windows", "macos"] },
-        "arch": { "enum": ["x86_64", "arm64"] },
+        "os": { "enum": ["windows", "macos", "any"] },
+        "arch": { "enum": ["x86_64", "arm64", "any"] },
         "asset_id": { "type": "integer", "minimum": 1 },
         "asset_name": { "type": "string", "minLength": 1, "maxLength": 240 },
         "asset_url": { "$ref": "#/$defs/httpsUri" },
@@ -357,10 +370,16 @@
       },
       "allOf": [
         {
-          "if": { "properties": { "os": { "const": "windows" } } },
+          "if": {
+            "type": "object",
+            "properties": { "os": { "const": "windows" } },
+            "required": ["os"]
+          },
           "then": {
+            "type": "object",
             "properties": {
               "target_id": { "type": "string", "pattern": "^windows-" },
+              "arch": { "enum": ["x86_64", "arm64"] },
               "execution_profile_ref": { "const": "windows-user-mode-as-invoker-v1" },
               "native_trust": {
                 "type": "object",
@@ -395,10 +414,19 @@
                 ]
               }
             }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "os": { "const": "macos" } },
+            "required": ["os"]
           },
-          "else": {
+          "then": {
+            "type": "object",
             "properties": {
               "target_id": { "type": "string", "pattern": "^macos-" },
+              "arch": { "enum": ["x86_64", "arm64"] },
               "execution_profile_ref": { "const": "macos-user-mode-same-session-v1" },
               "native_trust": {
                 "type": "object",
@@ -442,6 +470,33 @@
                     }
                   }
                 ]
+              }
+            }
+          }
+        },
+        {
+          "if": {
+            "type": "object",
+            "properties": { "os": { "const": "any" } },
+            "required": ["os"]
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "target_id": { "const": "desktop-universal" },
+              "arch": { "const": "any" },
+              "runtime_entry": { "const": "payload/index.html" },
+              "execution_profile_ref": { "const": "nimi-managed-web-v1" },
+              "native_trust": {
+                "type": "object",
+                "properties": {
+                  "signing_subject": { "type": "null" },
+                  "observed_subject": { "type": "null" },
+                  "entitlements_ref": { "type": "null" },
+                  "windows_code_signing": { "const": "not-applicable" },
+                  "macos_notarization": { "const": "not-applicable" },
+                  "macos_developer_id_subject": { "type": "null" }
+                }
               }
             }
           }
@@ -587,7 +642,59 @@
           "items": { "$ref": "#/$defs/target" }
         },
         "safety_profile": { "$ref": "#/$defs/safetyProfile" }
-      }
+      },
+      "allOf": [
+        {
+          "if": {
+            "type": "object",
+            "properties": {
+              "package": {
+                "type": "object",
+                "properties": { "runtime_kind": { "const": "managed-web" } },
+                "required": ["runtime_kind"]
+              }
+            },
+            "required": ["package"]
+          },
+          "then": {
+            "type": "object",
+            "properties": {
+              "storage_policy": {
+                "type": "object",
+                "properties": { "kind": { "const": "nimi-mediated-default" } }
+              },
+              "targets": {
+                "type": "array",
+                "minItems": 1,
+                "maxItems": 1,
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "target_id": { "const": "desktop-universal" },
+                    "os": { "const": "any" },
+                    "arch": { "const": "any" }
+                  }
+                }
+              }
+            }
+          },
+          "else": {
+            "type": "object",
+            "properties": {
+              "targets": {
+                "type": "array",
+                "items": {
+                  "type": "object",
+                  "properties": {
+                    "os": { "enum": ["windows", "macos"] },
+                    "arch": { "enum": ["x86_64", "arm64"] }
+                  }
+                }
+              }
+            }
+          }
+        }
+      ]
     }
   }
 }
