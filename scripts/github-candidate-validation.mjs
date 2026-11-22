@@ -6,7 +6,7 @@ import { mkdtemp, rm, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
-import { parse as parseYaml } from 'yaml';
+import { parse as parseYaml, parseDocument as parseYamlDocument, isMap, isScalar } from 'yaml';
 import { RegistryValidationError } from './registry-validation.mjs';
 import { SYMBOLIC_LINK_MODE, validatePayloadLinks } from './payload-links.mjs';
 
@@ -218,7 +218,16 @@ export function readNimiAppArchive(bytes, label) {
     const commentLength = bytes.readUInt16LE(cursor + 32);
     const localOffset = bytes.readUInt32LE(cursor + 42);
     const unixMode = bytes.readUInt32LE(cursor + 38) >>> 16;
-    const mode = (unixMode & 0o170000) === 0o120000 ? unixMode : unixMode & 0o777;
+    const fileType = unixMode & 0o170000;
+    const specialBits = unixMode & 0o7000;
+    let mode;
+    if (unixMode === SYMBOLIC_LINK_MODE) {
+      mode = SYMBOLIC_LINK_MODE;
+    } else if ((fileType === 0o100000 || fileType === 0) && specialBits === 0) {
+      mode = unixMode & 0o777;
+    } else {
+      fail(`${label} uses an unsupported ZIP entry mode`);
+    }
     if (method !== 0 || extraLength !== 0 || commentLength !== 0) fail(`${label} uses an unsupported ZIP entry encoding`);
     if (mode !== 0o644 && mode !== 0o755 && mode !== SYMBOLIC_LINK_MODE) fail(`${label} uses an unsupported ZIP entry mode`);
     const name = canonicalEntryName(bytes.subarray(cursor + 46, cursor + 46 + nameLength).toString('utf8'));
@@ -249,7 +258,164 @@ function parseJsonEntry(entries, name, label) {
   }
 }
 
+const MANAGED_WEB_EXECUTION_PROFILE_REF = 'nimi-managed-web-v1';
+const MANAGED_WEB_RUNTIME_ENTRY = 'payload/index.html';
+const MANAGED_WEB_MAX_RELEASE_BYTES = 64 * 1024 * 1024;
+const MANAGED_WEB_MAX_RELEASE_ENTRIES = 10_000;
+const WINDOWS_RESERVED_BASES = new Set(['CON', 'PRN', 'AUX', 'NUL', 'CLOCK$', 'CONIN$', 'CONOUT$']);
+const DESKTOP_WINDOW_BOUNDS = Object.freeze({
+  width: [400, 2560],
+  height: [360, 1600],
+  min_width: [320, 1280],
+  min_height: [320, 960],
+});
+const DESKTOP_WINDOW_DEFAULTS = Object.freeze({
+  width: 1280,
+  height: 840,
+  min_width: 480,
+  min_height: 420,
+});
+
+function validWindowsSegment(segment) {
+  if (/[<>:"|?*]/u.test(segment) || segment.endsWith('.') || segment.endsWith(' ')) return false;
+  const base = segment.split('.', 1)[0].replace(/ +$/u, '').toUpperCase();
+  if (WINDOWS_RESERVED_BASES.has(base)) return false;
+  if (/^(?:COM|LPT)(?:[1-9]|¹|²|³)$/u.test(base)) return false;
+  return true;
+}
+
+function unicodeCaseFold(input) {
+  let out = '';
+  for (const ch of input.normalize('NFC')) {
+    const cp = ch.codePointAt(0);
+    if (cp === 0x0131) out += '\u0131';
+    else if (cp === 0x1e9e) out += 'ss';
+    else if (cp >= 0x13f8 && cp <= 0x13fd) out += String.fromCodePoint(cp - 8);
+    else if (cp >= 0xab70 && cp <= 0xabbf) out += String.fromCodePoint(cp - 0x97d0);
+    else out += ch.toUpperCase().toLowerCase();
+  }
+  return out;
+}
+
+function targetPathCollisionKey(name, targetOS) {
+  const normalized = name.normalize('NFC');
+  if (targetOS === 'windows' || targetOS === 'any') {
+    return unicodeCaseFold(normalized);
+  }
+  return normalized;
+}
+
+function validateCrossPlatformArchiveEntries(entries, targetOS, label) {
+  const roles = new Map();
+  for (const name of entries.keys()) {
+    const segments = name.split('/');
+    for (const segment of segments) {
+      for (const ch of segment) {
+        const code = ch.codePointAt(0);
+        if (code < 0x20 || code === 0x7f) fail(`${label} archive path contains control character: ${name}`);
+      }
+      if ((targetOS === 'windows' || targetOS === 'any') && !validWindowsSegment(segment)) {
+        fail(`${label} archive path uses invalid Windows segment: ${name}`);
+      }
+    }
+    for (let index = 0; index < segments.length; index += 1) {
+      const prefix = segments.slice(0, index + 1).join('/');
+      const key = targetPathCollisionKey(prefix, targetOS);
+      const isFile = index === segments.length - 1;
+      const previous = roles.get(key);
+      if (previous) {
+        if (previous.spelling !== prefix || previous.file || isFile) {
+          fail(`${label} archive path collision on ${targetOS}: ${previous.spelling} and ${prefix}`);
+        }
+      } else {
+        roles.set(key, { spelling: prefix, file: isFile });
+      }
+    }
+  }
+}
+
+function assertDesktopWindowYamlIntegerNodes(yamlText, label) {
+  const doc = parseYamlDocument(yamlText, { keepSourceTokens: true });
+  if (!isMap(doc.contents)) return;
+  const desktopNode = doc.contents.get('desktop', true);
+  if (!isMap(desktopNode)) return;
+  const windowNode = desktopNode.get('window', true);
+  if (!isMap(windowNode)) return;
+  for (const pair of windowNode.items) {
+    const key = isScalar(pair.key) ? String(pair.key.value) : '';
+    if (!['width', 'height', 'min_width', 'min_height'].includes(key)) continue;
+    if (!isScalar(pair.value) || typeof pair.value.value !== 'number') {
+      fail(`${label} desktop.window.${key} must be an integer`);
+    }
+    const rawSource = typeof pair.value.srcToken?.source === 'string' ? pair.value.srcToken.source.trim() : String(pair.value.value);
+    if (!/^[0-9]+$/u.test(rawSource)) {
+      fail(`${label} desktop.window.${key} must be a base-10 YAML integer`);
+    }
+  }
+}
+
+function validateDeclarationDesktop(desktop, label, yamlText = null) {
+  if (desktop === undefined) return;
+  if (yamlText !== null) assertDesktopWindowYamlIntegerNodes(yamlText, label);
+  if (!desktop || typeof desktop !== 'object' || Array.isArray(desktop)) {
+    fail(`${label} desktop declaration must be a mapping`);
+  }
+  for (const key of Object.keys(desktop)) {
+    if (key !== 'window') fail(`${label} desktop declaration contains unsupported field: ${key}`);
+  }
+  if (desktop.window === undefined) return;
+  const win = desktop.window;
+  if (!win || typeof win !== 'object' || Array.isArray(win)) {
+    fail(`${label} desktop.window must be a mapping`);
+  }
+  const allowed = new Set(['width', 'height', 'min_width', 'min_height', 'title_bar_style']);
+  for (const key of Object.keys(win)) {
+    if (!allowed.has(key)) fail(`${label} desktop.window contains unsupported field: ${key}`);
+    const value = win[key];
+    if (key === 'title_bar_style') {
+      if (value !== 'native' && value !== 'hidden') fail(`${label} desktop.window.title_bar_style must be native or hidden`);
+      continue;
+    }
+    const [min, max] = DESKTOP_WINDOW_BOUNDS[key];
+    if (typeof value !== 'number' || !Number.isSafeInteger(value) || value < min || value > max) {
+      fail(`${label} desktop.window.${key} is outside ${min}..${max}`);
+    }
+  }
+  const width = win.width ?? DESKTOP_WINDOW_DEFAULTS.width;
+  const height = win.height ?? DESKTOP_WINDOW_DEFAULTS.height;
+  const minWidth = win.min_width ?? DESKTOP_WINDOW_DEFAULTS.min_width;
+  const minHeight = win.min_height ?? DESKTOP_WINDOW_DEFAULTS.min_height;
+  if (minWidth > width || minHeight > height) {
+    fail(`${label} desktop.window min dimensions exceed window dimensions`);
+  }
+}
+
+function expectedArchiveExecutionProfile(target) {
+  if (target.os === 'any') return { launch_mode: MANAGED_WEB_EXECUTION_PROFILE_REF };
+  if (target.os === 'macos') return { launch_mode: 'current-user' };
+  return { requested_execution_level: 'asInvoker', ui_access: false };
+}
+
 function expectedArchiveNativeTrust(target) {
+  if (target.os === 'any') {
+    if (
+      target.target_id !== 'desktop-universal'
+      || target.arch !== 'any'
+      || target.execution_profile_ref !== MANAGED_WEB_EXECUTION_PROFILE_REF
+      || target.native_trust?.signing_subject !== null
+      || target.native_trust?.observed_subject !== null
+      || target.native_trust?.entitlements_ref !== null
+      || target.native_trust?.windows_code_signing !== 'not-applicable'
+      || target.native_trust?.macos_notarization !== 'not-applicable'
+      || target.native_trust?.macos_developer_id_subject !== null
+    ) {
+      fail('managed-web target trust or execution profile is inconsistent');
+    }
+    return {
+      posture: 'nimi-managed-carrier',
+      certificate_subject: null,
+    };
+  }
   if (target.os === 'macos') {
     if (target.execution_profile_ref !== 'macos-user-mode-same-session-v1') fail('macOS target has an unsupported execution profile');
     const signed = target.native_trust.signing_subject === 'publisher';
@@ -280,10 +446,26 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
   const label = `${target.target_id} nimiapp`;
   const entries = readNimiAppArchive(bytes, label);
   validatePayloadLinks(entries, target.os);
-  for (const required of ['LICENSE', 'manifest.json', 'nimi.app.yaml', 'app-info.json', target.runtime_entry]) {
+  validateCrossPlatformArchiveEntries(entries, target.os, label);
+  for (const required of ['LICENSE', 'manifest.json', 'nimi.app.yaml', 'app-info.json']) {
     if (!entries.has(required)) fail(`${label} is missing ${required}`);
+    if (entries.get(required).mode !== 0o644) fail(`${label} control file ${required} must have mode 0644`);
   }
-  if (entries.get(target.runtime_entry).mode !== 0o755) fail(`${label} runtime_entry is not executable`);
+  if (!entries.has(target.runtime_entry)) fail(`${label} is missing ${target.runtime_entry}`);
+  const isManagedWeb = target.os === 'any';
+  if (isManagedWeb) {
+    if (candidate.package?.runtime_kind !== 'managed-web') fail(`${label} managed-web archive requires package.runtime_kind=managed-web`);
+    if (candidate.storage_policy?.kind !== 'nimi-mediated-default') fail(`${label} managed-web archive requires nimi-mediated-default storage`);
+    if (target.runtime_entry !== MANAGED_WEB_RUNTIME_ENTRY) fail(`${label} managed-web runtime_entry must be ${MANAGED_WEB_RUNTIME_ENTRY}`);
+    if (entries.get(target.runtime_entry).mode !== 0o644) fail(`${label} managed-web runtime_entry must have mode 0644`);
+    if (entries.size > MANAGED_WEB_MAX_RELEASE_ENTRIES) fail(`${label} exceeds ${MANAGED_WEB_MAX_RELEASE_ENTRIES} entries`);
+    let totalUncompressed = 0;
+    for (const entry of entries.values()) totalUncompressed += entry.bytes.length;
+    if (totalUncompressed > MANAGED_WEB_MAX_RELEASE_BYTES) fail(`${label} exceeds ${MANAGED_WEB_MAX_RELEASE_BYTES} bytes uncompressed`);
+  } else {
+    if (candidate.package?.runtime_kind !== 'native') fail(`${label} native archive requires package.runtime_kind=native`);
+    if (entries.get(target.runtime_entry).mode !== 0o755) fail(`${label} runtime_entry is not executable`);
+  }
   const manifest = parseJsonEntry(entries, 'manifest.json', label);
   const expectedManifest = {
     format: 'nimi.app-package/v2',
@@ -294,19 +476,21 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
     arch: target.arch,
     runtime_entry: target.runtime_entry,
     native_trust: expectedArchiveNativeTrust(target),
-    execution_profile: target.os === 'macos' ? { launch_mode: 'current-user' } : { requested_execution_level: 'asInvoker', ui_access: false },
+    execution_profile: expectedArchiveExecutionProfile(target),
   };
   if (!sameValue(manifest, expectedManifest)) fail(`${label} manifest does not match the descriptor target`);
 
+  const declarationYamlText = entries.get('nimi.app.yaml').bytes.toString('utf8');
   let declaration;
   try {
-    declaration = parseYaml(entries.get('nimi.app.yaml').bytes.toString('utf8'));
+    declaration = parseYaml(declarationYamlText);
   } catch (error) {
     fail(`${label} nimi.app.yaml is invalid: ${error instanceof Error ? error.message : String(error)}`);
   }
   if (!declaration || declaration.app_id !== candidate.app_id || declaration.version !== candidate.version) {
     fail(`${label} nimi.app.yaml identity does not match the candidate`);
   }
+  validateDeclarationDesktop(declaration.desktop, `${label} nimi.app.yaml`, declarationYamlText);
   if (!sameValue(declaration.app_access || [], candidate.app_access)) fail(`${label} App Access declaration does not match the candidate`);
   if (!Buffer.isBuffer(infoBytes) || !entries.get('app-info.json').bytes.equals(infoBytes)) fail(`${label} App info sidecar differs from archive`);
   const info = validatePublishedAppInfo(infoBytes, candidate, target);
@@ -501,7 +685,7 @@ export function validateAggregate(bytes, candidate) {
       app_info: { asset_name: target.app_info.asset_name, size: target.app_info.size, sha256: target.app_info.sha256 },
       runtime_entry: target.runtime_entry,
       native_trust: expectedArchiveNativeTrust(target),
-      execution_profile: target.os === 'macos' ? { launch_mode: 'current-user' } : { requested_execution_level: 'asInvoker', ui_access: false },
+      execution_profile: expectedArchiveExecutionProfile(target),
     };
     if (!sameValue(aggregateTarget, expected)) fail(`aggregate target ${target.target_id} does not match the candidate`);
   }

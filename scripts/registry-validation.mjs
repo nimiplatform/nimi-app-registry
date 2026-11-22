@@ -118,23 +118,92 @@ function requireDeclarationForNewAdmission(candidate, policy, label) {
   }
 }
 
+const STRICT_SEMVER_PATTERN = /^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)(?:-((?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*)(?:\.(?:0|[1-9][0-9]*|[0-9]*[A-Za-z-][0-9A-Za-z-]*))*))?(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?$/u;
+
+function parseSemVer(version) {
+  const match = STRICT_SEMVER_PATTERN.exec(String(version || ''));
+  if (!match) fail(`invalid semantic version: ${String(version)}`);
+  return {
+    major: BigInt(match[1]),
+    minor: BigInt(match[2]),
+    patch: BigInt(match[3]),
+    prerelease: match[4] ? match[4].split('.') : [],
+  };
+}
+
+export function compareSemVer(left, right) {
+  const a = parseSemVer(left);
+  const b = parseSemVer(right);
+  for (const field of ['major', 'minor', 'patch']) {
+    if (a[field] !== b[field]) return a[field] < b[field] ? -1 : 1;
+  }
+  if (a.prerelease.length === 0 && b.prerelease.length === 0) return 0;
+  if (a.prerelease.length === 0) return 1;
+  if (b.prerelease.length === 0) return -1;
+  const max = Math.min(a.prerelease.length, b.prerelease.length);
+  for (let index = 0; index < max; index += 1) {
+    const idA = a.prerelease[index];
+    const idB = b.prerelease[index];
+    if (idA === idB) continue;
+    const numA = /^[0-9]+$/u.test(idA);
+    const numB = /^[0-9]+$/u.test(idB);
+    if (numA && numB) {
+      const nA = BigInt(idA);
+      const nB = BigInt(idB);
+      if (nA !== nB) return nA < nB ? -1 : 1;
+      continue;
+    }
+    if (numA !== numB) return numA ? -1 : 1;
+    return idA < idB ? -1 : 1;
+  }
+  if (a.prerelease.length !== b.prerelease.length) return a.prerelease.length < b.prerelease.length ? -1 : 1;
+  return 0;
+}
+
 // Previously admitted baselines for the targets this candidate carries: each
 // target's current index pointer at the base revision selects the descriptor
-// whose declaration it replaces. Targets sharing a baseline are reported once;
-// a target without a prior pointer diffs against undeclared.
+// whose declaration it replaces. During a cross-carrier transition (native <->
+// managed-web) where no same-target prior pointer exists, fall back to the
+// deduplicated replaced pointers so safety_profile diff never drops to undeclared.
 function declarationReview(gitRoot, baseSha, candidate) {
   const index = readJsonAt(gitRoot, baseSha, 'index.json', 'index.json');
   const row = index?.apps?.[candidate.app_id];
   const groups = new Map();
+  const baseDescriptorCache = new Map();
+  const readBaseDescriptor = (descriptorPath) => {
+    if (!baseDescriptorCache.has(descriptorPath)) {
+      baseDescriptorCache.set(descriptorPath, readJsonAt(gitRoot, baseSha, descriptorPath, descriptorPath));
+    }
+    return baseDescriptorCache.get(descriptorPath);
+  };
   for (const target of candidate.targets) {
     const pointer = row?.latest_admitted_release_by_target?.[target.target_id];
-    const key = pointer ? pointer.descriptor_id : null;
-    const group = groups.get(key) ?? { previousDescriptorId: key, targetIds: [], pointerPath: pointer?.path ?? null };
+    if (pointer) {
+      const key = pointer.descriptor_id;
+      const group = groups.get(key) ?? { previousDescriptorId: key, targetIds: [], pointerPath: pointer.path };
+      group.targetIds.push(target.target_id);
+      groups.set(key, group);
+      continue;
+    }
+    const replacedPointers = Object.values(row?.latest_admitted_release_by_target || {}).filter((priorPointer) => {
+      const priorDoc = readBaseDescriptor(priorPointer.path);
+      return priorDoc?.candidate?.package?.runtime_kind !== candidate.package?.runtime_kind;
+    });
+    if (replacedPointers.length > 0) {
+      for (const priorPointer of replacedPointers) {
+        const key = priorPointer.descriptor_id;
+        const group = groups.get(key) ?? { previousDescriptorId: key, targetIds: [], pointerPath: priorPointer.path };
+        if (!group.targetIds.includes(target.target_id)) group.targetIds.push(target.target_id);
+        groups.set(key, group);
+      }
+      continue;
+    }
+    const group = groups.get(null) ?? { previousDescriptorId: null, targetIds: [], pointerPath: null };
     group.targetIds.push(target.target_id);
-    groups.set(key, group);
+    groups.set(null, group);
   }
   const baselines = [...groups.values()].map((group) => {
-    const previous = group.pointerPath ? readJsonAt(gitRoot, baseSha, group.pointerPath, group.pointerPath).candidate?.safety_profile : undefined;
+    const previous = group.pointerPath ? readBaseDescriptor(group.pointerPath).candidate?.safety_profile : undefined;
     return Object.freeze({ previousDescriptorId: group.previousDescriptorId, targetIds: group.targetIds, changes: diffSafetyProfiles(previous, candidate.safety_profile) });
   });
   return Object.freeze({ declared: candidate.safety_profile !== undefined, baselines });
@@ -146,9 +215,12 @@ function sameSemanticValue(left, right) {
 
 // Ordinary finalization may change only the admitted App's display identity and
 // the target pointers its candidate carries; every other row and all existing
-// policy stay semantically identical (formatting and key order are not change).
+// policy stay semantically identical. Removing active pointers is admitted ONLY
+// during a genuine cross-carrier transition (native <-> managed-web) whose new
+// SemVer is strictly greater than every replaced pointer's version and leaves
+// no stale pointers from the retired carrier.
 // @nimi-authority: rule.nimi.platform.app-ecosystem.p-napp-043d
-function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descriptorPath) {
+function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descriptorPath, readBaseDescriptor = null) {
   const candidate = descriptor.candidate;
   const appId = candidate.app_id;
   const baseApps = baseIndex?.apps || {};
@@ -162,6 +234,17 @@ function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descri
   const baseRow = baseApps[appId];
   if (headRow.display_name !== candidate.display_name) fail(`index display_name for ${appId} must equal the admitted candidate display_name`);
   const candidateTargets = new Set(candidate.targets.map((target) => target.target_id));
+  const candidateTargetsById = new Map(candidate.targets.map((target) => [target.target_id, target]));
+  const newRuntimeKind = candidate.package?.runtime_kind || 'native';
+  for (const targetId of candidateTargets) {
+    const pointer = headRow.latest_admitted_release_by_target?.[targetId];
+    if (!pointer) {
+      fail(`index pointer ${appId}/${targetId} is missing for admitted candidate target`);
+    }
+    if (pointer.descriptor_id !== descriptor.descriptor_id || pointer.path !== descriptorPath) {
+      fail(`index pointer ${appId}/${targetId} must select the newly admitted descriptor`);
+    }
+  }
   for (const [targetId, pointer] of Object.entries(headRow.latest_admitted_release_by_target)) {
     if (candidateTargets.has(targetId)) {
       if (pointer.descriptor_id !== descriptor.descriptor_id || pointer.path !== descriptorPath) {
@@ -171,9 +254,74 @@ function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descri
       fail(`index pointer ${appId}/${targetId} is outside the admitted candidate targets and must stay unchanged`);
     }
   }
+  let carrierTransition = null;
   if (baseRow) {
-    for (const targetId of Object.keys(baseRow.latest_admitted_release_by_target)) {
-      if (!Object.hasOwn(headRow.latest_admitted_release_by_target, targetId)) fail(`index pointer ${appId}/${targetId} must not be removed by finalization`);
+    const basePointers = baseRow.latest_admitted_release_by_target;
+    const headPointers = headRow.latest_admitted_release_by_target;
+    const removedTargets = Object.keys(basePointers).filter((targetId) => !Object.hasOwn(headPointers, targetId));
+    const priorDescriptors = new Map();
+    const loadPrior = (pointer) => {
+      if (!readBaseDescriptor) fail(`index pointer ${appId} transition requires base descriptor inspection`);
+      if (!priorDescriptors.has(pointer.path)) {
+        priorDescriptors.set(pointer.path, readBaseDescriptor(pointer.path));
+      }
+      return priorDescriptors.get(pointer.path);
+    };
+    if (removedTargets.length > 0) {
+      const priorRuntimeKinds = new Set();
+      for (const targetId of removedTargets) {
+        const prior = loadPrior(basePointers[targetId]);
+        const priorKind = prior?.candidate?.package?.runtime_kind || 'native';
+        if (priorKind === newRuntimeKind) {
+          fail(`index pointer ${appId}/${targetId} must not be removed by finalization without a carrier transition`);
+        }
+        if (compareSemVer(candidate.version, prior.candidate.version) <= 0) {
+          fail(`cross-carrier transition for ${appId} must raise version above replaced ${prior.descriptor_id}`);
+        }
+        priorRuntimeKinds.add(priorKind);
+      }
+      for (const targetId of Object.keys(headPointers)) {
+        if (!candidateTargets.has(targetId)) {
+          const retained = loadPrior(headPointers[targetId]);
+          const retainedKind = retained?.candidate?.package?.runtime_kind || 'native';
+          if (retainedKind !== newRuntimeKind) {
+            fail(`cross-carrier transition for ${appId} must not retain mixed carrier pointer ${targetId}`);
+          }
+        }
+      }
+      const droppedPlatforms = [];
+      if (priorRuntimeKinds.has('managed-web') && newRuntimeKind === 'native') {
+        const coveredOS = new Set();
+        for (const targetId of Object.keys(headPointers)) {
+          const target = candidateTargetsById.get(targetId);
+          if (target) {
+            coveredOS.add(target.os);
+          } else {
+            const retained = loadPrior(headPointers[targetId]);
+            const retainedTarget = retained?.candidate?.targets?.find((item) => item.target_id === targetId);
+            if (retainedTarget) coveredOS.add(retainedTarget.os);
+          }
+        }
+        for (const platformOS of ['windows', 'macos']) {
+          if (!coveredOS.has(platformOS)) droppedPlatforms.push(platformOS);
+        }
+      }
+      carrierTransition = Object.freeze({
+        fromRuntimeKinds: Object.freeze([...priorRuntimeKinds].sort()),
+        toRuntimeKind: newRuntimeKind,
+        replacedTargets: Object.freeze([...removedTargets].sort()),
+        droppedPlatforms: Object.freeze(droppedPlatforms),
+      });
+    } else if (readBaseDescriptor) {
+      // Also prevent mixing desktop-universal and native pointers without replacing the old carrier.
+      for (const [targetId, pointer] of Object.entries(headPointers)) {
+        if (candidateTargets.has(targetId)) continue;
+        const retained = loadPrior(pointer);
+        const retainedKind = retained?.candidate?.package?.runtime_kind || 'native';
+        if (retainedKind !== newRuntimeKind) {
+          fail(`index pointer ${appId}/${targetId} mixes ${retainedKind} with ${newRuntimeKind}; replace the previous carrier pointers during a carrier transition`);
+        }
+      }
     }
     for (const field of ['visibility', 'admission_status', 'kill_switch']) {
       if (!sameSemanticValue(baseRow[field], headRow[field])) fail(`maintainer finalization must not change ${field} for ${appId}; use a maintainer policy change`);
@@ -185,6 +333,7 @@ function validateFinalizationIndexScope(baseIndex, headIndex, descriptor, descri
     if (!sameSemanticValue(headRow.kill_switch, NEW_ROW_KILL_SWITCH)) fail(`new index row ${appId} must start with an inactive kill switch at revision 0`);
     if (headRow.admission_status !== 'approved') fail(`new index row ${appId} must record approved admission`);
   }
+  return carrierTransition;
 }
 
 // Base-owned maintainer policy: only kill_switch fields of existing rows change,
@@ -367,6 +516,7 @@ export async function validateRegistryTree(root, options = {}) {
     if (!sameSemanticValue(owner.origin, row.origin) || !sameSemanticValue(owner.upstream, row.upstream)) {
       fail('Native index requires matching product origin/upstream projection: ' + appId);
     }
+    const rowRuntimeKinds = new Set();
     for (const [targetId, pointer] of Object.entries(row.latest_admitted_release_by_target)) {
       const resolved = descriptors.get(pointer.descriptor_id);
       if (!resolved) fail(`index pointer ${appId}/${targetId} references a missing descriptor_id`);
@@ -377,6 +527,10 @@ export async function validateRegistryTree(root, options = {}) {
       if (!resolved.descriptor.candidate.targets.some((target) => target.target_id === targetId)) {
         fail(`index pointer ${appId}/${targetId} references a descriptor without that target`);
       }
+      rowRuntimeKinds.add(resolved.descriptor.candidate.package?.runtime_kind || 'native');
+    }
+    if (rowRuntimeKinds.size > 1) {
+      fail(`index row ${appId} mixes active target pointers across runtime_kind values: ${[...rowRuntimeKinds].sort().join(', ')}`);
     }
   }
 
@@ -553,11 +707,12 @@ export async function validatePullRequestTransition(options) {
     fail('approved descriptor candidate must exactly equal the checked publisher submission candidate');
   }
   requireDeclarationForNewAdmission(descriptor.candidate, policy, descriptorPath);
-  validateFinalizationIndexScope(
+  const carrierTransition = validateFinalizationIndexScope(
     readJsonAt(gitRoot, baseSha, 'index.json', 'index.json'),
     readJsonAt(gitRoot, headSha, 'index.json', 'index.json'),
     descriptor,
     descriptorPath,
+    (priorPath) => readJsonAt(gitRoot, baseSha, priorPath, priorPath),
   );
 
   const pullNumber = Number(requireContextValue(context.pullNumber, 'pull request number'));
@@ -572,5 +727,6 @@ export async function validatePullRequestTransition(options) {
   await validateRegistryTree(root, { schemaRoot: options.schemaRoot, allowSubmissions: false });
   return Object.freeze({ mode: 'maintainer-finalization', descriptorPath, submissionPath, publisherHeadSha,
     ...(productAddition.length ? { newProduct: readJsonAt(gitRoot, headSha, productPath, productPath) } : {}),
+    ...(carrierTransition ? { carrierTransition } : {}),
     declaration: declarationReview(gitRoot, baseSha, descriptor.candidate) });
 }
