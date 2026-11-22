@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.storybook",
+    "display_name": "Storybook",
+    "version": "0.1.11",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-storybook",
+      "license": {
+        "spdx_expression": "Apache-2.0",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b245c0e5326747d2ea6e82a6c20e9088bb6c46b0ec0c5cadd49ece6df99a1192"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.11",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-storybook/rulesets/22613699",
+      "commit_sha": "cbb681a2163966feecae1e589ca879982c47b1e1",
+      "release_id": 454300282,
+      "release_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/tag/v0.1.11",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/tag/v0.1.11",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 778371539,
+      "asset_name": "nimi.storybook-0.1.11.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.11/nimi.storybook-0.1.11.candidate.json",
+      "size": 1150,
+      "sha256": "accdc6a7cbcc67dee5192dc18f73fc53e62931a75f6308912d0a91b98a365bfe"
+    },
+    "storefront_media": {
+      "asset_id": 778371597,
+      "asset_name": "nimi.storybook-0.1.11-storefront-media.zip",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.11/nimi.storybook-0.1.11-storefront-media.zip",
+      "size": 449346,
+      "sha256": "5b8b3812f316238f96f99d563b5dfabd47b11827c2b0aed049526f96c35c1bf6"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "managed-web",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "nimi-managed-web-v1"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-storybook/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "desktop-universal",
+        "os": "any",
+        "arch": "any",
+        "asset_id": 778371378,
+        "asset_name": "nimi.storybook-0.1.11-desktop-universal.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.11/nimi.storybook-0.1.11-desktop-universal.nimiapp",
+        "size": 6898293,
+        "sha256": "a2c3c9315253c92dca0edd07ef8720b584448b4265cdf5fff19430c8f6fca9eb",
+        "app_info": {
+          "asset_id": 778371464,
+          "asset_name": "nimi.storybook-0.1.11-desktop-universal.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-storybook/releases/download/v0.1.11/nimi.storybook-0.1.11-desktop-universal.app-info.json",
+          "size": 308676,
+          "sha256": "fd20e5056463295d1d49f75915b1a92904305a36bfb302ddcc24228be038de4b"
+        },
+        "runtime_entry": "payload/index.html",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-storybook/attestations/sha256:a2c3c9315253c92dca0edd07ef8720b584448b4265cdf5fff19430c8f6fca9eb"
+        ],
+        "execution_profile_ref": "nimi-managed-web-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
