@@ -8,8 +8,14 @@ import {
   verifyTagRules,
 } from './github-candidate-validation.mjs';
 
+const HOSTED_WEB_MAX_ARCHIVE_BYTES = 256 * 1024 * 1024;
+const HOSTED_WEB_MAX_UNCOMPRESSED_BYTES = 256 * 1024 * 1024;
+
 export function verifyHostedBundle(bytes, product, source, release) {
-  const entries = readNimiAppArchive(bytes, 'hosted Web release');
+  const entries = readNimiAppArchive(bytes, 'hosted Web release', {
+    maxArchiveBytes: HOSTED_WEB_MAX_ARCHIVE_BYTES,
+    maxTotalUncompressedBytes: HOSTED_WEB_MAX_UNCOMPRESSED_BYTES,
+  });
   for (const [name, entry] of entries) {
     if (
       entry.mode !== 0o644 ||
@@ -85,6 +91,9 @@ export async function verifyHostedReview(review, token) {
     const assetName = 'nimi-web-' + release.version + '.zip';
     const url = product.repository + '/releases/download/' + tag + '/' + assetName;
     releaseAsset(record, { ...release, asset_name: assetName, asset_url: url }, 'Web bundle');
+    if (!Number.isSafeInteger(release.size) || release.size <= 0 || release.size > HOSTED_WEB_MAX_ARCHIVE_BYTES) {
+      throw new Error('Hosted Web release exceeds 256 MiB archive budget');
+    }
     const bytes = await downloadExact(url, release.size, release.sha256, 'Web bundle');
     verifyHostedBundle(bytes, product, source, release);
     const proofs = await requestJson(

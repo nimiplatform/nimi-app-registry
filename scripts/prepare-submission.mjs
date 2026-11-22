@@ -98,6 +98,7 @@ export async function prepareSubmission({ repository, tag, input, token = '', po
   const candidates = release.assets.filter((asset) => asset.name.endsWith('.candidate.json'));
   if (candidates.length !== 1) fail('Release must contain exactly one aggregate candidate asset');
   const aggregateAsset = releaseAsset(release, candidates[0].name, repository, tag);
+  if (aggregateAsset.size > 1048576) fail('Aggregate candidate exceeds 1 MiB limit');
   const aggregateBytes = await downloadExact(aggregateAsset.asset_url, aggregateAsset.size, aggregateAsset.sha256, 'aggregate');
   const aggregate = JSON.parse(aggregateBytes.toString('utf8'));
   if (aggregate.format !== 'nimi.app-release-candidate/v1' || tag !== `v${aggregate.version}` || !Array.isArray(aggregate.targets) || !aggregate.targets.length || aggregate.targets.length > 20) fail('Aggregate identity or target set is invalid');
@@ -105,6 +106,8 @@ export async function prepareSubmission({ repository, tag, input, token = '', po
   const targets = [];
   for (const source of aggregate.targets) {
     const asset = releaseAsset(release, source.asset_name, repository, tag);
+    const maxTargetBytes = source.os === 'any' ? 75497472 : 2097152000;
+    if (asset.size > maxTargetBytes) fail(`Target archive ${source.asset_name} exceeds ${maxTargetBytes} byte limit`);
     const appInfo = releaseAsset(release, source.app_info?.asset_name, repository, tag);
     if (appInfo.size > 1048576) fail('App information exceeds its schema size limit');
     const bytes = await downloadExact(appInfo.asset_url, appInfo.size, appInfo.sha256, 'App information');
