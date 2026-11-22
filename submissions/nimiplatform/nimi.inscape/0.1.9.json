@@ -1,0 +1,153 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.inscape",
+    "display_name": "Inscape",
+    "version": "0.1.9",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-inscape",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.9",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-inscape/rulesets/22613684",
+      "commit_sha": "0ea5e49a2471a032aa36d5c6ac037a238c870d91",
+      "release_id": 454439621,
+      "release_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/tag/v0.1.9",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/tag/v0.1.9",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 779031089,
+      "asset_name": "nimi.inscape-0.1.9.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.9/nimi.inscape-0.1.9.candidate.json",
+      "size": 1135,
+      "sha256": "0384e303c9a8171870f955eac3f34e8940fceb750d71549ee9d57a6e435a13b5"
+    },
+    "storefront_media": {
+      "asset_id": 779031124,
+      "asset_name": "nimi.inscape-0.1.9-storefront-media.zip",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.9/nimi.inscape-0.1.9-storefront-media.zip",
+      "size": 733078,
+      "sha256": "00cf6374f20ad1c9c2a43d6fbdd84e14c6251c9aa244772aab68c079103f1319"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "managed-web",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "nimi-managed-web-v1"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-inscape/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "desktop-universal",
+        "os": "any",
+        "arch": "any",
+        "asset_id": 779031018,
+        "asset_name": "nimi.inscape-0.1.9-desktop-universal.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.9/nimi.inscape-0.1.9-desktop-universal.nimiapp",
+        "size": 5736191,
+        "sha256": "52fec1e761837201c525a6978343bf379cd4979e8efb7ed9b9b5ba8c8cf82e96",
+        "app_info": {
+          "asset_id": 779031055,
+          "asset_name": "nimi.inscape-0.1.9-desktop-universal.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-inscape/releases/download/v0.1.9/nimi.inscape-0.1.9-desktop-universal.app-info.json",
+          "size": 541567,
+          "sha256": "a074b03011f51ff44ca059932622c9b227a5ab2f38b18f57a5915eaf75c4e663"
+        },
+        "runtime_entry": "payload/index.html",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-inscape/attestations/sha256:52fec1e761837201c525a6978343bf379cd4979e8efb7ed9b9b5ba8c8cf82e96"
+        ],
+        "execution_profile_ref": "nimi-managed-web-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "adult"
+    }
+  }
+}
