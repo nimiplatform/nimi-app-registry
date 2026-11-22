@@ -1,0 +1,165 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.overtone",
+    "display_name": "Nimi Overtone",
+    "version": "0.1.10",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-overtone",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "1f1651cd5b5444ed57f4dcff243581cbb44626191da122994497afe67e53ceac"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.10",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-overtone/rulesets/22613687",
+      "commit_sha": "bcbaa63b7fb769720d63f65564d64e5de4ac00cd",
+      "release_id": 454300324,
+      "release_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/tag/v0.1.10",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/tag/v0.1.10",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 778371866,
+      "asset_name": "nimi.overtone-0.1.10.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.10/nimi.overtone-0.1.10.candidate.json",
+      "size": 1145,
+      "sha256": "26eef9752048a483ca750de4e306765af2bdee91daf4ad8423d54f18ba872910"
+    },
+    "storefront_media": {
+      "asset_id": 778371921,
+      "asset_name": "nimi.overtone-0.1.10-storefront-media.zip",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.10/nimi.overtone-0.1.10-storefront-media.zip",
+      "size": 881374,
+      "sha256": "6e59c059273573af9832faca0031d7b45b7ee5d645eda7ea0ec689c4bc314db0"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "managed-web",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "nimi-managed-web-v1"
+    },
+    "app_access": [
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "music.generate",
+      "music.transcribe",
+      "audio.voice.convert",
+      "audio.separate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status",
+        "failed_operation",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-overtone/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi after checking the reported error and model configuration. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "desktop-universal",
+        "os": "any",
+        "arch": "any",
+        "asset_id": 778371759,
+        "asset_name": "nimi.overtone-0.1.10-desktop-universal.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.10/nimi.overtone-0.1.10-desktop-universal.nimiapp",
+        "size": 5636153,
+        "sha256": "53ca5c9a728728ab0b37c85c26ef697ea439b195412021da686cac5d70b74450",
+        "app_info": {
+          "asset_id": 778371828,
+          "asset_name": "nimi.overtone-0.1.10-desktop-universal.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-overtone/releases/download/v0.1.10/nimi.overtone-0.1.10-desktop-universal.app-info.json",
+          "size": 338585,
+          "sha256": "f1f3be4f602fcf0224ab4ddc715af36d4118293b87af4f2877917a11b08a1d05"
+        },
+        "runtime_entry": "payload/index.html",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-overtone/attestations/sha256:53ca5c9a728728ab0b37c85c26ef697ea439b195412021da686cac5d70b74450"
+        ],
+        "execution_profile_ref": "nimi-managed-web-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "private"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
