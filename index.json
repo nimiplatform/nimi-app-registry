@@ -46,12 +46,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "nimi.parentos@0.1.9",
-          "path": "descriptors/nimi.parentos/0.1.9.json"
+          "descriptor_id": "nimi.parentos@0.1.11",
+          "path": "descriptors/nimi.parentos/0.1.11.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "nimi.parentos@0.1.9",
-          "path": "descriptors/nimi.parentos/0.1.9.json"
+          "descriptor_id": "nimi.parentos@0.1.11",
+          "path": "descriptors/nimi.parentos/0.1.11.json"
         }
       },
       "origin": "nimi-official"
