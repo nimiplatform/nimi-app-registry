@@ -29,7 +29,10 @@ if (
 )
   throw Error('Web release asset mismatch.');
 const bytes = await downloadExact(url, asset.size, asset.digest.slice(7), 'Web release');
-const entries = readNimiAppArchive(bytes, 'Web bundle');
+const entries = readNimiAppArchive(bytes, 'Web bundle', {
+  maxArchiveBytes: 256 * 1024 * 1024,
+  maxTotalUncompressedBytes: 256 * 1024 * 1024,
+});
 const info = JSON.parse(entries.get('nimi-web-bundle.json')?.bytes.toString('utf8') ?? 'null');
 if (!info || !/^[a-z][a-z0-9]*(?:[._-][a-z0-9]+)+$/u.test(info.client_id) || info.client_id.length > 120)
   throw Error('Invalid client in the Web bundle.');

@@ -15,9 +15,9 @@ function archive(entries) {
   for (const [name, content] of Object.entries(entries).sort(([a], [b]) => a < b ? -1 : 1)) {
     const bytes = Buffer.from(content), filename = Buffer.from(name);
     const local = Buffer.alloc(30), directory = Buffer.alloc(46);
-    local.writeUInt32LE(0x04034b50); local.writeUInt16LE(20, 4);
+    local.writeUInt32LE(0x04034b50); local.writeUInt16LE(20, 4); local.writeUInt16LE(0x0800, 6);
     local.writeUInt32LE(crc32(bytes), 14); local.writeUInt32LE(bytes.length, 18); local.writeUInt32LE(bytes.length, 22); local.writeUInt16LE(filename.length, 26);
-    directory.writeUInt32LE(0x02014b50); directory.writeUInt16LE(0x0314, 4); directory.writeUInt16LE(20, 6);
+    directory.writeUInt32LE(0x02014b50); directory.writeUInt16LE(0x0314, 4); directory.writeUInt16LE(20, 6); directory.writeUInt16LE(0x0800, 8);
     directory.writeUInt32LE(crc32(bytes), 16); directory.writeUInt32LE(bytes.length, 20); directory.writeUInt32LE(bytes.length, 24); directory.writeUInt16LE(filename.length, 28);
     directory.writeUInt32LE(((0o100000 | (name.startsWith('payload/') ? 0o755 : 0o644)) << 16) >>> 0, 38); directory.writeUInt32LE(offset, 42);
     locals.push(local, filename, bytes); central.push(directory, filename); offset += local.length + filename.length + bytes.length;

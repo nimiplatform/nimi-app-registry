@@ -1,14 +1,52 @@
 import { validatePublishedAppInfo } from './app-info-validation.mjs';
 import { validateStorefrontMediaArchiveEntries } from './storefront-media-validation.mjs';
+import { isUtf8 } from 'node:buffer';
 import childProcess from 'node:child_process';
 import { createHash } from 'node:crypto';
-import { mkdtemp, rm, writeFile } from 'node:fs/promises';
+import * as fsp from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import path from 'node:path';
 import { isDeepStrictEqual } from 'node:util';
+import { crc32 as nativeCrc32, createInflateRaw, inflateRawSync } from 'node:zlib';
 import { parse as parseYaml, parseDocument as parseYamlDocument, isMap, isScalar } from 'yaml';
 import { RegistryValidationError } from './registry-validation.mjs';
-import { SYMBOLIC_LINK_MODE, validatePayloadLinks } from './payload-links.mjs';
+import { MAX_SYMLINK_TARGET_BYTES, SYMBOLIC_LINK_MODE, validatePayloadLinks } from './payload-links.mjs';
+
+export const NATIVE_MAX_ARCHIVE_BYTES = 2000 * 1024 * 1024;
+export const NATIVE_MAX_ENTRY_BYTES = 2000 * 1024 * 1024;
+export const NATIVE_MAX_RELEASE_BYTES = 4 * 1024 * 1024 * 1024;
+export const NATIVE_MAX_DIRECTORIES = 65_535;
+export const MANAGED_WEB_MAX_ARCHIVE_BYTES = 72 * 1024 * 1024;
+export const MANAGED_WEB_MAX_RELEASE_BYTES = 64 * 1024 * 1024;
+export const MANAGED_WEB_MAX_RELEASE_ENTRIES = 10_000;
+export const HOSTED_WEB_MAX_ARCHIVE_BYTES = 256 * 1024 * 1024;
+export const STOREFRONT_MEDIA_MAX_BYTES = 8 * 1024 * 1024;
+export const AGGREGATE_MAX_BYTES = 1024 * 1024;
+export const APP_INFO_MAX_BYTES = 1024 * 1024;
+export const MAX_LICENSE_BYTES = 128 * 1024;
+export const MAX_CONTROL_DOCUMENT_BYTES = 1024 * 1024;
+export const MAX_ARCHIVE_DIRECTORY_DEPTH = 64;
+export const MAX_ARCHIVE_ENTRY_NAME_BYTES = 1024;
+export const MAX_ZIP32_ENTRIES = 65_535;
+export const EXPANSION_RATIO_FLOOR_BYTES = 8 * 1024 * 1024;
+export const MAX_EXPANSION_RATIO = 20;
+
+const STREAM_IO_CHUNK_BYTES = 256 * 1024;
+const ZIP_METHOD_STORE = 0;
+const ZIP_METHOD_DEFLATE = 8;
+const ZIP_FLAGS_UTF8 = 0x0800;
+const ZIP_CREATOR_UNIX = 0x0314;
+const ZIP_READER_VERSION = 20;
+const EXT_ATTR_REGULAR_0644 = 0x81A40000;
+const EXT_ATTR_REGULAR_0755 = 0x81ED0000;
+const EXT_ATTR_SYMLINK_0777 = 0xA1FF0000;
+const UTF8_DECODER = new TextDecoder('utf-8', { fatal: true, ignoreBOM: true });
+const NIMIAPP_CONTROL_LIMITS = new Map([
+  ['LICENSE', MAX_LICENSE_BYTES],
+  ['app-info.json', APP_INFO_MAX_BYTES],
+  ['manifest.json', MAX_CONTROL_DOCUMENT_BYTES],
+  ['nimi.app.yaml', MAX_CONTROL_DOCUMENT_BYTES],
+]);
 
 function fail(message) {
   throw new RegistryValidationError(message);
@@ -88,6 +126,44 @@ async function readDownloadBytes(response, expectedSize, label) {
   return Buffer.concat(chunks, size);
 }
 
+async function writeBufferAt(handle, buf, position) {
+  let off = 0;
+  while (off < buf.length) {
+    const { bytesWritten } = await handle.write(buf, off, buf.length - off, position + off);
+    if (bytesWritten <= 0) fail('temporary download write did not make progress');
+    off += bytesWritten;
+  }
+}
+
+async function streamDownloadBodyToHandle(response, handle, startOffset, expectedSize, label) {
+  if (!response.body) fail(`${label} download has no body`);
+  let written = 0;
+  for await (const chunk of response.body) {
+    const bytes = Buffer.from(chunk);
+    if (written + bytes.length > expectedSize) {
+      await response.body.cancel().catch(() => {});
+      fail(`${label} exceeded its declared size`);
+    }
+    await writeBufferAt(handle, bytes, startOffset + written);
+    written += bytes.length;
+  }
+  if (written !== expectedSize) fail(`${label} size mismatch`);
+}
+
+async function hashFileHandle(handle, expectedSize, label) {
+  const hash = createHash('sha256');
+  const buf = Buffer.allocUnsafe(Math.min(1024 * 1024, Math.max(1, expectedSize)));
+  let pos = 0;
+  while (pos < expectedSize) {
+    const toRead = Math.min(buf.length, expectedSize - pos);
+    const { bytesRead } = await handle.read(buf, 0, toRead, pos);
+    if (bytesRead <= 0) fail(`${label} truncated during SHA-256 verification`);
+    hash.update(buf.subarray(0, bytesRead));
+    pos += bytesRead;
+  }
+  return hash.digest('hex');
+}
+
 function verifyDownloadDigest(bytes, expectedSha256, label) {
   const hash = createHash('sha256');
   for (let offset = 0; offset < bytes.length; offset += 64 * 1024 * 1024) {
@@ -121,7 +197,10 @@ async function fetchDownload(url, headers, signal, label) {
   return response;
 }
 
-export async function downloadExact(url, expectedSize, expectedSha256, label) {
+export async function downloadExact(url, expectedSize, expectedSha256, label, maxBytes = HOSTED_WEB_MAX_ARCHIVE_BYTES) {
+  if (!Number.isSafeInteger(expectedSize) || expectedSize <= 0 || expectedSize > maxBytes) {
+    fail(`${label} size exceeds bounded memory download budget (${maxBytes} bytes)`);
+  }
   const controller = new AbortController();
   const { signal } = controller;
   try {
@@ -175,82 +254,568 @@ export async function downloadExact(url, expectedSize, expectedSha256, label) {
   }
 }
 
-const crcTable = (() => {
-  const table = new Uint32Array(256);
-  for (let index = 0; index < 256; index += 1) {
-    let value = index;
-    for (let bit = 0; bit < 8; bit += 1) value = (value & 1) ? (0xedb88320 ^ (value >>> 1)) : (value >>> 1);
-    table[index] = value >>> 0;
+export async function downloadExactToFile(
+  url,
+  expectedSize,
+  expectedSha256,
+  targetPath,
+  label,
+  maxBytes = NATIVE_MAX_ARCHIVE_BYTES,
+) {
+  if (!Number.isSafeInteger(expectedSize) || expectedSize <= 0 || expectedSize > maxBytes) {
+    fail(`${label} size exceeds maximum download budget (${maxBytes} bytes)`);
   }
-  return table;
-})();
+  const controller = new AbortController();
+  const { signal } = controller;
+  const handle = await fsp.open(targetPath, 'w+');
+  let activeWorkers = [];
+  try {
+    if (expectedSize <= DOWNLOAD_RANGE_BYTES) {
+      await retryDownload(async () => {
+        await handle.truncate(0);
+        const response = await fetchDownload(url, undefined, signal, label);
+        if (!response.ok) {
+          await response.body?.cancel();
+          fail(`${label} download failed with HTTP ${response.status}`);
+        }
+        await streamDownloadBodyToHandle(response, handle, 0, expectedSize, label);
+      }, signal, label);
+    } else {
+      // Probe first range before launching concurrent workers so a server
+      // ignoring Range (HTTP 200) cleanly streams sequentially to offset 0.
+      let complete = false;
+      await retryDownload(async () => {
+        const end = DOWNLOAD_RANGE_BYTES - 1;
+        const response = await fetchDownload(url, {
+          Range: `bytes=0-${end}`, 'Accept-Encoding': 'identity',
+        }, signal, label);
+        if (response.status === 200) {
+          await handle.truncate(0);
+          await streamDownloadBodyToHandle(response, handle, 0, expectedSize, label);
+          complete = true;
+          return;
+        }
+        if (response.status !== 206) {
+          await response.body?.cancel();
+          fail(`${label} range download failed with HTTP ${response.status}`);
+        }
+        if (response.headers.get('content-range') !== `bytes 0-${end}/${expectedSize}`) {
+          await response.body?.cancel();
+          fail(`${label} range identity mismatch`);
+        }
+        const firstPart = await readDownloadBytes(response, end + 1, label);
+        await writeBufferAt(handle, firstPart, 0);
+      }, signal, label);
 
-function crc32(bytes) {
-  let crc = 0xffffffff;
-  for (const byte of bytes) crc = crcTable[(crc ^ byte) & 0xff] ^ (crc >>> 8);
-  return (crc ^ 0xffffffff) >>> 0;
+      if (!complete) {
+        let next = DOWNLOAD_RANGE_BYTES;
+        const worker = async () => {
+          while (!signal.aborted && next < expectedSize) {
+            const start = next;
+            next += DOWNLOAD_RANGE_BYTES;
+            const end = Math.min(next, expectedSize) - 1;
+            const part = await retryDownload(async () => {
+              const response = await fetchDownload(url, {
+                Range: `bytes=${start}-${end}`, 'Accept-Encoding': 'identity',
+              }, signal, label);
+              // Subsequent ranges must never silently accept HTTP 200.
+              if (response.status !== 206) {
+                await response.body?.cancel();
+                fail(`${label} range download failed with HTTP ${response.status}`);
+              }
+              if (response.headers.get('content-range') !== `bytes ${start}-${end}/${expectedSize}`) {
+                await response.body?.cancel();
+                fail(`${label} range identity mismatch`);
+              }
+              return readDownloadBytes(response, end - start + 1, label);
+            }, signal, label);
+            if (!signal.aborted) {
+              await writeBufferAt(handle, part, start);
+            }
+          }
+        };
+        activeWorkers = Array.from({ length: DOWNLOAD_CONCURRENCY }, () => worker());
+        await Promise.all(activeWorkers);
+      }
+    }
+    const stat = await handle.stat();
+    if (stat.size !== expectedSize) fail(`${label} size mismatch`);
+    const actualSha = await hashFileHandle(handle, expectedSize, label);
+    if (actualSha !== expectedSha256) fail(`${label} SHA-256 mismatch`);
+    return targetPath;
+  } catch (error) {
+    controller.abort();
+    if (activeWorkers.length > 0) {
+      await Promise.allSettled(activeWorkers);
+    }
+    throw error;
+  } finally {
+    await handle.close().catch(() => {});
+  }
 }
 
-function canonicalEntryName(value) {
-  if (typeof value !== 'string' || !value || value !== value.trim() || value.includes('\\') || value.startsWith('/')) {
-    fail(`archive entry is not a canonical relative path: ${String(value)}`);
+function decodeStrictUtf8(buf, label) {
+  if (!Buffer.isBuffer(buf) || !isUtf8(buf)) {
+    fail(`${label} contains malformed UTF-8`);
   }
-  if (value.split('/').some((part) => !part || part === '.' || part === '..')) fail(`archive entry is not canonical: ${value}`);
+  try {
+    return UTF8_DECODER.decode(buf);
+  } catch {
+    fail(`${label} contains malformed UTF-8`);
+  }
+}
+
+function canonicalEntryName(value, label) {
+  if (
+    typeof value !== 'string'
+    || !value
+    || value !== value.trim()
+    || value.includes('\\')
+    || value.includes('\0')
+    || value.startsWith('/')
+    || Buffer.byteLength(value, 'utf8') > MAX_ARCHIVE_ENTRY_NAME_BYTES
+  ) {
+    fail(`${label} archive entry is not a canonical relative path: ${String(value)}`);
+  }
+  const parts = value.split('/');
+  if (parts.length - 1 > MAX_ARCHIVE_DIRECTORY_DEPTH) {
+    fail(`${label} archive directory depth exceeds ${MAX_ARCHIVE_DIRECTORY_DEPTH}: ${value}`);
+  }
+  if (parts.some((part) => !part || part === '.' || part === '..')) {
+    fail(`${label} archive entry is not canonical: ${value}`);
+  }
+  for (const ch of value) {
+    const code = ch.codePointAt(0);
+    if (code < 0x20 || code === 0x7f) {
+      fail(`${label} archive entry contains control character: ${value}`);
+    }
+  }
   return value;
 }
 
-export function readNimiAppArchive(bytes, label) {
-  if (bytes.length < 22 || bytes.readUInt32LE(bytes.length - 22) !== 0x06054b50) fail(`${label} has no canonical ZIP end record`);
-  const endOffset = bytes.length - 22;
-  const count = bytes.readUInt16LE(endOffset + 10);
-  const centralSize = bytes.readUInt32LE(endOffset + 12);
-  const centralOffset = bytes.readUInt32LE(endOffset + 16);
-  if (centralOffset + centralSize !== endOffset || count !== bytes.readUInt16LE(endOffset + 8)) fail(`${label} ZIP directory is invalid`);
-  const entries = new Map();
-  let cursor = centralOffset;
-  for (let index = 0; index < count; index += 1) {
-    if (bytes.readUInt32LE(cursor) !== 0x02014b50) fail(`${label} ZIP central entry is invalid`);
-    const method = bytes.readUInt16LE(cursor + 10);
-    const expectedCrc = bytes.readUInt32LE(cursor + 16);
-    const size = bytes.readUInt32LE(cursor + 24);
-    const nameLength = bytes.readUInt16LE(cursor + 28);
-    const extraLength = bytes.readUInt16LE(cursor + 30);
-    const commentLength = bytes.readUInt16LE(cursor + 32);
-    const localOffset = bytes.readUInt32LE(cursor + 42);
-    const unixMode = bytes.readUInt32LE(cursor + 38) >>> 16;
-    const fileType = unixMode & 0o170000;
-    const specialBits = unixMode & 0o7000;
-    let mode;
-    if (unixMode === SYMBOLIC_LINK_MODE) {
-      mode = SYMBOLIC_LINK_MODE;
-    } else if ((fileType === 0o100000 || fileType === 0) && specialBits === 0) {
-      mode = unixMode & 0o777;
-    } else {
-      fail(`${label} uses an unsupported ZIP entry mode`);
+function parseCanonicalExternalAttrs(externalAttrs, label) {
+  if (externalAttrs === EXT_ATTR_REGULAR_0644) return 0o644;
+  if (externalAttrs === EXT_ATTR_REGULAR_0755) return 0o755;
+  if (externalAttrs === EXT_ATTR_SYMLINK_0777) return SYMBOLIC_LINK_MODE;
+  fail(`${label} uses an unsupported ZIP entry mode`);
+}
+
+function validateNimiappLayoutEntry(name, mode, uncompressedSize, label) {
+  const controlLimit = NIMIAPP_CONTROL_LIMITS.get(name);
+  if (controlLimit !== undefined) {
+    if (mode !== 0o644 || uncompressedSize <= 0 || uncompressedSize > controlLimit) {
+      fail(`${label} control entry ${name} violates mode or size budget`);
     }
-    if (method !== 0 || extraLength !== 0 || commentLength !== 0) fail(`${label} uses an unsupported ZIP entry encoding`);
-    if (mode !== 0o644 && mode !== 0o755 && mode !== SYMBOLIC_LINK_MODE) fail(`${label} uses an unsupported ZIP entry mode`);
-    const name = canonicalEntryName(bytes.subarray(cursor + 46, cursor + 46 + nameLength).toString('utf8'));
-    if (entries.has(name) || bytes.readUInt32LE(localOffset) !== 0x04034b50) fail(`${label} has an invalid or duplicate ZIP entry`);
-    const localNameLength = bytes.readUInt16LE(localOffset + 26);
-    const localExtraLength = bytes.readUInt16LE(localOffset + 28);
-    const localName = bytes.subarray(localOffset + 30, localOffset + 30 + localNameLength).toString('utf8');
-    if (localName !== name || localExtraLength !== 0 || bytes.readUInt16LE(localOffset + 8) !== 0) fail(`${label} ZIP local entry is invalid`);
-    const dataOffset = localOffset + 30 + localNameLength;
-    const payload = bytes.subarray(dataOffset, dataOffset + size);
-    if (payload.length !== size || crc32(payload) !== expectedCrc) fail(`${label} ZIP entry digest mismatch: ${name}`);
-    entries.set(name, Object.freeze({ bytes: Buffer.from(payload), mode }));
-    cursor += 46 + nameLength;
+    return;
   }
-  if (cursor !== centralOffset + centralSize) fail(`${label} ZIP directory size is invalid`);
-  const names = [...entries.keys()];
-  if (names.some((name, index) => index > 0 && names[index - 1] >= name)) fail(`${label} ZIP entries are not canonical`);
+  if (!name.startsWith('payload/')) {
+    fail(`${label} contains unexpected root entry: ${name}`);
+  }
+}
+
+function parseEocdAndValidate(archiveSize, eocd, label, options) {
+  const maxArchiveBytes = options.maxArchiveBytes ?? NATIVE_MAX_ARCHIVE_BYTES;
+  const maxTotalUncompressedBytes = options.maxTotalUncompressedBytes ?? NATIVE_MAX_RELEASE_BYTES;
+  const nimiappLayout = options.nimiappLayout === true;
+  if (archiveSize < 22 || archiveSize > maxArchiveBytes || archiveSize >= 0xffffffff) {
+    fail(`${label} archive size is out of ZIP32 budget`);
+  }
+  if (eocd.readUInt32LE(0) !== 0x06054b50) fail(`${label} has no canonical ZIP end record`);
+  const diskNumber = eocd.readUInt16LE(4);
+  const centralDisk = eocd.readUInt16LE(6);
+  const entriesOnDisk = eocd.readUInt16LE(8);
+  const count = eocd.readUInt16LE(10);
+  const centralSize = eocd.readUInt32LE(12);
+  const centralOffset = eocd.readUInt32LE(16);
+  const commentLen = eocd.readUInt16LE(20);
+  const endOffset = archiveSize - 22;
+  if (
+    diskNumber !== 0
+    || centralDisk !== 0
+    || commentLen !== 0
+    || entriesOnDisk !== count
+    || count === 0
+    || count > MAX_ZIP32_ENTRIES
+    || centralSize === 0
+    || centralSize === 0xffffffff
+    || centralOffset === 0xffffffff
+    || centralOffset + centralSize !== endOffset
+  ) {
+    fail(`${label} ZIP directory is invalid`);
+  }
+  return { count, centralSize, centralOffset, maxTotalUncompressedBytes, nimiappLayout };
+}
+
+function validateCentralEntryFields(
+  cdBuf,
+  cursor,
+  cdEnd,
+  expectedOffset,
+  centralOffset,
+  prevRawName,
+  nimiappLayout,
+  maxTotalUncompressedBytes,
+  totalUncompressed,
+  label,
+) {
+  if (cursor + 46 > cdEnd || cdBuf.readUInt32LE(cursor) !== 0x02014b50) {
+    fail(`${label} ZIP central entry is invalid`);
+  }
+  const creatorVersion = cdBuf.readUInt16LE(cursor + 4);
+  const readerVersion = cdBuf.readUInt16LE(cursor + 6);
+  const flags = cdBuf.readUInt16LE(cursor + 8);
+  const method = cdBuf.readUInt16LE(cursor + 10);
+  const modTime = cdBuf.readUInt16LE(cursor + 12);
+  const modDate = cdBuf.readUInt16LE(cursor + 14);
+  const expectedCrc = cdBuf.readUInt32LE(cursor + 16);
+  const compSize = cdBuf.readUInt32LE(cursor + 20);
+  const uncompSize = cdBuf.readUInt32LE(cursor + 24);
+  const nameLen = cdBuf.readUInt16LE(cursor + 28);
+  const extraLen = cdBuf.readUInt16LE(cursor + 30);
+  const commentLen = cdBuf.readUInt16LE(cursor + 32);
+  const diskStart = cdBuf.readUInt16LE(cursor + 34);
+  const internalAttrs = cdBuf.readUInt16LE(cursor + 36);
+  const externalAttrs = cdBuf.readUInt32LE(cursor + 38);
+  const localOffset = cdBuf.readUInt32LE(cursor + 42);
+  if (
+    creatorVersion !== ZIP_CREATOR_UNIX
+    || readerVersion !== ZIP_READER_VERSION
+    || flags !== ZIP_FLAGS_UTF8
+    || extraLen !== 0
+    || commentLen !== 0
+    || diskStart !== 0
+    || internalAttrs !== 0
+    || compSize === 0xffffffff
+    || uncompSize === 0xffffffff
+    || localOffset === 0xffffffff
+    || nameLen === 0
+    || nameLen > MAX_ARCHIVE_ENTRY_NAME_BYTES
+    || cursor + 46 + nameLen > cdEnd
+  ) {
+    fail(`${label} uses an unsupported ZIP entry encoding`);
+  }
+  const mode = parseCanonicalExternalAttrs(externalAttrs, label);
+  const rawName = cdBuf.subarray(cursor + 46, cursor + 46 + nameLen);
+  const name = canonicalEntryName(decodeStrictUtf8(rawName, `${label} ZIP entry name`), label);
+  if (prevRawName !== null && Buffer.compare(prevRawName, rawName) >= 0) {
+    fail(`${label} ZIP entries are not canonical`);
+  }
+  if (mode === SYMBOLIC_LINK_MODE) {
+    if (method !== ZIP_METHOD_STORE || compSize !== uncompSize || uncompSize === 0 || uncompSize > MAX_SYMLINK_TARGET_BYTES) {
+      fail(`${label} symbolic link entry is invalid: ${name}`);
+    }
+  } else if (method === ZIP_METHOD_STORE) {
+    if (compSize !== uncompSize || uncompSize > NATIVE_MAX_ENTRY_BYTES || (uncompSize === 0 && expectedCrc !== 0)) {
+      fail(`${label} Store ZIP entry is invalid: ${name}`);
+    }
+  } else if (method === ZIP_METHOD_DEFLATE) {
+    if (compSize === 0 || uncompSize === 0 || compSize >= uncompSize || uncompSize > NATIVE_MAX_ENTRY_BYTES) {
+      fail(`${label} Deflate ZIP entry is invalid: ${name}`);
+    }
+  } else {
+    fail(`${label} uses an unsupported ZIP entry encoding`);
+  }
+  if (nimiappLayout) {
+    validateNimiappLayoutEntry(name, mode, uncompSize, label);
+  }
+  if (localOffset !== expectedOffset) {
+    fail(`${label} ZIP local offset is not contiguous: ${name}`);
+  }
+  const dataOffset = localOffset + 30 + nameLen;
+  const nextOffset = dataOffset + compSize;
+  if (nextOffset < dataOffset || nextOffset > centralOffset) {
+    fail(`${label} ZIP local data bounds are invalid: ${name}`);
+  }
+  const nextTotalUncompressed = totalUncompressed + uncompSize;
+  if (nextTotalUncompressed > maxTotalUncompressedBytes) {
+    fail(`${label} exceeds ${maxTotalUncompressedBytes} bytes uncompressed`);
+  }
+  return {
+    name,
+    rawName,
+    mode,
+    method,
+    modTime,
+    modDate,
+    expectedCrc,
+    compSize,
+    uncompSize,
+    localOffset,
+    dataOffset,
+    nextOffset,
+    nextCursor: cursor + 46 + nameLen,
+    nextTotalUncompressed,
+  };
+}
+
+function assertLocalHeaderMatches(localBuf, meta, label) {
+  if (
+    localBuf.length !== 30 + meta.rawName.length
+    || localBuf.readUInt32LE(0) !== 0x04034b50
+    || localBuf.readUInt16LE(4) !== ZIP_READER_VERSION
+    || localBuf.readUInt16LE(6) !== ZIP_FLAGS_UTF8
+    || localBuf.readUInt16LE(8) !== meta.method
+    || localBuf.readUInt16LE(10) !== meta.modTime
+    || localBuf.readUInt16LE(12) !== meta.modDate
+    || localBuf.readUInt32LE(14) !== meta.expectedCrc
+    || localBuf.readUInt32LE(18) !== meta.compSize
+    || localBuf.readUInt32LE(22) !== meta.uncompSize
+    || localBuf.readUInt16LE(26) !== meta.rawName.length
+    || localBuf.readUInt16LE(28) !== 0
+    || !localBuf.subarray(30).equals(meta.rawName)
+  ) {
+    fail(`${label} ZIP local entry is invalid: ${meta.name}`);
+  }
+}
+
+export function readNimiAppArchive(bytes, label, options = {}) {
+  const archive = Buffer.isBuffer(bytes) ? bytes : Buffer.from(bytes);
+  const retainPredicate = typeof options.retainPredicate === 'function' ? options.retainPredicate : null;
+  if (archive.length < 22) fail(`${label} has no canonical ZIP end record`);
+  const eocd = archive.subarray(archive.length - 22);
+  const { count, centralSize, centralOffset, maxTotalUncompressedBytes, nimiappLayout } =
+    parseEocdAndValidate(archive.length, eocd, label, options);
+  const cdBuf = archive.subarray(centralOffset, centralOffset + centralSize);
+  const parsed = [];
+  let cursor = 0;
+  let expectedOffset = 0;
+  let totalUncompressed = 0;
+  let prevRawName = null;
+  for (let index = 0; index < count; index += 1) {
+    const meta = validateCentralEntryFields(
+      cdBuf,
+      cursor,
+      centralSize,
+      expectedOffset,
+      centralOffset,
+      prevRawName,
+      nimiappLayout,
+      maxTotalUncompressedBytes,
+      totalUncompressed,
+      label,
+    );
+    const localBuf = archive.subarray(meta.localOffset, meta.dataOffset);
+    assertLocalHeaderMatches(localBuf, meta, label);
+    parsed.push(meta);
+    cursor = meta.nextCursor;
+    expectedOffset = meta.nextOffset;
+    totalUncompressed = meta.nextTotalUncompressed;
+    prevRawName = meta.rawName;
+  }
+  if (cursor !== centralSize || expectedOffset !== centralOffset) {
+    fail(`${label} ZIP directory size is invalid`);
+  }
+  if (totalUncompressed > EXPANSION_RATIO_FLOOR_BYTES && totalUncompressed > archive.length * MAX_EXPANSION_RATIO) {
+    fail(`${label} ZIP expansion ratio exceeds ${MAX_EXPANSION_RATIO}x`);
+  }
+
+  const entries = new Map();
+  for (const meta of parsed) {
+    const rawSlice = archive.subarray(meta.dataOffset, meta.dataOffset + meta.compSize);
+    if (rawSlice.length !== meta.compSize) fail(`${label} ZIP entry truncated: ${meta.name}`);
+    let plain;
+    if (meta.method === ZIP_METHOD_STORE) {
+      if (meta.uncompSize > 0 && nativeCrc32(rawSlice) !== meta.expectedCrc) {
+        fail(`${label} ZIP entry digest mismatch: ${meta.name}`);
+      }
+      plain = rawSlice;
+    } else {
+      let inflated;
+      try {
+        inflated = inflateRawSync(rawSlice, { maxOutputLength: meta.uncompSize, info: true });
+      } catch (error) {
+        fail(`${label} ZIP deflate payload is invalid for ${meta.name}: ${error instanceof Error ? error.message : String(error)}`);
+      }
+      if (inflated.buffer.length !== meta.uncompSize || inflated.engine.bytesWritten !== meta.compSize) {
+        fail(`${label} ZIP deflate length or trailing bytes mismatch: ${meta.name}`);
+      }
+      if (nativeCrc32(inflated.buffer) !== meta.expectedCrc) {
+        fail(`${label} ZIP entry digest mismatch: ${meta.name}`);
+      }
+      plain = inflated.buffer;
+    }
+    const retain = meta.mode === SYMBOLIC_LINK_MODE || !retainPredicate || retainPredicate(meta.name, { mode: meta.mode, size: meta.uncompSize });
+    entries.set(meta.name, Object.freeze({
+      bytes: retain ? Buffer.from(plain) : null,
+      size: meta.uncompSize,
+      mode: meta.mode,
+    }));
+  }
   return entries;
+}
+
+async function readExactFromHandle(handle, buf, position, label) {
+  let off = 0;
+  while (off < buf.length) {
+    const { bytesRead } = await handle.read(buf, off, buf.length - off, position + off);
+    if (bytesRead <= 0) fail(`${label} ZIP ended unexpectedly`);
+    off += bytesRead;
+  }
+  return buf;
+}
+
+async function readStoreEntryFromHandle(handle, meta, retain, budgetState, label) {
+  if (meta.uncompSize === 0) {
+    return retain ? Buffer.alloc(0) : null;
+  }
+  const buf = Buffer.allocUnsafe(Math.min(STREAM_IO_CHUNK_BYTES, meta.compSize));
+  let offset = 0;
+  let crc = 0;
+  const chunks = retain ? [] : null;
+  while (offset < meta.compSize) {
+    const toRead = Math.min(buf.length, meta.compSize - offset);
+    const { bytesRead } = await handle.read(buf, 0, toRead, meta.dataOffset + offset);
+    if (bytesRead <= 0) fail(`${label} ZIP entry truncated: ${meta.name}`);
+    const slice = buf.subarray(0, bytesRead);
+    budgetState.total += bytesRead;
+    if (budgetState.total > budgetState.maxTotal) {
+      fail(`${label} exceeds ${budgetState.maxTotal} bytes uncompressed`);
+    }
+    crc = nativeCrc32(slice, crc);
+    if (chunks) chunks.push(Buffer.from(slice));
+    offset += bytesRead;
+  }
+  if ((crc >>> 0) !== (meta.expectedCrc >>> 0)) {
+    fail(`${label} ZIP entry digest mismatch: ${meta.name}`);
+  }
+  return chunks ? Buffer.concat(chunks) : null;
+}
+
+async function readDeflateEntryFromHandle(handle, meta, retain, budgetState, label) {
+  // Node v24 createInflateRaw silently ignores maxOutputLength; enforce
+  // per-entry and cumulative uncompressed caps in our single bounded consumer.
+  const inf = createInflateRaw();
+  let outLen = 0;
+  let crc = 0;
+  let aborted = null;
+  const chunks = retain ? [] : null;
+  const done = new Promise((resolve, reject) => {
+    inf.on('data', (chunk) => {
+      if (aborted) return;
+      if (outLen + chunk.length > meta.uncompSize || budgetState.total + chunk.length > budgetState.maxTotal) {
+        aborted = new RegistryValidationError(`${label} ZIP deflate uncompressed overflow: ${meta.name}`);
+        inf.destroy(aborted);
+        return;
+      }
+      outLen += chunk.length;
+      budgetState.total += chunk.length;
+      crc = nativeCrc32(chunk, crc);
+      if (chunks) chunks.push(Buffer.from(chunk));
+    });
+    inf.on('error', (error) => {
+      const wrapped = error === aborted
+        ? error
+        : new RegistryValidationError(`${label} ZIP deflate payload is invalid for ${meta.name}: ${error instanceof Error ? error.message : String(error)}`);
+      aborted = wrapped;
+      reject(wrapped);
+    });
+    inf.on('end', () => resolve());
+  });
+
+  const buf = Buffer.allocUnsafe(Math.min(STREAM_IO_CHUNK_BYTES, meta.compSize));
+  let offset = 0;
+  while (offset < meta.compSize && !aborted) {
+    const toRead = Math.min(buf.length, meta.compSize - offset);
+    const { bytesRead } = await handle.read(buf, 0, toRead, meta.dataOffset + offset);
+    if (bytesRead <= 0) {
+      const truncErr = new RegistryValidationError(`${label} ZIP entry truncated: ${meta.name}`);
+      aborted = truncErr;
+      inf.destroy(truncErr);
+      break;
+    }
+    const slice = Buffer.from(buf.subarray(0, bytesRead));
+    if (!inf.write(slice)) {
+      await new Promise((resolve) => {
+        const finish = () => {
+          inf.off('drain', finish);
+          inf.off('close', finish);
+          inf.off('error', finish);
+          resolve();
+        };
+        inf.once('drain', finish);
+        inf.once('close', finish);
+        inf.once('error', finish);
+      });
+    }
+    offset += bytesRead;
+  }
+  if (!aborted) inf.end();
+  await done;
+  if (outLen !== meta.uncompSize || inf.bytesWritten !== meta.compSize) {
+    fail(`${label} ZIP deflate length or trailing bytes mismatch: ${meta.name}`);
+  }
+  if ((crc >>> 0) !== (meta.expectedCrc >>> 0)) {
+    fail(`${label} ZIP entry digest mismatch: ${meta.name}`);
+  }
+  return chunks ? Buffer.concat(chunks) : null;
+}
+
+export async function readNimiAppArchiveFromFile(filePath, label, options = {}) {
+  const retainPredicate = typeof options.retainPredicate === 'function' ? options.retainPredicate : null;
+  const handle = await fsp.open(filePath, 'r');
+  try {
+    const stat = await handle.stat();
+    if (!stat.isFile()) fail(`${label} is not a regular archive file`);
+    const archiveSize = stat.size;
+    const eocd = await readExactFromHandle(handle, Buffer.allocUnsafe(22), archiveSize - 22, label);
+    const { count, centralSize, centralOffset, maxTotalUncompressedBytes, nimiappLayout } =
+      parseEocdAndValidate(archiveSize, eocd, label, options);
+    const cdBuf = await readExactFromHandle(handle, Buffer.allocUnsafe(centralSize), centralOffset, label);
+    const parsed = [];
+    let cursor = 0;
+    let expectedOffset = 0;
+    let totalUncompressed = 0;
+    let prevRawName = null;
+    for (let index = 0; index < count; index += 1) {
+      const meta = validateCentralEntryFields(
+        cdBuf,
+        cursor,
+        centralSize,
+        expectedOffset,
+        centralOffset,
+        prevRawName,
+        nimiappLayout,
+        maxTotalUncompressedBytes,
+        totalUncompressed,
+        label,
+      );
+      const localBuf = await readExactFromHandle(handle, Buffer.allocUnsafe(30 + meta.rawName.length), meta.localOffset, label);
+      assertLocalHeaderMatches(localBuf, meta, label);
+      parsed.push(meta);
+      cursor = meta.nextCursor;
+      expectedOffset = meta.nextOffset;
+      totalUncompressed = meta.nextTotalUncompressed;
+      prevRawName = meta.rawName;
+    }
+    if (cursor !== centralSize || expectedOffset !== centralOffset) {
+      fail(`${label} ZIP directory size is invalid`);
+    }
+    if (totalUncompressed > EXPANSION_RATIO_FLOOR_BYTES && totalUncompressed > archiveSize * MAX_EXPANSION_RATIO) {
+      fail(`${label} ZIP expansion ratio exceeds ${MAX_EXPANSION_RATIO}x`);
+    }
+
+    const entries = new Map();
+    const budgetState = { total: 0, maxTotal: maxTotalUncompressedBytes };
+    for (const meta of parsed) {
+      const retain = meta.mode === SYMBOLIC_LINK_MODE || !retainPredicate || retainPredicate(meta.name, { mode: meta.mode, size: meta.uncompSize });
+      const data = meta.method === ZIP_METHOD_STORE
+        ? await readStoreEntryFromHandle(handle, meta, retain, budgetState, label)
+        : await readDeflateEntryFromHandle(handle, meta, retain, budgetState, label);
+      entries.set(meta.name, Object.freeze({
+        bytes: data,
+        size: meta.uncompSize,
+        mode: meta.mode,
+      }));
+    }
+    return entries;
+  } finally {
+    await handle.close().catch(() => {});
+  }
 }
 
 function parseJsonEntry(entries, name, label) {
   const entry = entries.get(name);
-  if (!entry) fail(`${label} is missing ${name}`);
+  if (!entry || !entry.bytes) fail(`${label} is missing ${name}`);
   try {
     return JSON.parse(entry.bytes.toString('utf8'));
   } catch (error) {
@@ -260,8 +825,6 @@ function parseJsonEntry(entries, name, label) {
 
 const MANAGED_WEB_EXECUTION_PROFILE_REF = 'nimi-managed-web-v1';
 const MANAGED_WEB_RUNTIME_ENTRY = 'payload/index.html';
-const MANAGED_WEB_MAX_RELEASE_BYTES = 64 * 1024 * 1024;
-const MANAGED_WEB_MAX_RELEASE_ENTRIES = 10_000;
 const WINDOWS_RESERVED_BASES = new Set(['CON', 'PRN', 'AUX', 'NUL', 'CLOCK$', 'CONIN$', 'CONOUT$']);
 const DESKTOP_WINDOW_BOUNDS = Object.freeze({
   width: [400, 2560],
@@ -307,8 +870,12 @@ function targetPathCollisionKey(name, targetOS) {
 
 function validateCrossPlatformArchiveEntries(entries, targetOS, label) {
   const roles = new Map();
+  let fileCount = 0;
   for (const name of entries.keys()) {
     const segments = name.split('/');
+    if (segments.length - 1 > MAX_ARCHIVE_DIRECTORY_DEPTH) {
+      fail(`${label} archive directory depth exceeds ${MAX_ARCHIVE_DIRECTORY_DEPTH}: ${name}`);
+    }
     for (const segment of segments) {
       for (const ch of segment) {
         const code = ch.codePointAt(0);
@@ -330,6 +897,14 @@ function validateCrossPlatformArchiveEntries(entries, targetOS, label) {
       } else {
         roles.set(key, { spelling: prefix, file: isFile });
       }
+    }
+    fileCount += 1;
+    const dirCount = roles.size - fileCount;
+    if (targetOS === 'any' && dirCount > MANAGED_WEB_MAX_RELEASE_ENTRIES) {
+      fail(`${label} exceeds ${MANAGED_WEB_MAX_RELEASE_ENTRIES} directories`);
+    }
+    if (targetOS !== 'any' && dirCount > NATIVE_MAX_DIRECTORIES) {
+      fail(`${label} exceeds ${NATIVE_MAX_DIRECTORIES} directories`);
     }
   }
 }
@@ -442,9 +1017,7 @@ function expectedArchiveNativeTrust(target) {
   };
 }
 
-export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes) {
-  const label = `${target.target_id} nimiapp`;
-  const entries = readNimiAppArchive(bytes, label);
+function validateNimiAppArchiveEntries(entries, candidate, target, sourceLicenseDigests, infoBytes, label) {
   validatePayloadLinks(entries, target.os);
   validateCrossPlatformArchiveEntries(entries, target.os, label);
   for (const required of ['LICENSE', 'manifest.json', 'nimi.app.yaml', 'app-info.json']) {
@@ -460,7 +1033,7 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
     if (entries.get(target.runtime_entry).mode !== 0o644) fail(`${label} managed-web runtime_entry must have mode 0644`);
     if (entries.size > MANAGED_WEB_MAX_RELEASE_ENTRIES) fail(`${label} exceeds ${MANAGED_WEB_MAX_RELEASE_ENTRIES} entries`);
     let totalUncompressed = 0;
-    for (const entry of entries.values()) totalUncompressed += entry.bytes.length;
+    for (const entry of entries.values()) totalUncompressed += entry.size;
     if (totalUncompressed > MANAGED_WEB_MAX_RELEASE_BYTES) fail(`${label} exceeds ${MANAGED_WEB_MAX_RELEASE_BYTES} bytes uncompressed`);
   } else {
     if (candidate.package?.runtime_kind !== 'native') fail(`${label} native archive requires package.runtime_kind=native`);
@@ -501,6 +1074,29 @@ export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDi
   const archivedLicenseSha = createHash('sha256').update(entries.get('LICENSE').bytes).digest('hex');
   if (!sourceLicenseDigests.has(archivedLicenseSha)) fail(`${label} LICENSE does not match a reviewed source license file`);
   return info;
+}
+
+export function validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes) {
+  const label = `${target.target_id} nimiapp`;
+  const isManagedWeb = target.os === 'any';
+  const entries = readNimiAppArchive(bytes, label, {
+    maxArchiveBytes: isManagedWeb ? MANAGED_WEB_MAX_ARCHIVE_BYTES : NATIVE_MAX_ARCHIVE_BYTES,
+    maxTotalUncompressedBytes: isManagedWeb ? MANAGED_WEB_MAX_RELEASE_BYTES : NATIVE_MAX_RELEASE_BYTES,
+    nimiappLayout: true,
+  });
+  return validateNimiAppArchiveEntries(entries, candidate, target, sourceLicenseDigests, infoBytes, label);
+}
+
+export async function validateNimiAppArchiveFile(filePath, candidate, target, sourceLicenseDigests, infoBytes) {
+  const label = `${target.target_id} nimiapp`;
+  const isManagedWeb = target.os === 'any';
+  const entries = await readNimiAppArchiveFromFile(filePath, label, {
+    maxArchiveBytes: isManagedWeb ? MANAGED_WEB_MAX_ARCHIVE_BYTES : NATIVE_MAX_ARCHIVE_BYTES,
+    maxTotalUncompressedBytes: isManagedWeb ? MANAGED_WEB_MAX_RELEASE_BYTES : NATIVE_MAX_RELEASE_BYTES,
+    nimiappLayout: true,
+    retainPredicate: (name) => NIMIAPP_CONTROL_LIMITS.has(name),
+  });
+  return validateNimiAppArchiveEntries(entries, candidate, target, sourceLicenseDigests, infoBytes, label);
 }
 
 // @nimi-authority: rule.nimi.platform.app-ecosystem.p-dev-004
@@ -563,7 +1159,7 @@ export async function verifyTagRules(owner, repo, tag, token) {
   fail(`publisher tag ${tag} is not protected against update and deletion`);
 }
 
-export async function verifyBuildProvenance(bytes, candidate, target, attestations, token, workflowName = 'nimi-app-release.yml') {
+export async function verifyBuildProvenance(artifactOrBytes, candidate, target, attestations, token, workflowName = 'nimi-app-release.yml') {
   if (!Array.isArray(attestations.attestations) || attestations.attestations.length === 0) {
     fail(`${target.target_id} has no GitHub build provenance attestation`);
   }
@@ -572,12 +1168,19 @@ export async function verifyBuildProvenance(bytes, candidate, target, attestatio
     return JSON.stringify(attestation.bundle);
   });
   const { owner, repo } = repositoryParts(candidate.source.repository);
-  const temporaryRoot = await mkdtemp(path.join(tmpdir(), 'nimi-registry-provenance-'));
+  const temporaryRoot = await fsp.mkdtemp(path.join(tmpdir(), 'nimi-registry-provenance-'));
   try {
-    const artifactPath = path.join(temporaryRoot, 'artifact.nimiapp');
+    let artifactPath;
+    if (typeof artifactOrBytes === 'string') {
+      artifactPath = artifactOrBytes;
+    } else if (Buffer.isBuffer(artifactOrBytes)) {
+      artifactPath = path.join(temporaryRoot, 'artifact.nimiapp');
+      await fsp.writeFile(artifactPath, artifactOrBytes);
+    } else {
+      fail(`${target.target_id} build provenance requires a verified artifact file or buffer`);
+    }
     const bundlePath = path.join(temporaryRoot, 'attestations.jsonl');
-    await writeFile(artifactPath, bytes);
-    await writeFile(bundlePath, `${bundles.join('\n')}\n`);
+    await fsp.writeFile(bundlePath, `${bundles.join('\n')}\n`);
     let result;
     try {
       result = JSON.parse(childProcess.execFileSync('gh', [
@@ -605,7 +1208,7 @@ export async function verifyBuildProvenance(bytes, candidate, target, attestatio
       fail(`${target.target_id} build provenance is not from a tag-triggered GitHub Actions run`);
     }
   } finally {
-    await rm(temporaryRoot, { recursive: true, force: true });
+    await fsp.rm(temporaryRoot, { recursive: true, force: true });
   }
 }
 
@@ -719,27 +1322,38 @@ export async function validatePublishedGitHubCandidate(candidate, options = {}) 
 
   const sourceLicenseDigests = await verifyLicenseFiles(owner, repo, candidate, token);
   releaseAsset(release, candidate.aggregate, 'aggregate');
-  const aggregateBytes = await downloadExact(candidate.aggregate.asset_url, candidate.aggregate.size, candidate.aggregate.sha256, 'aggregate');
+  if (candidate.aggregate.size > AGGREGATE_MAX_BYTES) fail('aggregate exceeds 1 MiB budget');
+  const aggregateBytes = await downloadExact(candidate.aggregate.asset_url, candidate.aggregate.size, candidate.aggregate.sha256, 'aggregate', AGGREGATE_MAX_BYTES);
   validateAggregate(aggregateBytes, candidate);
 
   const parsedInfos = [];
   for (const target of candidate.targets) {
+    const maxArchiveBytes = target.os === 'any' ? MANAGED_WEB_MAX_ARCHIVE_BYTES : NATIVE_MAX_ARCHIVE_BYTES;
     releaseAsset(release, target, target.target_id);
-    const bytes = await downloadExact(target.asset_url, target.size, target.sha256, target.target_id);
+    if (target.size > maxArchiveBytes) fail(`${target.target_id} archive exceeds ${maxArchiveBytes} bytes`);
     releaseAsset(release, target.app_info, `${target.target_id} App info`);
-    const infoBytes = await downloadExact(target.app_info.asset_url, target.app_info.size, target.app_info.sha256, `${target.target_id} App info`);
-    const info = validateNimiAppArchive(bytes, candidate, target, sourceLicenseDigests, infoBytes);
-    parsedInfos.push({ targetId: target.target_id, info });
-    const attestationRef = `https://api.github.com/repos/${owner}/${repo}/attestations/sha256:${target.sha256}`;
-    if (!sameValue(target.provenance_attestation_refs, [attestationRef])) {
-      fail(`${target.target_id} provenance_attestation_refs must bind the exact GitHub digest lookup`);
+    if (target.app_info.size > APP_INFO_MAX_BYTES) fail(`${target.target_id} App info exceeds 1 MiB budget`);
+    const infoBytes = await downloadExact(target.app_info.asset_url, target.app_info.size, target.app_info.sha256, `${target.target_id} App info`, APP_INFO_MAX_BYTES);
+
+    const tempDir = await fsp.mkdtemp(path.join(tmpdir(), 'nimi-registry-target-'));
+    try {
+      const tempArchivePath = path.join(tempDir, 'target.nimiapp');
+      await downloadExactToFile(target.asset_url, target.size, target.sha256, tempArchivePath, target.target_id, maxArchiveBytes);
+      const info = await validateNimiAppArchiveFile(tempArchivePath, candidate, target, sourceLicenseDigests, infoBytes);
+      parsedInfos.push({ targetId: target.target_id, info });
+      const attestationRef = `https://api.github.com/repos/${owner}/${repo}/attestations/sha256:${target.sha256}`;
+      if (!sameValue(target.provenance_attestation_refs, [attestationRef])) {
+        fail(`${target.target_id} provenance_attestation_refs must bind the exact GitHub digest lookup`);
+      }
+      const attestations = await requestJson(
+        attestationRef,
+        token,
+        `${target.target_id} provenance attestations`,
+      );
+      await verifyBuildProvenance(tempArchivePath, candidate, target, attestations, token);
+    } finally {
+      await fsp.rm(tempDir, { recursive: true, force: true });
     }
-    const attestations = await requestJson(
-      attestationRef,
-      token,
-      `${target.target_id} provenance attestations`,
-    );
-    await verifyBuildProvenance(bytes, candidate, target, attestations, token);
   }
 
   const firstInfo = parsedInfos[0].info;
@@ -758,13 +1372,20 @@ export async function validatePublishedGitHubCandidate(candidate, options = {}) 
   let storefrontImageCount = 0;
   if (hasMediaArchive) {
     releaseAsset(release, candidate.storefront_media, 'storefront_media');
+    if (candidate.storefront_media.size > STOREFRONT_MEDIA_MAX_BYTES) {
+      fail('storefront_media exceeds 8 MiB budget');
+    }
     const mediaZipBytes = await downloadExact(
       candidate.storefront_media.asset_url,
       candidate.storefront_media.size,
       candidate.storefront_media.sha256,
       'storefront_media',
+      STOREFRONT_MEDIA_MAX_BYTES,
     );
-    const mediaEntries = readNimiAppArchive(mediaZipBytes, 'storefront_media');
+    const mediaEntries = readNimiAppArchive(mediaZipBytes, 'storefront_media', {
+      maxArchiveBytes: STOREFRONT_MEDIA_MAX_BYTES,
+      maxTotalUncompressedBytes: STOREFRONT_MEDIA_MAX_BYTES,
+    });
     storefrontImageCount = validateStorefrontMediaArchiveEntries(mediaEntries, firstInfo.storefront.media);
   }
 
