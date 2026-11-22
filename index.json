@@ -32,13 +32,9 @@
         "revision": 0
       },
       "latest_admitted_release_by_target": {
-        "macos-aarch64": {
-          "descriptor_id": "nimi.overtone@0.1.8",
-          "path": "descriptors/nimi.overtone/0.1.8.json"
-        },
-        "windows-x86_64": {
-          "descriptor_id": "nimi.overtone@0.1.8",
-          "path": "descriptors/nimi.overtone/0.1.8.json"
+        "desktop-universal": {
+          "descriptor_id": "nimi.overtone@0.1.10",
+          "path": "descriptors/nimi.overtone/0.1.10.json"
         }
       },
       "origin": "nimi-official"
