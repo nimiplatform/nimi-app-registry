@@ -235,12 +235,12 @@
       },
       "latest_admitted_release_by_target": {
         "macos-aarch64": {
-          "descriptor_id": "org.nimiplatform.deeptutor@1.6.21",
-          "path": "descriptors/org.nimiplatform.deeptutor/1.6.21.json"
+          "descriptor_id": "org.nimiplatform.deeptutor@1.6.22",
+          "path": "descriptors/org.nimiplatform.deeptutor/1.6.22.json"
         },
         "windows-x86_64": {
-          "descriptor_id": "org.nimiplatform.deeptutor@1.6.21",
-          "path": "descriptors/org.nimiplatform.deeptutor/1.6.21.json"
+          "descriptor_id": "org.nimiplatform.deeptutor@1.6.22",
+          "path": "descriptors/org.nimiplatform.deeptutor/1.6.22.json"
         }
       },
       "origin": "open-source-adapted",
