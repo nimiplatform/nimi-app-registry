@@ -1,5 +1,27 @@
 {
   "schema_version": 1,
+  "descriptor_id": "io.github.nimiplatform.presenton@0.9.12-beta.1",
+  "publisher_submission": {
+    "pull_number": 158,
+    "path": "submissions/nimiplatform/io.github.nimiplatform.presenton/0.9.12-beta.1.json",
+    "head_sha": "ac7353abd0891cd3b2bd4883eab347c271ba229a"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-11-23T08:44:04.335Z"
+    }
+  },
   "candidate": {
     "app_id": "io.github.nimiplatform.presenton",
     "display_name": "Presenton",
