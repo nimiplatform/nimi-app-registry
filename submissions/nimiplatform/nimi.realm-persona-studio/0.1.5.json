@@ -1,0 +1,200 @@
+{
+  "schema_version": 1,
+  "candidate": {
+    "app_id": "nimi.realm-persona-studio",
+    "display_name": "Realm Persona Studio",
+    "version": "0.1.5",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/nimiapp-realm-persona-studio",
+      "license": {
+        "spdx_expression": "MIT",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "b5023f8aa1b0ac908b2a8d50fc7f98cc60a999679f4fb18b53758ee9a35605fc"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.5",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/nimiapp-realm-persona-studio/rulesets/22613694",
+      "commit_sha": "9a1854adefe6334e034d69a7b62b39c9c6b5ebc8",
+      "release_id": 392355416,
+      "release_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/tag/v0.1.5",
+      "release_notes_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/tag/v0.1.5",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 576395042,
+      "asset_name": "nimi.realm-persona-studio-0.1.5.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.5/nimi.realm-persona-studio-0.1.5.candidate.json",
+      "size": 2109,
+      "sha256": "fad9bb246003f539a5efe25b57ce2ef9e368f5f1db1307155094b37a73f8bbdc"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/blob/9a1854adefe6334e034d69a7b62b39c9c6b5ebc8/src-electron/main.ts"
+    },
+    "app_access": [
+      "realm.data",
+      "runtime.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "image.generate",
+      "audio.synthesize"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "app-owned-os-storage",
+      "os_storage_disclosure": [
+        {
+          "expected_size_band": "Typically KiB to a few MiB of JSON, subject to browser storage quota.",
+          "path_pattern": "<Electron userData>/Local Storage/**",
+          "purpose": "Language preference only. Realm remains authoritative for Persona records."
+        },
+        {
+          "expected_size_band": "JSON metadata is typically KiB to a few MiB; imported image files in Runtime custody are limited to 8 MiB each.",
+          "path_pattern": "<Nimi protected App storage>/**",
+          "purpose": "Creation and post drafts, local schedules, creative-asset history, imported artifact metadata and theme preference through protected App operations. Media bytes remain in Runtime artifact custody."
+        }
+      ]
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "runtime_status"
+      ],
+      "redaction_rules": [
+        "credentials"
+      ],
+      "issue_categories": [
+        "startup",
+        "runtime"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart the App from Nimi. If the problem persists, reinstall the current admitted release."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 576394376,
+        "asset_name": "nimi.realm-persona-studio-0.1.5-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.5/nimi.realm-persona-studio-0.1.5-macos-aarch64.nimiapp",
+        "size": 556890763,
+        "sha256": "f3d683c7abed5cb68fcb6b01a7b677f7ca510be4eace2efdb8fa12ed14f61345",
+        "app_info": {
+          "asset_id": 576395002,
+          "asset_name": "nimi.realm-persona-studio-0.1.5-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.5/nimi.realm-persona-studio-0.1.5-macos-aarch64.app-info.json",
+          "size": 168100,
+          "sha256": "8094b80b21ac20123180f5f205a2a467c95b2c918c690423414adcff40293108"
+        },
+        "runtime_entry": "payload/nimiapp-realm-persona-studio-shell.app/Contents/MacOS/nimiapp-realm-persona-studio-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-persona-studio/attestations/sha256:f3d683c7abed5cb68fcb6b01a7b677f7ca510be4eace2efdb8fa12ed14f61345"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 576394640,
+        "asset_name": "nimi.realm-persona-studio-0.1.5-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.5/nimi.realm-persona-studio-0.1.5-windows-x86_64.nimiapp",
+        "size": 595565422,
+        "sha256": "987f55bb4e336d4104580e06ca7c6d6908a98fb3c6b73fe27cf86d60d569b0ec",
+        "app_info": {
+          "asset_id": 576395022,
+          "asset_name": "nimi.realm-persona-studio-0.1.5-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/nimiapp-realm-persona-studio/releases/download/v0.1.5/nimi.realm-persona-studio-0.1.5-windows-x86_64.app-info.json",
+          "size": 168101,
+          "sha256": "77d4806c282524274a0074db9f6ec0eec0e06a0a3566c6b88896ac2f493d3c01"
+        },
+        "runtime_entry": "payload/nimiapp-realm-persona-studio-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/nimiapp-realm-persona-studio/attestations/sha256:987f55bb4e336d4104580e06ca7c6d6908a98fb3c6b73fe27cf86d60d569b0ec"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "user-confirmed"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "publishable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "user-confirmed"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": true,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "public"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
