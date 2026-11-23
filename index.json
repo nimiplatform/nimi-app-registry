@@ -453,8 +453,8 @@
       },
       "latest_admitted_release_by_target": {
         "windows-x86_64": {
-          "descriptor_id": "ai.nimi.videolingo@0.1.9",
-          "path": "descriptors/ai.nimi.videolingo/0.1.9.json"
+          "descriptor_id": "ai.nimi.videolingo@0.2.0",
+          "path": "descriptors/ai.nimi.videolingo/0.2.0.json"
         }
       },
       "origin": "open-source-adapted",
