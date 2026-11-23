@@ -1,0 +1,254 @@
+{
+  "schema_version": 1,
+  "descriptor_id": "openmontage.studio@0.1.4",
+  "publisher_submission": {
+    "pull_number": 156,
+    "path": "submissions/nimiplatform/openmontage.studio/0.1.4.json",
+    "head_sha": "69dd5c454f400b1092c0222604e54d51642f9df6"
+  },
+  "admission": {
+    "ordinary_release_proof": true,
+    "trust_tier": "community",
+    "build_assurance": "developer-attested",
+    "dependency_assurance": {
+      "lockfile_reviewed": true,
+      "sbom_ref": null
+    },
+    "review": {
+      "decision": "approved",
+      "adjudicator_login": "snowzane",
+      "adjudicator_actor_id": 1681360,
+      "reason_code": "maintainer-confirmed-admission",
+      "decided_at": "2026-11-23T08:22:26.400Z"
+    }
+  },
+  "candidate": {
+    "app_id": "openmontage.studio",
+    "display_name": "OpenMontage",
+    "version": "0.1.4",
+    "publisher": {
+      "github_namespace": "nimiplatform",
+      "namespace_kind": "organization",
+      "assurance": "pseudonymous",
+      "verified_domain_ref": null,
+      "kyc_ref": null
+    },
+    "source": {
+      "repository": "https://github.com/nimiplatform/OpenMontage",
+      "license": {
+        "spdx_expression": "AGPL-3.0-only",
+        "files": [
+          {
+            "path": "LICENSE",
+            "sha256": "0d96a4ff68ad6d4b6f1f30f713b18d5184912ba8dd389f86aa7710db079abcb0"
+          },
+          {
+            "path": "THIRD_PARTY_NOTICES.md",
+            "sha256": "7eeaa5ff090c28b4c790b46dae1c3ff6cca07214dbd51e285c5f9a746864c187"
+          },
+          {
+            "path": "licenses/FFMPEG-GPL-2.0.txt",
+            "sha256": "8177f97513213526df2cf6184d8ff986c675afb514d4e68a404010521b880643"
+          },
+          {
+            "path": "licenses/FFMPEG-GPL-3.0.txt",
+            "sha256": "8ceb4b9ee5adedde47b31e975c1d90c73ad27b6b165a1dcd80c7c545eb65b903"
+          },
+          {
+            "path": "licenses/REMOTION-LICENSE.md",
+            "sha256": "bd65083b940f61904f6ef298aade918a7cad72a3e35bc406e36fab365844b673"
+          }
+        ]
+      }
+    },
+    "release": {
+      "tag": "v0.1.4",
+      "tag_protection_ref": "https://api.github.com/repos/nimiplatform/OpenMontage/rulesets/23202795",
+      "commit_sha": "d1eeaec595ff84b9c755ee84c6a082b46cccaf95",
+      "release_id": 455118507,
+      "release_url": "https://github.com/nimiplatform/OpenMontage/releases/tag/v0.1.4",
+      "release_notes_url": "https://github.com/nimiplatform/OpenMontage/releases/tag/v0.1.4",
+      "immutable": true,
+      "prerelease": false
+    },
+    "aggregate": {
+      "asset_id": 782033116,
+      "asset_name": "openmontage.studio-0.1.4.candidate.json",
+      "asset_url": "https://github.com/nimiplatform/OpenMontage/releases/download/v0.1.4/openmontage.studio-0.1.4.candidate.json",
+      "size": 2233,
+      "sha256": "72f655969e56f9fa3079162d80ae702d6a7c0ae15d05f418f1357ba0a1b2535a"
+    },
+    "storefront_media": {
+      "asset_id": 782033156,
+      "asset_name": "openmontage.studio-0.1.4-storefront-media.zip",
+      "asset_url": "https://github.com/nimiplatform/OpenMontage/releases/download/v0.1.4/openmontage.studio-0.1.4-storefront-media.zip",
+      "size": 336854,
+      "sha256": "be6d25cbf705a784ebf2cd5cae35ef4aa225e45777e8063c4bcd7a83222e7d01"
+    },
+    "package": {
+      "kind": "nimiapp",
+      "runtime_kind": "native",
+      "registration_mode": "app-managed",
+      "sandbox_ref": "ordinary-user-process-no-sandbox"
+    },
+    "app_access": [
+      "runtime.consume",
+      "integration.provide",
+      "integration.consume"
+    ],
+    "capability_contract_refs": [
+      "text.generate",
+      "image.generate",
+      "audio.synthesize",
+      "audio.transcribe",
+      "video.generate",
+      "music.generate"
+    ],
+    "required_standardized_feature_refs": [],
+    "storage_policy": {
+      "kind": "nimi-mediated-default",
+      "os_storage_disclosure": null
+    },
+    "update_channel": "stable",
+    "rollback_marker": "none",
+    "support": {
+      "diagnostics_bundle_fields": [
+        "app_version",
+        "failed_operation",
+        "runtime_status",
+        "error_message"
+      ],
+      "redaction_rules": [
+        "credentials",
+        "session_tokens",
+        "private_documents",
+        "private_prompts_and_queries"
+      ],
+      "issue_categories": [
+        "startup",
+        "ai",
+        "media-rendering",
+        "subtitles",
+        "storage"
+      ],
+      "escalation_url": "https://github.com/nimiplatform/OpenMontage/issues",
+      "kill_switch_visibility": "visible",
+      "recovery_instructions": "Restart OpenMontage from Nimi after checking the failed operation and AI settings. Include App version and redacted diagnostics in an issue. Interrupted work is not evidence of completion."
+    },
+    "targets": [
+      {
+        "target_id": "macos-aarch64",
+        "os": "macos",
+        "arch": "arm64",
+        "asset_id": 782031614,
+        "asset_name": "openmontage.studio-0.1.4-macos-aarch64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/OpenMontage/releases/download/v0.1.4/openmontage.studio-0.1.4-macos-aarch64.nimiapp",
+        "size": 452356454,
+        "sha256": "279da6241caf81f61c7aa8632f675b8362e49554a0ae34177451fe5844cacb77",
+        "app_info": {
+          "asset_id": 782033019,
+          "asset_name": "openmontage.studio-0.1.4-macos-aarch64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/OpenMontage/releases/download/v0.1.4/openmontage.studio-0.1.4-macos-aarch64.app-info.json",
+          "size": 364847,
+          "sha256": "b503c5e5a14f0156afe48e2b8333bd8398af85ce3a0bb012b82227cef231defa"
+        },
+        "runtime_entry": "payload/openmontage-nimi-app-shell.app/Contents/MacOS/openmontage-nimi-app-shell",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/OpenMontage/attestations/sha256:279da6241caf81f61c7aa8632f675b8362e49554a0ae34177451fe5844cacb77"
+        ],
+        "execution_profile_ref": "macos-user-mode-same-session-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "not-applicable",
+          "macos_notarization": "absent",
+          "macos_developer_id_subject": null
+        }
+      },
+      {
+        "target_id": "windows-x86_64",
+        "os": "windows",
+        "arch": "x86_64",
+        "asset_id": 782032305,
+        "asset_name": "openmontage.studio-0.1.4-windows-x86_64.nimiapp",
+        "asset_url": "https://github.com/nimiplatform/OpenMontage/releases/download/v0.1.4/openmontage.studio-0.1.4-windows-x86_64.nimiapp",
+        "size": 520251625,
+        "sha256": "815bfd567966587ae13303e284b7ba7698e120890d446c2cab6e36ac3be591ad",
+        "app_info": {
+          "asset_id": 782033057,
+          "asset_name": "openmontage.studio-0.1.4-windows-x86_64.app-info.json",
+          "asset_url": "https://github.com/nimiplatform/OpenMontage/releases/download/v0.1.4/openmontage.studio-0.1.4-windows-x86_64.app-info.json",
+          "size": 364848,
+          "sha256": "e804e23ffe57fe110e66497956f6eab4d57473fd025fef3f4dcf7a48e39434e0"
+        },
+        "runtime_entry": "payload/openmontage-nimi-app-shell.exe",
+        "provenance_attestation_refs": [
+          "https://api.github.com/repos/nimiplatform/OpenMontage/attestations/sha256:815bfd567966587ae13303e284b7ba7698e120890d446c2cab6e36ac3be591ad"
+        ],
+        "execution_profile_ref": "windows-user-mode-as-invoker-v1",
+        "native_trust": {
+          "signing_subject": null,
+          "observed_subject": null,
+          "entitlements_ref": null,
+          "windows_code_signing": "unsigned",
+          "macos_notarization": "not-applicable",
+          "macos_developer_id_subject": null
+        }
+      }
+    ],
+    "safety_profile": {
+      "ai": {
+        "direct_interaction": true,
+        "interaction_notice": "absent",
+        "outputs": [
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "text",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "image",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "audio",
+            "publication_control": "not-applicable"
+          },
+          {
+            "export_visible_marking": "absent",
+            "exposure": "exportable",
+            "in_product_notice": "absent",
+            "machine_readable_marking": "absent",
+            "modality": "video",
+            "publication_control": "not-applicable"
+          }
+        ],
+        "risk_features": [],
+        "subject_notice": "not-applicable"
+      },
+      "content_descriptors": [],
+      "data_practices": {
+        "commercial_features": [],
+        "publisher_direct_external_network": false,
+        "sensitive_data_categories": [],
+        "telemetry": [],
+        "third_party_account": "none",
+        "user_content_sharing": "none"
+      },
+      "high_impact_decision_uses": [],
+      "intended_audience": "general"
+    }
+  }
+}
